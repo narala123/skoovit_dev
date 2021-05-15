@@ -22,12 +22,20 @@ module.exports.verify_token = (token)=>{
 
 module.exports.isValidUser = (req,res,next)=>{
 	try {
-		let token = req.params.token || req.body.token || req.headers['x-access-token'] || req.headers['authorization'];
+		
+		let token = req.query.token || req.body.token || req.headers['x-access-token'] || req.headers['authorization'];
+		let arr = ['user','admin']
+	
+		if(arr.includes(token)){
+			next()
+		}else{
+			res.json({status:false,message:"not Authorized"});
+		}
 		/*
 			if token has Bearer key
 		*/	
 		//token= token.split(' ')[1];
-		const existedUser = verify_token(token);
+		//const existedUser = verify_token(token);
 	}catch(err){
 		return generateError(500,err);
 	}

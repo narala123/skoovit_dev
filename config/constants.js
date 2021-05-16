@@ -7,5 +7,6 @@
         STATUS_301: 301,
         STATUS_MSG_500: "Internal Server Error",
         STATUS_MSG_400: "Bad Request",
-        STATUS_MSG_426: "Upgrade Required"
+        STATUS_MSG_426: "Upgrade Required",
+        STATUS_MSG_Delete: " Deleted Sucessfully"
     }

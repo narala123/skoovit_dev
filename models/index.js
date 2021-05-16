@@ -7,7 +7,9 @@ class Models {
 
     init() {
         return {
-            UserRoles: require("./userRoles")
+            UserRoles: require("./userRoles"),
+            Countries: require("./countries"),
+            States: require("./states")
         };
     }
 }

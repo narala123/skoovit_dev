@@ -7,7 +7,7 @@ const User = new Schema({
     email:{ type:String, required:true, trim:true },
     mobile:{ type: String, required:true },
     active:{ type:Boolean, default:true },
-    userType:{ type: Schema.Types.ObjectId,ref:'userroles' },    
+    userType:{ type: Schema.Types.ObjectId, ref:'userroles' },    
     isDelete:{ type: Boolean, default:false },
     isLoggedIn:{ type: Boolean, default: true },
     createDate:{ type:Date, default:Date.now },

@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken');
 
-module.exports.create_token = (id, type, expiresIn)=>{
-	try {
-		const tokenExpiredTime = expiresIn ? expiresIn : '2 days';
+module.exports.create_token = (userId,planId, userType)=> {
+	try {		
 		return jwt.sign({
-      		id: id,
-      		type: type
-    	}, process.env.SECRET_KEY, { expiresIn:tokenExpiredTime, algorithms: ['HS256'] });
+      		userId: userId,
+      		planId: planId,
+      		userType: userType
+    	}, process.env.SECRET_KEY, { algorithms: ['HS256'] });
 	}catch(err){
 		return generateError(500,err);
 	}	

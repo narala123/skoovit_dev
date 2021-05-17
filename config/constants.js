@@ -8,5 +8,6 @@
         STATUS_MSG_500: "Internal Server Error",
         STATUS_MSG_400: "Bad Request",
         STATUS_MSG_426: "Upgrade Required",
-        STATUS_MSG_Delete: " Deleted Sucessfully"
+        STATUS_MSG_Delete: " Deleted Sucessfully",
+        STATUS_MSG_Update: " Updated Sucessfully"
     }

@@ -9,7 +9,9 @@ class Models {
         return {
             UserRoles: require("./userRoles"),
             Countries: require("./countries"),
-            States: require("./states")
+            States: require("./states"),
+            Cities: require("./cities"),
+            User: require("./user"),
         };
     }
 }

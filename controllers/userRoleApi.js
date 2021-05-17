@@ -8,7 +8,7 @@ module.exports = function(express){
     //api.use(userPermission.isValidUser);
     api.post("/create",async (req,res)=>{
         try{
-            console.log("req.body-->", req.body);
+           // console.log("req.body-->", req.body);
             let data =  await userRoleService.createRole(req.body);   
             console.log(data,"final data");
             res.json({statusCode:constants.STATUS_200,data:data})

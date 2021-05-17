@@ -1,25 +1,71 @@
-let userPermission = require("../config/middlewares/authorization")
-module.exports = function(express){
-    let api  = express.Router();
+const constants = require("../config/constants");
+let userPermission = require("../config/middlewares/authorization");
+let userService = require("../services/userService");
+// const { check, validationResult } = require("express-validator");
 
-    api.post("/signup",(req,res)=>{
-       
-    });
-    api.post("/login",(req,res)=>{
+module.exports = function (express) {
+  let api = express.Router();
+  api.post(
+    "/signup",
+    async (req, res) => {
+      try {
+        let data = await userService.signup(req.body);
+        res.json({ statusCode: constants.STATUS_200, data: data });
+      } catch (e) {
+        return userPermission.generateError(constants.STATUS_400, e);
+      }
+    }
+  );
+  
+  api.get("/getusers", async (req, res) => {
+    try {
+      let data = await userService.getUsers();
+      res.json({ statusCode: constants.STATUS_200, data: data });
+    } catch (e) {
+      return userPermission.generateError(constants.STATUS_500, e);
+    }
+  });
 
-    });
+  api.get("/getuser/:id", async (req, res) => {
+    try {
+      let data = await userService.getUser(req.params.id);
+      res.json({ statusCode: constants.STATUS_200, data: data });
+    } catch (e) {
+      return userPermission.generateError(constants.STATUS_500, e);
+    }
+  });
 
-    /*
+  api.post("/isactive/:id", async (req, res) => {
+    try {
+      let data = await userService.isActive(req.params.id, req.body);
+      res.json({ statusCode: constants.STATUS_200, data: data });
+    } catch (e) {
+      return userPermission.generateError(constants.STATUS_500, e);
+    }
+  });
+
+  api.post("/isdelete/:id", async (req, res) => {
+    try {
+      let data = await userService.isDelete(req.params.id, req.body);
+      res.json({ statusCode: constants.STATUS_200, data: data });
+    } catch (e) {
+      return userPermission.generateError(constants.STATUS_500, e);
+    }
+  });
+
+  api.post("/login", (req, res) => {});
+
+  /*
         To check valid token and user role, works as middleware.
         below of this function all Api's should have token.
         without token Api's can write on top this line.
     */
 
-    //api.use(userPermission.isValidUser);
-    
-    api.get("/profile",(req,res)=>{
-        res.json({status:true,message:"success"});
-    })
+  //api.use(userPermission.isValidUser);
 
-    return api;
-}
+  api.get("/profile", (req, res) => {
+    res.json({ status: true, message: "success" });
+  });
+
+  return api;
+};

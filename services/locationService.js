@@ -116,6 +116,62 @@ class LocationService {
       return e.message;
     }
   }
+
+  async createCity(data) {
+    try {
+      //console.log(data,"-------");
+      let cityCreation = await this.db.Cities.create(data);
+      return cityCreation;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  }
+  async fetchCities() {
+    try {
+      //console.log(data,"-------");
+      let fetchCities = await this.db.Cities.find({}).sort({ createDate: -1 });
+      return fetchCities;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  }
+  async getCity(id) {
+    try {
+      //console.log(data,"-------");
+      let getCity = await this.db.Cities.findOne({ _id: id });
+      return getCity;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  }
+
+  async deleteCity(id) {
+    try {
+      //console.log(data,"-------");
+      let deletedCity = await this.db.Cities.deleteOne({ _id: id });
+      return deletedCity;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  }
+  async updateCity(id, data) {
+    try {
+      //console.log(data,"-------");
+      let updateCity = await this.db.Cities.findOneAndUpdate(
+        { _id: id },
+        { $set: data },
+        { new: true }
+      );
+      return updateCity;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  }
 }
 
 module.exports = new LocationService();

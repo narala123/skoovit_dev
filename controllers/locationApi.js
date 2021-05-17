@@ -113,5 +113,59 @@ module.exports = function (express) {
     }
   });
 
+  api.post("/createcity", async (req, res) => {
+    try {
+      //console.log(req.body);
+      let data = await locationService.createCity(req.body);
+      res.json({ statusCode: constants.STATUS_200, data: data });
+    } catch (e) {
+      return userPermission.generateError(constants.STATUS_500, e);
+    }
+  });
+  api.get("/getcities", async (req, res) => {
+    try {
+      let data = await locationService.fetchCities();
+      res.json({ statusCode: constants.STATUS_200, data: data });
+    } catch (e) {
+      return userPermission.generateError(constants.STATUS_500, e);
+    }
+  });
+  api.post("/updatecity/:id", async (req, res) => {
+    try {
+      //console.log(req.body);
+      let data = await locationService.updateCity(req.params.id, req.body);
+      res.json({
+        statusCode: constants.STATUS_200,
+        message: constants.STATUS_MSG_Update,
+      });
+    } catch (e) {
+      return userPermission.generateError(constants.STATUS_500, e);
+    }
+  });
+
+  api.get("/getcity/:id", async (req, res) => {
+    try {
+      let data = await locationService.getCity(req.params.id);
+      res.json({
+        statusCode: constants.STATUS_200,
+        data: data,
+      });
+    } catch (e) {
+      return userPermission.generateError(constants.STATUS_500, e);
+    }
+  });
+
+  api.get("/deletecity/:id", async (req, res) => {
+    try {
+      let data = await locationService.deleteCity(req.params.id);
+      res.json({
+        statusCode: constants.STATUS_200,
+        message: constants.STATUS_MSG_Delete,
+      });
+    } catch (e) {
+      return userPermission.generateError(constants.STATUS_500, e);
+    }
+  });
+
   return api;
 };

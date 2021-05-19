@@ -6,7 +6,6 @@ class UserService {
   }
 
   async signup(data) {
-   
     try {
       //console.log(data,"-------");
       let signupdata = await this.db.User.create(data);
@@ -16,7 +15,6 @@ class UserService {
       return e.message;
     }
   }
-
 
   async getUsers() {
     try {
@@ -57,6 +55,28 @@ class UserService {
         { new: true }
       );
       return isDelete;
+    } catch (e) {
+      return e.message;
+    }
+  }
+
+  async login(number, otp) {
+    try {
+      const loginuser = await this.db.User.find({});
+      //console.log(loginuser[0].mobile);
+     // console.log(Object.values(number))
+      console.log(otp)
+
+      if (loginuser[0].mobile === String(Object.values(number)) && otp) {
+        const login = "Logged In"
+      return login
+      }
+      else{
+       // console.log("user not exist")
+
+        const login = "user does not exist !! Please SignUp"
+        return login
+      }
     } catch (e) {
       return e.message;
     }

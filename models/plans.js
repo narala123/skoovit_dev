@@ -7,7 +7,7 @@ const Plans = new Schema({
     duration:{ type: Number },    
     active:{ type: Boolean, default:true },      
     features:[
-    	{ 	gallery:{ 
+    	{ 	gallery:{
     			images:{ type: Number,default:2 },
     			videos:{ type: Number,default: 1 },
     			audio:{ type: Number, default: 1 },

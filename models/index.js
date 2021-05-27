@@ -13,6 +13,8 @@ class Models {
       Cities: require("./cities"),
       User: require("./user"),
       Plans: require("./plans"),
+      ActivePlans: require("./active-plan"),
+      UserPlanTransactions: require("./user-plans-transactions"),
     };
   }
 }

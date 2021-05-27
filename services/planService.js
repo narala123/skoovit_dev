@@ -12,7 +12,41 @@ class PlanService {
       //console.error("error",e)
       return e.message;
     }
-  }
+  };
+
+  async createActivePlan(data) {
+    try {
+      //console.log(data,"-------");
+      let createPlan = await this.db.ActivePlans.create(data);
+      return createPlan;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  };
+
+  async createPlanHistory(data) {
+    try {
+      //console.log(data,"-------");
+      let createPlan = await this.db.UserPlanTransactions.create(data);
+      return createPlan;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  };
+
+  async getFreePlan() {
+    try {
+      //console.log(data,"-------");
+      let freePlan = await this.db.Plans.findOne({planType:"Free"},{_id:1,planType:1});
+      return freePlan;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  }; 
+
   async getPlans() {
     try {
       //console.log(data,"-------");
@@ -24,7 +58,8 @@ class PlanService {
       //console.error("error",e)
       return e.message;
     }
-  }
+  };
+
   async getPlan(id) {
     try {
       //console.log(data,"-------");
@@ -34,7 +69,8 @@ class PlanService {
       //console.error("error",e)
       return e.message;
     }
-  }
+  };
+
   async updatePlan(id, data) {
     try {
       //console.log(data,"-------");

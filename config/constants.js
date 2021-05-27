@@ -2,12 +2,20 @@
         STATUS_503: 503,
         STATUS_500: 500,
         STATUS_400: 400,
+        STATUS_404: 404,
+        STATUS_409: 409,
         STATUS_426: 426,
         STATUS_200: 200,
         STATUS_301: 301,
-        STATUS_MSG_500: "Internal Server Error",
-        STATUS_MSG_400: "Bad Request",
-        STATUS_MSG_426: "Upgrade Required",
-        STATUS_MSG_Delete: " Deleted Sucessfully",
-        STATUS_MSG_Update: " Updated Sucessfully"
-    }
+        STATUS_TRUE: true,
+        STATUS_FALSE: false,
+        STATUS_MSG_500: "Internal Server Error.",
+        STATUS_MSG_400: "Bad Request.",
+        STATUS_MSG_404: "Entered Mobile is Not Existed, Please signup.",
+        STATUS_MSG_409: "User Already Existed.",
+        STATUS_MSG_426: "Upgrade Required.",
+        STATUS_MSG_200: "Success.",
+        STATUS_MSG_Delete: " Deleted Sucessfully.",
+        STATUS_MSG_Update: " Updated Sucessfully.",
+        STATUS_MSG_OTPFAIL: "Please Enter valid Otp."
+    };

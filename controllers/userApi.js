@@ -1,17 +1,61 @@
 const constants = require("../config/constants");
 let userPermission = require("../config/middlewares/authorization");
 let userService = require("../services/userService");
-// const { check, validationResult } = require("express-validator");
-
+let userRoleService = require('../services/userRoleService');
+const em = require('../utils/event-emitter');
+const eventNames = require('../config/event-emitter-constants');
 module.exports = function (express) {
   let api = express.Router();
   api.post("/signup", async (req, res) => {
     try {
-      let data = await userService.signup(req.body);
-      res.json({ statusCode: constants.STATUS_200, data: data });
-    } catch (e) {
-      return userPermission.generateError(constants.STATUS_400, e);
+      const isUserExist = await userService.isUserExist(req.body);
+      if(isUserExist){
+         return res.json({ statusCode: constants.STATUS_409, message:constants.STATUS_MSG_409, status: constants.STATUS_FALSE });
+      }else {      
+        const isUserRoleExisted = await userRoleService.isUserRoleExisted("user");
+        if(!isUserRoleExisted) {
+          return res.json({ statusCode: constants.STATUS_404, message:STATUS_MSG_404, status: constants.STATUS_FALSE });
+        }
+        req.body['userType'] = isUserRoleExisted._id;
+        const data = await userService.signup(req.body);
+        if(data) { 
+          //console.log(data,"data");  
+          em.emit(eventNames.Assign_Plan_To_User,{userId:data._id});
+          return res.json({ statusCode: constants.STATUS_200, message:constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: data });
+        }else {
+          return res.json({ statusCode: constants.STATUS_500, message:constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        } 
+      }
+    }catch (e) {
+      console.log(e,"eeroor")
+      return e;
     }
+  });
+  
+  api.post("/sendotp", async (req, res) => {
+    try {      
+      let data = await userService.sendOtp(req.body.mobile);
+      if(data) {
+        return res.json({ statusCode: constants.STATUS_200, message:"OTP Sent Successfully, Please verify to enjoy the features."});
+      }else {
+        return res.json({ statusCode: constants.STATUS_404, message:constants.STATUS_MSG_404});
+      }      
+    } catch (e) {
+      return userPermission.generateError(constants.STATUS_500, e);
+    }
+  });
+
+  api.post("/login", async (req,res)=> {
+      try {
+        const verifyOtpWithMobile =  await userService.verifyOtp(req.body.mobile, req.body.otp);
+        if(verifyOtpWithMobile){
+          return res.json({ statusCode: constants.STATUS_200, message:constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: verifyOtpWithMobile});
+        }else {
+          return res.json({ statusCode: constants.STATUS_400, message:constants.STATUS_MSG_OTPFAIL, status: constants.STATUS_FALSE });
+        }
+      } catch(e) {
+        return userPermission.generateError(constants.STATUS_500, e);
+      }
   });
 
   api.get("/getusers", async (req, res) => {
@@ -50,19 +94,7 @@ module.exports = function (express) {
     }
   });
 
-  api.post("/login", async (req, res) => {
-    try {
-      digits = "0123456789";
-      otpvalue = " ";
-      for (let i = 0; i < 6; i++) {
-        otpvalue = otpvalue + digits[Math.floor(Math.random() * 10)];
-      }
-      let data = await userService.login(req.body, otpvalue);
-      res.json({ statusCode: constants.STATUS_200, data: data });
-    } catch (e) {
-      return userPermission.generateError(constants.STATUS_500, e);
-    }
-  });
+
 
   /*
         To check valid token and user role, works as middleware.

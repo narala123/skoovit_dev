@@ -25,12 +25,12 @@ var passValidator = [
 
 const User = new Schema({
   fullName: { type: String, required: true, validate: nameValidator },
-  password: {
+  /*password: {
     type: String,
     required: true,
     minlength: 8,
     validate: passValidator,
-  },
+  },*/
   email: {
     type: String,
     required: true,
@@ -39,8 +39,7 @@ const User = new Schema({
     validate: emailValidator,
   },
   mobile: {
-    type: String,
-    required: true,
+    type: String,    
     unique: true,
     minlength: 10,
     maxlenth: 10,
@@ -49,6 +48,7 @@ const User = new Schema({
     type: Schema.Types.ObjectId,
     ref: "userroles",
   },
+  otp:{ type: Number },
   active: { type: Boolean, default: true },
   isDelete: { type: Boolean, default: false },
   isLoggedIn: { type: Boolean, default: true },

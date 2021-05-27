@@ -10,7 +10,7 @@ module.exports = function(express){
         try{
            // console.log("req.body-->", req.body);
             let data =  await userRoleService.createRole(req.body);   
-            console.log(data,"final data");
+            //console.log(data,"final data");
             res.json({statusCode:constants.STATUS_200,data:data})
         }catch(e){            
             return userPermission.generateError(constants.STATUS_500,e)

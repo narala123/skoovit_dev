@@ -1,14 +1,26 @@
 const db = require("../models");
+const auth = require("../config/middlewares/authorization");
+
+exports.otpGen = ()=> {
+  return Math.floor(1000 + Math.random() * 9000);
+};
 
 class UserService {
   constructor() {
     this.db = db;
   }
+  
+  async isUserExist(data){
+    try {
+      return await this.db.User.findOne({$or:[{email:data.email},{mobile:data.mobile}]});
+    }catch(e) {
+      return e.message;
+    } 
+  };
 
   async signup(data) {
-    try {
-      //console.log(data,"-------");
-      let signupdata = await this.db.User.create(data);
+    try {     
+      const signupdata = await this.db.User.create(data);
       return signupdata;
     } catch (e) {
       //console.error("error",e)
@@ -58,29 +70,35 @@ class UserService {
     } catch (e) {
       return e.message;
     }
-  }
+  };
 
-  async login(number, otp) {
-    try {
-      const loginuser = await this.db.User.find({});
-      //console.log(loginuser[0].mobile);
-     // console.log(Object.values(number))
-      console.log(otp)
-
-      if (loginuser[0].mobile === String(Object.values(number)) && otp) {
-        const login = "Logged In"
-      return login
+  async sendOtp(mobile) {
+    try {      
+      const verifyMobile = await this.db.User.findOne({mobile:mobile});
+      if(verifyMobile){
+        let otp = otpGen();
+        return await this.db.User.findOneAndUpdate({mobile:mobile},{$set:{otp:2021, otpTime: Date.now}},{new:true});        
       }
-      else{
-       // console.log("user not exist")
-
-        const login = "user does not exist !! Please SignUp"
-        return login
-      }
+      return verifyMobile;      
     } catch (e) {
       return e.message;
     }
-  }
+  };
+
+  // to verify otp and login
+  async verifyOtp(mobile, otp) {
+    try {      
+      const loginUser = await this.db.User.findOne({mobile:mobile,otp:otp},{otp:0});
+      if(loginUser){  
+        loginUser.token =  await auth.create_token(loginUser._id, __, loginUser.userType);    
+        return loginUser;      
+      }else {
+        return loginUser; 
+      }           
+    } catch (e) {
+      return e.message;
+    }
+  };
 }
 
 module.exports = new UserService();

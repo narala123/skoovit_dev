@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Plans = new Schema({
-    name:{ type: String, required:true },
+    name:{ type: String },
+	planType:{ type: String },
     price:{ type: Number },
     duration:{ type: Number },    
     active:{ type: Boolean, default:true },      

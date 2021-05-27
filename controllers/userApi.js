@@ -1,6 +1,6 @@
 const constants = require("../config/constants");
 let userPermission = require("../config/middlewares/authorization");
-let userService = require("../services/userService");
+let userService = require("../services/UserService");
 let userRoleService = require('../services/userRoleService');
 const em = require('../utils/event-emitter');
 const eventNames = require('../config/event-emitter-constants');
@@ -14,7 +14,7 @@ module.exports = function (express) {
       }else {      
         const isUserRoleExisted = await userRoleService.isUserRoleExisted("user");
         if(!isUserRoleExisted) {
-          return res.json({ statusCode: constants.STATUS_404, message:STATUS_MSG_404, status: constants.STATUS_FALSE });
+          return res.json({ statusCode: constants.STATUS_404, message:constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
         }
         req.body['userType'] = isUserRoleExisted._id;
         const data = await userService.signup(req.body);

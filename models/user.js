@@ -49,6 +49,7 @@ const User = new Schema({
     ref: "userroles",
   },
   otp:{ type: Number },
+  isMobileVerified:{ type: Boolean, default: false },
   active: { type: Boolean, default: true },
   isDelete: { type: Boolean, default: false },
   isLoggedIn: { type: Boolean, default: true },

@@ -76,11 +76,13 @@ class UserService {
     try {      
       const verifyMobile = await this.db.User.findOne({mobile:mobile});
       if(verifyMobile){
-        let otp = otpGen();
-        return await this.db.User.findOneAndUpdate({mobile:mobile},{$set:{otp:2021, otpTime: Date.now}},{new:true});        
-      }
-      return verifyMobile;      
+        //let otp = this.otpGen();
+        return await this.db.User.findOneAndUpdate({_id:verifyMobile._id},{otp:2021, otpTime: Date.now},{new:true});        
+      }else{
+        return verifyMobile;  
+      }          
     } catch (e) {
+
       return e.message;
     }
   };
@@ -89,13 +91,37 @@ class UserService {
   async verifyOtp(mobile, otp) {
     try {      
       const loginUser = await this.db.User.findOne({mobile:mobile,otp:otp},{otp:0});
-      if(loginUser){  
-        loginUser.token =  await auth.create_token(loginUser._id, __, loginUser.userType);    
-        return loginUser;      
+      if(loginUser) {  
+        await this.db.User.findOneAndUpdate({_id:loginUser._id},{$set:{isMobileVerified:true}},{new:true}); 
+        const userInfo =  await this.db.User.aggregate([{$match:{mobile:mobile}},
+        { $lookup: {
+          from: "activeplans",
+          localField: "_id",
+          foreignField: "userId",
+          as: "planInfo"
+        }
+      },
+      {
+        $unwind:"$planInfo"
+      },{
+        $project:{
+          "email":1,
+          "mobile":1,
+          "_id":1,
+          "activePlan": {
+            "planType": "$planInfo.planType"            
+          }
+        }
+      }
+      ]);
+        //console.log(userInfo,"userInfo");
+        userInfo[0].token =  await auth.create_token(loginUser._id, "Free", loginUser.userType);    
+        return userInfo;      
       }else {
         return loginUser; 
       }           
     } catch (e) {
+      console.log(e);
       return e.message;
     }
   };

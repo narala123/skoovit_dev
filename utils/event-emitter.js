@@ -15,8 +15,9 @@ class Events {
         this.em.on(this.eventNames.Assign_Plan_To_User, async(data)=>{
         let planDetails = await this.plansService.getFreePlan();
         planDetails = JSON.parse(JSON.stringify(planDetails));        
-        planDetails["userId"] = data["userId"];
-        planDetails["planId"] = planDetails["_id"];  
+        planDetails["userId"] = data.userId;
+        planDetails["planId"] = planDetails._id;  
+        delete planDetails._id;
         //console.log(planDetails,"planDetails");
         await this.plansService.createActivePlan(planDetails);
         await this.plansService.createPlanHistory(planDetails);

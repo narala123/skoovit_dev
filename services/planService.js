@@ -16,7 +16,7 @@ class PlanService {
 
   async createActivePlan(data) {
     try {
-      //console.log(data,"-------");
+      console.log(data,"------Active plans-");
       let createPlan = await this.db.ActivePlans.create(data);
       return createPlan;
     } catch (e) {

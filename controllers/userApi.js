@@ -20,6 +20,7 @@ module.exports = function (express) {
         const data = await userService.signup(req.body);
         if(data) { 
           //console.log(data,"data");  
+          await userService.sendOtp(data.mobile);
           em.emit(eventNames.Assign_Plan_To_User,{userId:data._id});
           return res.json({ statusCode: constants.STATUS_200, message:constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: data });
         }else {
@@ -41,20 +42,21 @@ module.exports = function (express) {
         return res.json({ statusCode: constants.STATUS_404, message:constants.STATUS_MSG_404});
       }      
     } catch (e) {
-      return userPermission.generateError(constants.STATUS_500, e);
+      return e;
     }
   });
 
-  api.post("/login", async (req,res)=> {
+  api.post("/otpverification", async (req,res)=> {
       try {
         const verifyOtpWithMobile =  await userService.verifyOtp(req.body.mobile, req.body.otp);
         if(verifyOtpWithMobile){
           return res.json({ statusCode: constants.STATUS_200, message:constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: verifyOtpWithMobile});
         }else {
           return res.json({ statusCode: constants.STATUS_400, message:constants.STATUS_MSG_OTPFAIL, status: constants.STATUS_FALSE });
-        }
+        } 
       } catch(e) {
-        return userPermission.generateError(constants.STATUS_500, e);
+        console.log(e)
+        return e;
       }
   });
 
@@ -63,7 +65,7 @@ module.exports = function (express) {
       let data = await userService.getUsers();
       res.json({ statusCode: constants.STATUS_200, data: data });
     } catch (e) {
-      return userPermission.generateError(constants.STATUS_500, e);
+      return e;
     }
   });
 

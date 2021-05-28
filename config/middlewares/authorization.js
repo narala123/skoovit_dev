@@ -6,9 +6,10 @@ module.exports.create_token = (userId,planId, userType)=> {
       		userId: userId,
       		planId: planId,
       		userType: userType
-    	}, process.env.SECRET_KEY, { algorithms: ['HS256'] });
+    	}, process.env.SECRET_KEY);
 	}catch(err){
-		return generateError(500,err);
+		console.log(err);
+		return this.generateError(500,err);
 	}	
 };
 

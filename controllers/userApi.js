@@ -14,7 +14,7 @@ module.exports = function (express) {
       }else {      
         const isUserRoleExisted = await userRoleService.isUserRoleExisted("user");
         if(!isUserRoleExisted) {
-          return res.json({ statusCode: constants.STATUS_404, message:constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
+          return res.json({ statusCode: constants.STATUS_404, message:constants.STATUS_MSG_404_R, status: constants.STATUS_FALSE });
         }
         req.body['userType'] = isUserRoleExisted._id;
         const data = await userService.signup(req.body);

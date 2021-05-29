@@ -13,32 +13,19 @@ module.exports.create_token = (userId,planId, userType)=> {
 	}	
 };
 
-module.exports.verify_token = (token)=>{
-	try{
-		return token ? jwt.verify(token,process.env.SECRET_KEY,{ algorithms: ['HS256'] }) : {};
-	}catch(err){
-		return generateError(500,err);
-	}
-};
 
-module.exports.isValidUser = (req,res,next)=>{
+
+module.exports.isValidUser = async(req,res,next)=>{
 	try {
-		
 		let token = req.query.token || req.body.token || req.headers['x-access-token'] || req.headers['authorization'];
-		let arr = ['user','admin']
-	
-		if(arr.includes(token)){
-			next()
+		if(await verify_token(token)){
+			next();
 		}else{
-			res.json({status:false,message:"not Authorized"});
-		}
-		/*
-			if token has Bearer key
-		*/	
-		//token= token.split(' ')[1];
-		//const existedUser = verify_token(token);
+			return res.json({status:false,message:"not Authorized"});
+		}		
 	}catch(err){
-		return generateError(500,err);
+		console.log(err);
+		return this.generateError(500,err);
 	}
 };
 
@@ -55,5 +42,13 @@ module.exports.generateError = (code, err) => {
       responsemessage: 'Oops something went wrong. Please try again.'
     })
   }
+};
+
+exports.verify_token = (token)=>{
+	try{
+		return token ? jwt.verify(token,process.env.SECRET_KEY,{ algorithms: ['HS256'] }) : {};
+	}catch(err){
+		return this.generateError(500,err);
+	}
 };
 

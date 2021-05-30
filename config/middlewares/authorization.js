@@ -46,7 +46,7 @@ module.exports.generateError = (code, err) => {
 
 exports.verify_token = (token)=>{
 	try{
-		return token ? jwt.verify(token,process.env.SECRET_KEY,{ algorithms: ['HS256'] }) : {};
+		return token ? jwt.verify(token,process.env.SECRET_KEY) : {};
 	}catch(err){
 		return this.generateError(500,err);
 	}

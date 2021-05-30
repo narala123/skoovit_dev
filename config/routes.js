@@ -10,4 +10,7 @@ module.exports = function (app, express) {
   
   let planApi = require("../controllers/planApi")(express);
   app.use("/plan", planApi);
+
+  let userProfileApi = require("../controllers/userProfileApi")(express);
+  app.use("/userprofile",userProfileApi);
 };

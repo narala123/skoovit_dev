@@ -5,7 +5,7 @@ const UserProfile = new Schema({
     userId:{ type: Schema.Types.ObjectId,ref:'users' },	
     userName:{ type: String },
     languages:{ type: Array },
-    dob:{ type: Date },
+    dob:{ type: String },
     gender:{ type: String },
     country:{ type: String },
     state:{ type: String },

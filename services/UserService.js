@@ -39,7 +39,7 @@ class UserService {
 
   async getUser(id) {
     try {
-      let getuser = await this.db.User.find({ _id: id });
+      let getuser = await this.db.User.findOne({ _id: id });
       return getuser;
     } catch (e) {
       return e.message;

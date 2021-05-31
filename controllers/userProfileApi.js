@@ -41,5 +41,35 @@ module.exports = function (express) {
             return e;
         }
     });
+    api.get('/info/:pId', async (req, res) =>{
+        try {
+            const isProfileExisted = await userProfileService.isProfileExisted(null,req.params.pId);
+            if(!isProfileExisted) {
+                return res.json({ statusCode: constants.STATUS_404, message:constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
+            }
+            const fetchProfile = await userProfileService.getUserProfile(req.params.pId);
+            if(fetchProfile && fetchProfile != null) {
+                return res.json({ statusCode: constants.STATUS_200, message:constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: fetchProfile });
+            }else{
+                return res.json({ statusCode: constants.STATUS_500, message:constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            }
+        } catch(e) {
+            console.log(e);
+            return e;
+        }
+    });
+    api.get('/allprofilesinfo', async (req, res) =>{
+        try {
+            const fetchProfiles = await userProfileService.getUserProfiles();
+            if(fetchProfiles) {
+                return res.json({ statusCode: constants.STATUS_200, message:constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: fetchProfiles });
+            }else{
+                return res.json({ statusCode: constants.STATUS_500, message:constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            }
+        } catch(e) {
+            console.log(e);
+            return e;
+        }
+    });
     return api;
 };

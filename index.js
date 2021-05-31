@@ -22,6 +22,6 @@ mongoose.connect(
   }
 );
 
-app.listen(3003, () => {
+app.listen(3002, () => {
   console.log(`server listening on 3003`);
 });

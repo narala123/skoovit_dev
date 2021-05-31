@@ -18,5 +18,6 @@
         STATUS_MSG_200: "Success.",
         STATUS_MSG_Delete: " Deleted Sucessfully.",
         STATUS_MSG_Update: " Updated Sucessfully.",
-        STATUS_MSG_OTPFAIL: "Please Enter valid Otp."
+        STATUS_MSG_OTPFAIL: "Please Enter valid Otp.",
+        DESTINATION_FOLDER:"./uploads"
     };

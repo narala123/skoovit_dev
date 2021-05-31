@@ -37,17 +37,18 @@ module.exports = (app,express)=>{
         let fileNames = []
         return new Promise((resolve,reject)=>{
             for(let i=0;i<files.length;i++){
-                  threads.add(new Worker(path.resolve("workers/imageCompressorWorker.js"), { workerData: { filename:files[i].filename}}));
+                    console.log(files[i]["originalname"].split(".")[1])
+                  threads.add(new Worker(path.resolve("workers/imageCompressorWorker.js"), { workerData: { filename:files[i].filename, mimeType:files[i]["originalname"].split(".")[1],destFilname:Date.now()+"."+files[i].originalname.split(".")[1]}}));
             }
             for (let worker of threads) {
                 worker.on('error', (err) => { 
                     console.log(err);
                     reject(err)
                   });
-                worker.on('exit', () => {
-                  threads.delete(worker);
-                  console.log(`Thread exiting, ${threads.size} running...`);
-                })
+                // worker.on('exit', () => {
+                //   threads.delete(worker);
+                //   console.log(`Thread exiting, ${threads.size} running...`);
+                // })
                 worker.on('message', (msg) => {
                     fileNames.push(msg)
                 });

@@ -1,6 +1,5 @@
 const upload = require("../config/middlewares/multerConfig");
 const path = require("path");
-const sharp = require("sharp");
 const {Worker, isMainThread, parentPort, workerData} = require('worker_threads');
 module.exports = (app,express)=>{
     let api = express.Router();
@@ -8,15 +7,13 @@ module.exports = (app,express)=>{
         upload.Imageupload(req,res,(err)=>{
             console.log(req.files);
             let promises = [];
-            for(let i=0;i<req.files.length;i++){
-                promises.push(imageWorkerInit(req.files.filename));
-            }
-            Promise.all(promises).then((data)=>{
-                console.log(data)
-            }).catch(err=>{
+            imageWorkerInit(req.files).then(data=>{
+                console.log("images",data);
+            }).catch(err=>{ 
                 console.log(err);
             })
-
+        
+           
         })
     })
     api.post("/videoupload", (req,res)=>{
@@ -35,21 +32,27 @@ module.exports = (app,express)=>{
        
     })
 
-    function imageWorkerInit(filename){
-        new Promise((resolve,reject)=>{
-            const worker = new Worker(path.resolve("workers/imageCompressorWorker.js"), {
-                workerData: JSON.stringify({filename:filename,sharp:sharp})
-              });
-              worker.on('message', (data)=>{
-                resolve(data)
-              });
-              worker.on('error', (err)=>{
-                reject(data)
-              });
-              worker.on('exit', (code) => {
-                if (code !== 0)
-                  reject(new Error(`Worker stopped with exit code ${code}`));
-              });
+    function imageWorkerInit(files){
+        let threads = new Set();
+        let fileNames = []
+        return new Promise((resolve,reject)=>{
+            for(let i=0;i<files.length;i++){
+                  threads.add(new Worker(path.resolve("workers/imageCompressorWorker.js"), { workerData: { filename:files[i].filename}}));
+            }
+            for (let worker of threads) {
+                worker.on('error', (err) => { 
+                    console.log(err);
+                    reject(err)
+                  });
+                worker.on('exit', () => {
+                  threads.delete(worker);
+                  console.log(`Thread exiting, ${threads.size} running...`);
+                })
+                worker.on('message', (msg) => {
+                    fileNames.push(msg)
+                });
+              }
+              resolve(fileNames);
             });
     }
 

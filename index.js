@@ -1,4 +1,7 @@
 require("dotenv").config();
+const https = require('https');
+const fs = require('fs');
+const path = require('path');
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -8,6 +11,9 @@ const app = express();
 app.use(bodyParser.json({ limit: "50mb", extended: true }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cors());
+
+let credentials = {key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')), cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))};
+let httpsServer = https.createServer(credentials, app)
 
 mongoose.connect(
   process.env.MONGODB_DEV_URL,
@@ -22,6 +28,6 @@ mongoose.connect(
   }
 );
 
-app.listen(3002, () => {
+httpsServer.listen(3002, () => {
   console.log(`server listening on 3003`);
 });

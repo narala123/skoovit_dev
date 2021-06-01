@@ -13,7 +13,11 @@ module.exports = function (app, express) {
 
   let userProfileApi = require("../controllers/userProfileApi")(express);
   app.use("/userprofile",userProfileApi);
+
   let fileUploadApi = require("../controllers/fileUploadApi")(app,express);
   app.use("/fileupload",fileUploadApi);
+
+  let adminApi = require("../controllers/adminApi")(express);
+  app.use('/admin',adminApi);
 
 };

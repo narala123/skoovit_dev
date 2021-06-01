@@ -15,7 +15,10 @@ class Models {
       Plans: require("./plans"),
       ActivePlans: require("./active-plan"),
       UserPlanTransactions: require("./user-plans-transactions"),
-      UserProfiles:require("./user-profile")
+      UserProfiles:require("./user-profile"),
+      Languages:require("./languages"),
+      Categories:require("./categories"),
+      SubCategories:require("./sub-categories")  
     };
   }
 }

@@ -1,23 +1,26 @@
 const db = require("../models");
-class LocationService {
+class AdminService {
   constructor() {
     this.db = db;
   }
-  async createCountry(data) {
+  /*
+    categories
+*/
+  async createCategory(data) {
     try {
       //console.log(data,"-------");
-      let countryCreation = await this.db.Countries.create(data);
+      let countryCreation = await this.db.Categories.create(data);
       return countryCreation;
     } catch (e) {
       //console.error("error",e)
       return e.message;
     }
   }
-  async fetchCountries() {
+  async fetchCategories(id) {
     try {
       //console.log(data,"-------");
-      let fetchCountries = await this.db.Countries.find({active:true}).sort({
-        country:1
+      let fetchCountries = await this.db.Categories.find({active:true}).sort({
+        createDate: -1,active:-1
       });
       return fetchCountries;
     } catch (e) {
@@ -25,10 +28,10 @@ class LocationService {
       return e.message;
     }
   }
-  async updateCountry(id, data) {
+  async updateCategory(id, data) {
     try {
       //console.log(data,"-------");
-      let updateCountry = await this.db.Countries.findOneAndUpdate(
+      let updateCountry = await this.db.Categories.findOneAndUpdate(
         { _id: id },
         { $set: data },
         { new: true }
@@ -40,10 +43,10 @@ class LocationService {
     }
   }
 
-  async getCountry(id) {
+  async getCategory(id) {
     try {
       //console.log(data,"-------");
-      let getCountry = await this.db.Countries.findOne({ _id: id });
+      let getCountry = await this.db.Categories.findOne({ _id: id });
       return getCountry;
     } catch (e) {
       //console.error("error",e)
@@ -51,40 +54,43 @@ class LocationService {
     }
   }
 
-  async deleteCountry(id) {
+  async deleteCategory(id) {
     try {
       //console.log(data,"-------");
-      let deletedCountry = await this.db.Countries.deleteOne({ _id: id });
+      let deletedCountry = await this.db.Categories.deleteOne({ _id: id });
       return deletedCountry;
     } catch (e) {
       //console.error("error",e)
       return e.message;
     }
   }
-  async createState(data) {
+  /*
+  sub-categories
+*/
+  async createSubCategory(data) {
     try {
       //console.log(data,"-------");
-      let stateCreation = await this.db.States.create(data);
+      let stateCreation = await this.db.SubCategories.create(data);
       return stateCreation;
     } catch (e) {
       //console.error("error",e)
       return e.message;
     }
   }
-  async fetchStates(id) {
+  async fetchSubCategories(id) {
     try {
       //console.log(data,"-------");
-      let fetchStates = await this.db.States.find({country:id, active:true}).sort({ createDate: -1, active:- 1});
+      let fetchStates = await this.db.SubCategories.find({category:id,active:true}).sort({ createDate: -1 });
       return fetchStates;
     } catch (e) {
       //console.error("error",e)
       return e.message;
     }
   }
-  async getState(id) {
+  async getSubCategory(id) {
     try {
       //console.log(data,"-------");
-      let getState = await this.db.States.findOne({ _id: id });
+      let getState = await this.db.SubCategories.findOne({ _id: id });
       return getState;
     } catch (e) {
       //console.error("error",e)
@@ -92,20 +98,20 @@ class LocationService {
     }
   }
 
-  async deleteState(id) {
+  async deleteSubCategory(id) {
     try {
       //console.log(data,"-------");
-      let deletedState = await this.db.States.deleteOne({ _id: id });
+      let deletedState = await this.db.SubCategories.deleteOne({ _id: id });
       return deletedState;
     } catch (e) {
       //console.error("error",e)
       return e.message;
     }
   }
-  async updateState(id, data) {
+  async updateSubCategory(id, data) {
     try {
       //console.log(data,"-------");
-      let updateState = await this.db.States.findOneAndUpdate(
+      let updateState = await this.db.SubCategories.findOneAndUpdate(
         { _id: id },
         { $set: data },
         { new: true }
@@ -116,31 +122,33 @@ class LocationService {
       return e.message;
     }
   }
-
-  async createCity(data) {
+/*
+  languages
+*/
+  async createLanguage(data) {
     try {
       //console.log(data,"-------");
-      let cityCreation = await this.db.Cities.create(data);
+      let cityCreation = await this.db.Languages.create(data);
       return cityCreation;
     } catch (e) {
       //console.error("error",e)
       return e.message;
     }
   }
-  async fetchCities(id) {
+  async fetchLanguages() {
     try {
       //console.log(data,"-------");
-      let fetchCities = await this.db.Cities.find({state:id, active:true}).sort({ createDate: -1, active:-1 });
+      let fetchCities = await this.db.Languages.find({active:true}).sort({ createDate: -1 });
       return fetchCities;
     } catch (e) {
       //console.error("error",e)
       return e.message;
     }
   }
-  async getCity(id) {
+  async getLanguage(id) {
     try {
       //console.log(data,"-------");
-      let getCity = await this.db.Cities.findOne({ _id: id });
+      let getCity = await this.db.Languages.findOne({ _id: id });
       return getCity;
     } catch (e) {
       //console.error("error",e)
@@ -148,20 +156,20 @@ class LocationService {
     }
   }
 
-  async deleteCity(id) {
+  async deleteLanguage(id) {
     try {
       //console.log(data,"-------");
-      let deletedCity = await this.db.Cities.deleteOne({ _id: id });
+      let deletedCity = await this.db.Languages.deleteOne({ _id: id });
       return deletedCity;
     } catch (e) {
       //console.error("error",e)
       return e.message;
     }
   }
-  async updateCity(id, data) {
+  async updateLanguage(id, data) {
     try {
       //console.log(data,"-------");
-      let updateCity = await this.db.Cities.findOneAndUpdate(
+      let updateCity = await this.db.Languages.findOneAndUpdate(
         { _id: id },
         { $set: data },
         { new: true }
@@ -174,4 +182,4 @@ class LocationService {
   }
 }
 
-module.exports = new LocationService();
+module.exports = new AdminService();

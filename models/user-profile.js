@@ -39,7 +39,7 @@ const UserProfile = new Schema({
     gallery:{
         images: [
             {
-                name:{ type: String },
+                filename:{ type: String },
                 originalName:{ type: String },
                 location:{ type: String },
                 awsId:{ type: String }
@@ -47,7 +47,7 @@ const UserProfile = new Schema({
         ],
         videos:[
             {
-                name:{ type: String },
+                filename:{ type: String },
                 originalName:{ type: String },
                 location:{ type: String },
                 awsId:{ type: String } 
@@ -55,7 +55,7 @@ const UserProfile = new Schema({
         ],
         audios:[
             {
-                name:{ type: String },
+                filename:{ type: String },
                 originalName:{ type: String },
                 location:{ type: String },
                 awsId:{ type: String } 
@@ -63,7 +63,7 @@ const UserProfile = new Schema({
         ],
         docs:[
             {
-                name:{ type: String },
+                filename:{ type: String },
                 originalName:{ type: String },
                 location:{ type: String },
                 awsId:{ type: String } 

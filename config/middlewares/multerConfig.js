@@ -3,9 +3,10 @@ const constant = require("../constants");
 const fs =  require("fs");
 class MulterConfg {
     constructor(){
-        this.Imageupload = multer({storage: this.destinationStorage()}).array('image');
-        this.Videoupload = multer({storage: this.destinationStorage()}).array('video');
+        this.imageUpload = multer({storage: this.destinationStorage()}).array('image');
+        this.videoUpload = multer({storage: this.destinationStorage()}).array('video');
         this.docUpload = multer({storage: this.destinationStorage(),limits:{fileSize:1000}}).array('doc');
+        this.audioUpload = multer({storage: this.destinationStorage()}).array('audio');
     }
 
     destinationStorage(){

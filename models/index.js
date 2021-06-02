@@ -18,7 +18,8 @@ class Models {
       UserProfiles:require("./user-profile"),
       Languages:require("./languages"),
       Categories:require("./categories"),
-      SubCategories:require("./sub-categories")  
+      SubCategories:require("./sub-categories"),
+      Educations:require("./education")
     };
   }
 }

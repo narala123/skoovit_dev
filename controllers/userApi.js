@@ -9,55 +9,56 @@ module.exports = function (express) {
   api.post("/signup", async (req, res) => {
     try {
       const isUserExist = await userService.isUserExist(req.body);
-      if(isUserExist){
-         return res.json({ statusCode: constants.STATUS_409, message:constants.STATUS_MSG_409, status: constants.STATUS_FALSE });
-      }else {      
+      if (isUserExist) {
+        return res.json({ statusCode: constants.STATUS_409, message: constants.STATUS_MSG_409, status: constants.STATUS_FALSE });
+      } else {
         const isUserRoleExisted = await userRoleService.isUserRoleExisted("user");
-        if(!isUserRoleExisted) {
-          return res.json({ statusCode: constants.STATUS_404, message:constants.STATUS_MSG_404_R, status: constants.STATUS_FALSE });
+        if (!isUserRoleExisted) {
+          return res.json({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404_R, status: constants.STATUS_FALSE });
         }
         req.body['userType'] = isUserRoleExisted._id;
         const data = await userService.signup(req.body);
-        if(data) { 
+        if (data) {
           //console.log(data,"data");  
           await userService.sendOtp(data.mobile);
-          em.emit(eventNames.Assign_Plan_To_User,{userId:data._id});
-          return res.json({ statusCode: constants.STATUS_200, message:constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: data });
-        }else {
-          return res.json({ statusCode: constants.STATUS_500, message:constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
-        } 
+          em.emit(eventNames.Assign_Plan_To_User, { userId: data._id });
+          return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: data });
+        } else {
+          return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
       }
-    }catch (e) {
-      console.log(e,"eeroor")
-      return e;
-    }
-  });
-  
-  api.post("/sendotp", async (req, res) => {
-    try {      
-      let data = await userService.sendOtp(req.body.mobile);
-      if(data) {
-        return res.json({ statusCode: constants.STATUS_200, message:"OTP Sent Successfully, Please verify to enjoy the features."});
-      }else {
-        return res.json({ statusCode: constants.STATUS_404, message:constants.STATUS_MSG_404});
-      }      
     } catch (e) {
-      return e;
+      console.log("error", e)
+      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
-  api.post("/otpverification", async (req,res)=> {
-      try {
-        const verifyOtpWithMobile =  await userService.verifyOtp(req.body.mobile, req.body.otp);
-        if(verifyOtpWithMobile){
-          return res.json({ statusCode: constants.STATUS_200, message:constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: verifyOtpWithMobile});
-        }else {
-          return res.json({ statusCode: constants.STATUS_400, message:constants.STATUS_MSG_OTPFAIL, status: constants.STATUS_FALSE });
-        } 
-      } catch(e) {
-        console.log(e)
-        return e;
+  api.post("/sendotp", async (req, res) => {
+    try {
+      let data = await userService.sendOtp(req.body.mobile);
+      if (data) {
+        return res.json({ statusCode: constants.STATUS_200, message: "OTP Sent Successfully, Please verify to enjoy the features." });
+      } else {
+        return res.json({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404 });
       }
+    } catch (e) {
+      console.log("error", e)
+      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }
+  });
+
+  api.post("/otpverification", async (req, res) => {
+    try {
+      const verifyOtpWithMobile = await userService.verifyOtp(req.body.mobile, req.body.otp);
+      if (verifyOtpWithMobile) {
+        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: verifyOtpWithMobile });
+      } else {
+        return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_OTPFAIL, status: constants.STATUS_FALSE });
+      }
+    } catch (e) {
+      console.log("error", e)
+      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }
   });
 
   api.get("/getusers", async (req, res) => {
@@ -65,7 +66,8 @@ module.exports = function (express) {
       let data = await userService.getUsers();
       res.json({ statusCode: constants.STATUS_200, data: data });
     } catch (e) {
-      return e;
+      console.log("error", e)
+      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
@@ -74,7 +76,8 @@ module.exports = function (express) {
       let data = await userService.getUser(req.params.id);
       res.json({ statusCode: constants.STATUS_200, data: data });
     } catch (e) {
-      return userPermission.generateError(constants.STATUS_500, e);
+      console.log("error", e)
+      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
@@ -83,7 +86,8 @@ module.exports = function (express) {
       let data = await userService.isActive(req.params.id, req.body);
       res.json({ statusCode: constants.STATUS_200, data: data });
     } catch (e) {
-      return userPermission.generateError(constants.STATUS_500, e);
+      console.log("error", e)
+      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
@@ -92,12 +96,10 @@ module.exports = function (express) {
       let data = await userService.isDelete(req.params.id, req.body);
       res.json({ statusCode: constants.STATUS_200, data: data });
     } catch (e) {
-      return userPermission.generateError(constants.STATUS_500, e);
+      console.log("error", e)
+      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
-
-
-
   /*
         To check valid token and user role, works as middleware.
         below of this function all Api's should have token.

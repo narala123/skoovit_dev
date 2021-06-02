@@ -19,8 +19,8 @@ class AdminService {
   async fetchCategories(id) {
     try {
       //console.log(data,"-------");
-      let fetchCountries = await this.db.Categories.find({active:true}).sort({
-        createDate: -1,active:-1
+      let fetchCountries = await this.db.Categories.find({ active: true }).sort({
+        createDate: -1, active: -1
       });
       return fetchCountries;
     } catch (e) {
@@ -80,7 +80,7 @@ class AdminService {
   async fetchSubCategories(id) {
     try {
       //console.log(data,"-------");
-      let fetchStates = await this.db.SubCategories.find({category:id,active:true}).sort({ createDate: -1 });
+      let fetchStates = await this.db.SubCategories.find({ category: id, active: true }).sort({ createDate: -1 });
       return fetchStates;
     } catch (e) {
       //console.error("error",e)
@@ -122,9 +122,9 @@ class AdminService {
       return e.message;
     }
   }
-/*
-  languages
-*/
+  /*
+    languages
+  */
   async createLanguage(data) {
     try {
       //console.log(data,"-------");
@@ -138,7 +138,7 @@ class AdminService {
   async fetchLanguages() {
     try {
       //console.log(data,"-------");
-      let fetchCities = await this.db.Languages.find({active:true}).sort({ createDate: -1 });
+      let fetchCities = await this.db.Languages.find({ active: true }).sort({ createDate: -1 });
       return fetchCities;
     } catch (e) {
       //console.error("error",e)
@@ -179,7 +179,65 @@ class AdminService {
       //console.error("error",e)
       return e.message;
     }
+  };
+  /*
+    educations
+  */
+  async createEducation(data) {
+    try {
+      //console.log(data,"-------");
+      let cityCreation = await this.db.Educations.create(data);
+      return cityCreation;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
   }
+  async fetchEducations() {
+    try {
+      //console.log(data,"-------");
+      let fetchCities = await this.db.Educations.find({ active: true }).sort({ createDate: -1 });
+      return fetchCities;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  }
+  async getEducation(id) {
+    try {
+      //console.log(data,"-------");
+      let getCity = await this.db.Educations.findOne({ _id: id });
+      return getCity;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  }
+
+  async deleteEducation(id) {
+    try {
+      //console.log(data,"-------");
+      let deletedCity = await this.db.Educations.deleteOne({ _id: id });
+      return deletedCity;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  }
+  async updateEducation(id, data) {
+    try {
+      //console.log(data,"-------");
+      let updateCity = await this.db.Educations.findOneAndUpdate(
+        { _id: id },
+        { $set: data },
+        { new: true }
+      );
+      return updateCity;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  };
 }
 
 module.exports = new AdminService();

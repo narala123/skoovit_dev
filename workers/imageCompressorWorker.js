@@ -12,9 +12,7 @@ sharp(path.resolve("uploads/"+workerData.filename))
     }else{ 
       fs.unlink(path.resolve("uploads/"+workerData.filename),()=>{
         parentPort.postMessage({filename:workerData.destFilname,originalName:workerData.orginalFileName});
-      })
-      
-      
+      })   
     }
   })
 }else{

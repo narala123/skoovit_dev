@@ -51,6 +51,34 @@ class UserProfileService {
             return e.message;
         }
     };
+
+    async galleryUpdate(profileId, data,type){
+       try{
+        return await this.db.UserProfiles.updateOne({_id:profileId},this.getGalleryCondition(type,data)).sort({createDate:-1});
+        }catch(e){
+            console.log(e);
+            return e.message;
+        }
+    }
+    getGalleryCondition(type,data){
+        let conditon = {};
+        switch(type){
+            case "image":
+            conditon = {$addToSet:{"gallery.images":data}};
+            break;
+            case "video":
+            conditon = {$addToSet:{"gallery.videos":data}};
+            break;
+            case "doc":
+            conditon = {$addToSet:{"gallery.docs":data}};
+            break;
+            case "audio":
+            conditon = {$addToSet:{"gallery.audios":data}};
+            break;
+        }
+        return conditon
+
+    }
 };
   
 module.exports = new UserProfileService();

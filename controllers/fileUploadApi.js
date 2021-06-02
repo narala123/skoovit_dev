@@ -1,88 +1,125 @@
 const upload = require("../config/middlewares/multerConfig");
 const path = require("path");
 const sharp = require("sharp");
+const UserProfileService = require("../services/userProfileService");
 const {Worker, isMainThread, parentPort, workerData} = require('worker_threads');
+const constants = require("../config/constants");
 module.exports = (app,express)=>{
     let api = express.Router();
     api.post("/imageupload", (req,res)=>{
         upload.Imageupload(req,res,(err)=>{
-            console.log(req.files);
+            if(!err){
             let promises = [];
-            imageWorkerInit(req.files).then(data=>{
-                console.log("images",data);
-            }).catch(err=>{ 
-                console.log(err);
+            for(let i=0;i<req.files.length;i++){
+                promises.push(imageWorkerInit(req.files[i]))
+            }
+            Promise.all(promises).then(async (data)=>{
+                try{
+                await UserProfileService.galleryUpdate(req.body.profileId,data,"image")
+                return res.json({ statusCode: constants.STATUS_200, message:constants.STATUS_MSG_200 ,data: data, status:constants.STATUS_TRUE });
+                }catch(e){
+                    console.log("error",e)
+                    return res.json({ statusCode: constants.STATUS_500, message:constants.STATUS_MSG_500,status:constants.STATUS_FALSE });
+                }
+
+            }).catch(err=>{
+                console.log("error",err)
+                return res.json({ statusCode: constants.STATUS_500, message:constants.STATUS_MSG_500,status:constants.STATUS_FALSE });
             })
-        
-           
+        }else{
+            console.log("err",err.message)
+            return res.json({ statusCode: constants.STATUS_500, message:constants.STATUS_MSG_500,status:constants.STATUS_FALSE });
+        }
         })
     })
     api.post("/videoupload", (req,res)=>{
         upload.Videoupload(req,res,(err)=>{
-            videoWorkerInit(req.files).then(data=>{
-                console.log("images",data);
-            }).catch(err=>{ 
-                console.log(err);
-            })
+            if(!err){
+            let promises = [];
+                for(let i=0;i<req.files.length;i++){
+                    promises.push(videoWorkerInit(req.files[i]))
+                }
+                Promise.all(promises).then(data=>{
+                    try{
+                    await UserProfileService.galleryUpdate(req.body.profileId,data,"video")
+                    return res.json({ statusCode: constants.STATUS_200, message:constants.STATUS_MSG_200 ,data: data, status:constants.STATUS_TRUE });
+                    }catch(e){
+                        console.log("error",e)
+                        return res.json({ statusCode: constants.STATUS_500, message:constants.STATUS_MSG_500,status:constants.STATUS_FALSE });
+                    }
+                }).catch(err=>{
+                    console.log(err);
+                    return res.json({ statusCode: constants.STATUS_500, message:constants.STATUS_MSG_500,status:constants.STATUS_FALSE });
+                })
+            }else{
+                console.log("err",err.message)
+                return res.json({ statusCode: constants.STATUS_500, message:constants.STATUS_MSG_500,status:constants.STATUS_FALSE });
+            }
         })
        
     })
 
     api.post("/docupload", (req,res)=>{
         upload.docUpload(req,res,(err)=>{
-            console.log(err);
-            console.log(req.files);
-        })
+            if(!err){
+            let arr = [];
+            for(let i = 0;req.files.length;i++){
+                arr.push({filename:req.files[i].filename,originalName:req.files[i].originalname})
+            }
+            try {
+                await UserProfileService.galleryUpdate(req.body.profileId, arr, "doc")
+                return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: arr, status: constants.STATUS_TRUE });
+            } catch (e) {
+                console.log("error", e)
+                return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            }
+           }else{
+            console.log("err",err.message)
+            return res.json({ statusCode: constants.STATUS_500, message:constants.STATUS_MSG_500,status:constants.STATUS_FALSE });
+           }
+            
+        });
        
     })
 
-    function imageWorkerInit(files){
-        let threads = new Set();
-        let fileNames = []
-        return new Promise((resolve,reject)=>{
-            for(let i=0;i<files.length;i++){
-                    console.log(files[i]["originalname"].split(".")[files[i]["originalname"].split(".").length-1])
-                  threads.add(new Worker(path.resolve("workers/imageCompressorWorker.js"), { workerData: { filename:files[i].filename, mimeType:files[i]["originalname"].split(".")[files[i]["originalname"].split(".").length-1],destFilname:Date.now()+"."+files[i].originalname.split(".")[files[i]["originalname"].split(".").length-1]}}));
-            }
-            for (let worker of threads) {
-                worker.on('error', (err) => { 
-                    console.log(err);
-                    reject(err)
-                  });
-                worker.on('exit', () => {
-                  threads.delete(worker);
-                  console.log(`Thread exiting, ${threads.size} running...`);
-                })
-                worker.on('message', (msg) => {
-                    fileNames.push(msg)
-                });
-              }
-              resolve(fileNames); 
-           });
+    function imageWorkerInit(files) {
+        return new Promise((resolve, reject) => {
+            let worker = new Worker(path.resolve("workers/imageCompressorWorker.js"), { workerData: { filename: files.filename, mimeType: files["originalname"].split(".")[files["originalname"].split(".").length - 1], destFilname: Date.now() + "." + files.originalname.split(".")[files["originalname"].split(".").length - 1], orginalFileName: files["originalname"] } });
+            worker.on('error', (err) => {
+                console.log(err);
+                reject(err)
+            });
+            worker.on('exit', (code) => {
+                if (code != 0) {
+                    reject(new Error(`Worker stopped with exit code ${code}`));
+                } else {
+                    worker.terminate();
+                }
+            })
+            worker.on('message', (msg) => {
+                resolve(msg)
+            });
+
+        });
     }
 
     function videoWorkerInit(files){
-        let threads = new Set();
-        let fileNames = []
         return new Promise((resolve,reject)=>{
-            for(let i=0;i<files.length;i++){
-                    console.log(files[i]["originalname"].split(".")[files[i]["originalname"].split(".").length-1])
-                  threads.add(new Worker(path.resolve("workers/videoTranscoderWorker.js"), { workerData: { filename:files[i].filename, mimeType:files[i]["originalname"].split(".")[files[i]["originalname"].split(".").length-1],destFilname:Date.now()+"."+files[i].originalname.split(".")[files[i]["originalname"].split(".").length-1]}}));
-            }
-            for (let worker of threads) {
+         let worker =  new Worker(path.resolve("workers/videoTranscoderWorker.js"), { workerData: { filename:files.filename, mimeType:files["originalname"].split(".")[files["originalname"].split(".").length-1],destFilname:Date.now(),orginalFileName: files["originalname"]}});
                 worker.on('error', (err) => { 
                     console.log(err);
                     reject(err)
                   });
-                worker.on('exit', () => {
-                  threads.delete(worker);
-                  console.log(`Thread exiting, ${threads.size} running...`);
+                worker.on('exit', (code) => {
+                    if (code != 0) {
+                        reject(new Error(`Worker stopped with exit code ${code}`));
+                      } else {
+                        worker.terminate();
+                      }
                 })
                 worker.on('message', (msg) => {
-                    fileNames.push(msg)
-                });
-              }
-              resolve(fileNames);
+                    resolve(msg)
+                });  
             });
     }
 

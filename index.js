@@ -15,6 +15,8 @@ app.use(cors());
 let credentials = {key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')), cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))};
 let httpsServer = https.createServer(credentials, app)
 
+app.use("/uploads",express.static(__dirname + "/uploads"));
+
 mongoose.connect(
   process.env.MONGODB_DEV_URL,
   { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true }, 
@@ -29,5 +31,5 @@ mongoose.connect(
 );
 
 httpsServer.listen(3002, () => {
-  console.log(`server listening on 3003`);
+  console.log(`server listening on 3002`);
 });

@@ -11,7 +11,7 @@ sharp(path.resolve("uploads/"+workerData.filename))
         parentPort.postMessage(err)
     }else{ 
       fs.unlink(path.resolve("uploads/"+workerData.filename),()=>{
-        parentPort.postMessage(workerData.destFilname);
+        parentPort.postMessage({filename:workerData.destFilname,originalName:workerData.orginalFileName});
       })
       
       
@@ -26,7 +26,7 @@ sharp(path.resolve("uploads/"+workerData.filename))
         parentPort.postMessage(err)
     }else{
       fs.unlink(path.resolve("uploads/"+workerData.filename),()=>{
-        parentPort.postMessage(workerData.destFilname);
+        parentPort.postMessage({filename:workerData.destFilname,originalName:workerData.orginalFileName});
       })
     }
   })

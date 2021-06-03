@@ -6,7 +6,7 @@ const { Worker, isMainThread, parentPort, workerData } = require('worker_threads
 const constants = require("../config/constants");
 module.exports = (app, express) => {
     let api = express.Router();
-    api.post("/imageupload", (req, res) => {
+    api.post("/image", (req, res) => {
         upload.Imageupload(req, res, (err) => {
             if (!err) {
                 let promises = [];
@@ -27,12 +27,12 @@ module.exports = (app, express) => {
                     return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                 })
             } else {
-                console.log("err", err.message)
+                console.log("err", err)
                 return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
             }
         })
     })
-    api.post("/videoupload", (req, res) => {
+    api.post("/video", (req, res) => {
         upload.Videoupload(req, res, (err) => {
             if (!err) {
                 let promises = [];
@@ -52,14 +52,14 @@ module.exports = (app, express) => {
                     return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                 })
             } else {
-                console.log("err", err.message)
+                console.log("err", err)
                 return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
             }
         })
 
     })
 
-    api.post("/docupload", (req, res) => {
+    api.post("/doc", (req, res) => {
         upload.docUpload(req, res, async (err) => {
             if (!err) {
                 let arr = [];
@@ -74,11 +74,31 @@ module.exports = (app, express) => {
                     return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                 }
             } else {
-                console.log("err", err.message)
+                console.log("err", err)
                 return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
             }
 
         });
+        api.post("/audio", (req, res) => {
+            upload.audioUpload(req, res, async (err) => {
+                if (!err) {
+                    let arr = [];
+                    for (let i = 0; req.files.length; i++) {
+                        arr.push({ filename: req.files[i].filename, originalName: req.files[i].originalname })
+                    }
+                    try {
+                        await UserProfileService.galleryUpdate(req.body.profileId, arr, "doc")
+                        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: arr, status: constants.STATUS_TRUE });
+                    } catch (e) {
+                        console.log("error", e)
+                        return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                    }
+                } else {
+                    console.log("err", err)
+                    return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                }
+    
+            });
 
     })
 

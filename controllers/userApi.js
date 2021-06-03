@@ -109,23 +109,41 @@ module.exports = function (express,passport) {
 
   //api.use(userPermission.isValidUser);
 
+  /*
+    Facebbok Strategy
+  */
   api.get("/profile", (req, res) => {
     res.json({ status: true, message: "success" });
   });
 
-  api.get("/auth/facebook", passport.authenticate('facebook',{scope:"email"}))
+  api.get("/auth/facebook", passport.authenticate('facebook',{scope:"email"}));
 
   api.get("/auth/facebook/callback",passport.authenticate('facebook', { successRedirect: '/user/auth/fbSucess',
   failureRedirect: '/user/auth/failure' }))
 
   api.get('/auth/fbSucess',(req,res)=>{
-    res.json({success:true,message:"successfull login"})
-
+    return res.json({success:true,message:"login completed successfully"});
   });
 
-  api.get("/auth/failure",(req,res)=>{
+  
 
-  })
+  /*
+    Google Strategy
+  */
+
+  api.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+  api.get('/auth/google/callback', 
+    passport.authenticate('google', { failureRedirect: '/user/auth/failure' }), (req, res)=> {
+      console.log(req,"req----------------")
+      return res.json({success:true,message:"login completed successfully"});
+    }
+  );
+
+  api.get("/auth/failure",(req,res)=>{
+    return res.json({success:false,message:"Please Check your credentials"});
+  });
 
   return api;
 };

@@ -1,7 +1,9 @@
 const db = require("../models");
 const auth = require("../config/middlewares/authorization");
+const em = require('../utils/event-emitter');
+const eventNames = require('../config/event-emitter-constants');
 
-exports.otpGen = ()=> {
+exports.otpGen = () => {
   return Math.floor(1000 + Math.random() * 9000);
 };
 
@@ -9,21 +11,34 @@ class UserService {
   constructor() {
     this.db = db;
   }
-  
-  async isUserExist(data){
+
+  async isUserExist(data) {
     try {
-      return await this.db.User.findOne({$or:[{email:data.email},{mobile:data.mobile}]});
-    }catch(e) {
+      return await this.db.User.findOne({ $or: [{ email: data.email }, { mobile: data.mobile }] });
+    } catch (e) {
       return e.message;
-    } 
+    }
   };
 
-  async signup(data) {
-    try {     
-      const signupdata = await this.db.User.create(data);
-      return signupdata;
+  async signup(data, type) {
+    try {
+      if (type && type === "social Media") {
+        const signupdata = await this.db.User.create(data);
+        const plansData = await this.db.Plans.findOne({ type: "free" });
+        let obj = {};        
+        obj["email"] = signupdata.email;
+        obj["mobile"] = signupdata.mobile || '';
+        obj["_id"] = signupdata._id;
+        obj["activePlan"] = {
+          "planType": plansData.planType
+        }
+        em.emit(eventNames.Assign_Plan_To_User, { userId: signupdata._id });
+        return obj;
+      }else {
+        return await this.db.User.create(data);
+      }
     } catch (e) {
-      //console.error("error",e)
+      console.error("error", e)
       return e.message;
     }
   }
@@ -73,14 +88,14 @@ class UserService {
   };
 
   async sendOtp(mobile) {
-    try {      
-      const verifyMobile = await this.db.User.findOne({mobile:mobile});
-      if(verifyMobile){
+    try {
+      const verifyMobile = await this.db.User.findOne({ mobile: mobile });
+      if (verifyMobile) {
         //let otp = this.otpGen();
-        return await this.db.User.findOneAndUpdate({_id:verifyMobile._id},{otp:2021, otpTime: Date.now},{new:true});        
-      }else{
-        return verifyMobile;  
-      }          
+        return await this.db.User.findOneAndUpdate({ _id: verifyMobile._id }, { otp: 2021, otpTime: Date.now }, { new: true });
+      } else {
+        return verifyMobile;
+      }
     } catch (e) {
 
       return e.message;
@@ -89,42 +104,55 @@ class UserService {
 
   // to verify otp and login
   async verifyOtp(mobile, otp) {
-    try {      
-      const loginUser = await this.db.User.findOne({mobile:mobile,otp:otp},{otp:0});
-      if(loginUser) {  
-        await this.db.User.findOneAndUpdate({_id:loginUser._id},{$set:{isMobileVerified:true}},{new:true}); 
-        const userInfo =  await this.db.User.aggregate([{$match:{mobile:mobile}},
-        { $lookup: {
-          from: "activeplans",
-          localField: "_id",
-          foreignField: "userId",
-          as: "planInfo"
-        }
-      },
-      {
-        $unwind:"$planInfo"
-      },{
-        $project:{
-          "email":1,
-          "mobile":1,
-          "_id":1,
-          "activePlan": {
-            "planType": "$planInfo.planType"            
+    try {
+      const loginUser = await this.db.User.findOne({ mobile: mobile, otp: otp }, { otp: 0 });
+      if (loginUser) {
+        await this.db.User.findOneAndUpdate({ _id: loginUser._id }, { $set: { isMobileVerified: true } }, { new: true });
+        const userInfo = await this.db.User.aggregate([{ $match: { mobile: mobile } },
+        {
+          $lookup: {
+            from: "activeplans",
+            localField: "_id",
+            foreignField: "userId",
+            as: "planInfo"
+          }
+        },
+        {
+          $unwind: "$planInfo"
+        }, {
+          $project: {
+            "email": 1,
+            "mobile": 1,
+            "_id": 1,
+            "activePlan": {
+              "planType": "$planInfo.planType"
+            }
           }
         }
-      }
-      ]);
+        ]);
         //console.log(userInfo,"userInfo");
-        userInfo[0].token =  await auth.create_token(loginUser._id, "Free", loginUser.userType);    
-        return userInfo;      
-      }else {
-        return loginUser; 
-      }           
+        userInfo[0].token = await auth.create_token(loginUser._id, "Free", loginUser.userType);
+        return userInfo;
+      } else {
+        return loginUser;
+      }
     } catch (e) {
       console.log(e);
       return e.message;
     }
   };
+  async isSocialMediaIdExisted(id, type) {
+    try {
+      if (type == "google") {
+        return this.db.User.findOne({ googleId: id });
+      }
+      if (type == "facebook") {
+        return this.db.User.findOne({ facebookId: id });
+      }
+    } catch (e) {
+      return e.message;
+    }
+  }
 }
 
 module.exports = new UserService();

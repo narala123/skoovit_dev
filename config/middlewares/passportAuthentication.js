@@ -1,35 +1,118 @@
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const userService = require("../../services/UserService");
+const userRoleService = require('../../services/userRoleService');
 
-class FaceBookAuthentication {
-    constructor(){
-        this.passport = passport
-        this.passport.serializeUser(this.serializeUser)
-        this.passport.deserializeUser(this.deserializeUser)
-        this.configFaceBookStrategy()
+class PassportAuthentication {
+    constructor() {
+        
+        this.passport = passport;
+        this.passport.serializeUser(this.serializeUser);
+        this.passport.deserializeUser(this.deserializeUser);
+        this.configFaceBookStrategy();
+        this.configGoogleStrategy();  
+        //this.configJWTStrategy();   
     }
 
-    async configFaceBookStrategy(){
-         await this.passport.use(new FacebookStrategy(this.fbStrategyOptions(), this.fbCallBack));
+    async configFaceBookStrategy() {
+        await this.passport.use(new FacebookStrategy(this.fbStrategyOptions(), this.fbCallBack));
     }
-    fbStrategyOptions(){
+    fbStrategyOptions() {
         return {
             clientID: process.env.FACEBOOK_STRATEGY_APP_ID,
             clientSecret: process.env.FACEBOOK_STRATEGY_APP_SECRET,
-            callbackURL: "https://localhost:3003/user/auth/facebook/callback",
-            profileFields:['id','displayName','name','gender','picture.type(large)','email']
-          }
+            callbackURL: `https://localhost:${process.env.PORT}/user/auth/facebook/callback`,
+            profileFields: ['id', 'displayName', 'name', 'gender', 'picture.type(large)', 'email']
+        }
     }
-    fbCallBack(accessToken, refreshToken, profile, done) {
-        console.log("profile",profile);
-        done(null,profile);
-      }
-      serializeUser(user,done){
-            done(null,user)
-      }
-      deserializeUser(id,done){
-            done(null,id)
-      }
+    async fbCallBack(accessToken, refreshToken, profile, done) {
+        console.log(profile,"profile");
+        try {
+            const userInfo = await userService.isSocialMediaIdExisted(profile.id, 'facebook');
+            if(userInfo){
+                return done(null, userInfo);
+            }else {
+                const isUserRoleExisted = await userRoleService.isUserRoleExisted("user");
+                if (!isUserRoleExisted) {
+                    return done("error", null);
+                }
+                let data = {};
+                data['userType'] = isUserRoleExisted._id;                
+                data["fullName"] =  profile.displayName || '';
+                data["email"] = profile.emails[0].value || '';
+                data["facebookId"] = profile.id || '';
+                data["profileUrl"] = profile.photos[0].value || '';                
+                let user = await userService.signup(data,"social Media");
+                return done(null, user);
+            }
+        } catch(e) {
+            console.log(e,"errr")
+            return done(e, e);
+        }
+    };
+
+    serializeUser(user, done) {
+        done(null, user)
+    };
+
+    deserializeUser(id, done) {
+        done(null, id)
+    };
+
+    async configGoogleStrategy() {
+        await this.passport.use(new GoogleStrategy(this.GoogleStrategyOptions(),this.googleCallBack));
+    } 
+    GoogleStrategyOptions(){
+        return {            
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: `https://localhost:${process.env.PORT}/user/auth/google/callback`          
+        }
+    };
+    async googleCallBack(accessToken, refreshToken, profile, done) {        
+        try {
+            const userInfo = await userService.isSocialMediaIdExisted(profile.id, 'google');
+            if(userInfo){
+                return done(null, userInfo);
+            }else {
+                const isUserRoleExisted = await userRoleService.isUserRoleExisted("user");
+                if (!isUserRoleExisted) {
+                    return done(null, 'error');
+                }
+                let data = {};
+                data['userType'] = isUserRoleExisted._id;                
+                data["fullName"] =  profile.displayName || '';
+                data["email"] = profile.emails[0].value || '';
+                data["googleId"] = profile.id || '';
+                data["profileUrl"] = profile.photos[0].value || '';
+                const user = await userService.signup(data, "social Media");
+                return done(null, user);
+            }
+        } catch(e) {
+            return done(e, e);
+        }        
+    };    
+    async configJWTStrategy() {
+       await this.passport.use(new JwtStrategy(this.jwtConfigOptions(), this.jwtCallBack));
+    };
+
+    jwtConfigOptions(){
+        return {
+            jwtFromRequest : ExtractJwt.fromAuthHeaderAsBearerToken(),
+            secretOrKey : process.env.SECRET_KEY,
+            issuer : process.env.ISSUER,
+            audience : process.env.AUDIENCE
+        }
+    };
+
+    jwtCallBack(jwt_payload, done){
+        console.log("jwt_payload", jwt_payload);
+        return done(null, jwt_payload);
+    };
+
 }
 
-module.exports = new FaceBookAuthentication().passport;
+module.exports = new PassportAuthentication().passport;

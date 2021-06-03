@@ -37,6 +37,6 @@ mongoose.connect(
   }
 );
 
-httpsServer.listen(3003, () => {
-  console.log(`server listening on 3002`);
+httpsServer.listen(process.env.PORT, () => {
+  console.log(`server listening on ${process.env.PORT}`);
 });

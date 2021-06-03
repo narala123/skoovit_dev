@@ -1,8 +1,8 @@
-module.exports = function (app, express) {
+module.exports = function (app, express,passport) {
   let userRoleApi = require("../controllers/userRoleApi")(express);
   app.use("/userrole", userRoleApi);
 
-  let userApi = require("../controllers/userApi")(express);
+  let userApi = require("../controllers/userApi")(express,passport);
   app.use("/user", userApi);
 
   let locationApi = require("../controllers/locationApi")(express);

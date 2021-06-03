@@ -79,26 +79,27 @@ module.exports = (app, express) => {
             }
 
         });
-        api.post("/audio", (req, res) => {
-            upload.audioUpload(req, res, async (err) => {
-                if (!err) {
-                    let arr = [];
-                    for (let i = 0; req.files.length; i++) {
-                        arr.push({ filename: req.files[i].filename, originalName: req.files[i].originalname })
-                    }
-                    try {
-                        await UserProfileService.galleryUpdate(req.body.profileId, arr, "doc")
-                        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: arr, status: constants.STATUS_TRUE });
-                    } catch (e) {
-                        console.log("error", e)
-                        return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
-                    }
-                } else {
-                    console.log("err", err)
+    })
+    api.post("/audio", (req, res) => {
+        upload.audioUpload(req, res, async (err) => {
+            if (!err) {
+                let arr = [];
+                for (let i = 0; req.files.length; i++) {
+                    arr.push({ filename: req.files[i].filename, originalName: req.files[i].originalname })
+                }
+                try {
+                    await UserProfileService.galleryUpdate(req.body.profileId, arr, "doc")
+                    return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: arr, status: constants.STATUS_TRUE });
+                } catch (e) {
+                    console.log("error", e)
                     return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                 }
-    
-            });
+            } else {
+                console.log("err", err)
+                return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            }
+
+        });
 
     })
 

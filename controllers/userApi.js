@@ -4,7 +4,8 @@ let userService = require("../services/UserService");
 let userRoleService = require('../services/userRoleService');
 const em = require('../utils/event-emitter');
 const eventNames = require('../config/event-emitter-constants');
-module.exports = function (express) {
+//const passport = require("../config/middlewares/passportAuthentication");
+module.exports = function (express,passport) {
   let api = express.Router();
   api.post("/signup", async (req, res) => {
     try {
@@ -111,6 +112,20 @@ module.exports = function (express) {
   api.get("/profile", (req, res) => {
     res.json({ status: true, message: "success" });
   });
+
+  api.get("/auth/facebook", passport.authenticate('facebook',{scope:"email"}))
+
+  api.get("/auth/facebook/callback",passport.authenticate('facebook', { successRedirect: '/user/auth/fbSucess',
+  failureRedirect: '/user/auth/failure' }))
+
+  api.get('/auth/fbSucess',(req,res)=>{
+    res.json({success:true,message:"successfull login"})
+
+  });
+
+  api.get("/auth/failure",(req,res)=>{
+
+  })
 
   return api;
 };

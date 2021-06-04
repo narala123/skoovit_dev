@@ -1,6 +1,7 @@
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+//const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const GoogleTokenStrategy = require('passport-google-token').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const userService = require("../../services/UserService");
@@ -63,13 +64,13 @@ class PassportAuthentication {
     };
 
     async configGoogleStrategy() {
-        await this.passport.use(new GoogleStrategy(this.GoogleStrategyOptions(),this.googleCallBack));
+        await this.passport.use(new GoogleTokenStrategy(this.GoogleStrategyOptions(),this.googleCallBack));
     } 
     GoogleStrategyOptions(){
         return {            
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: `https://localhost:${process.env.PORT}/user/auth/google/callback`          
+            //callbackURL: `https://localhost:${process.env.PORT}/user/auth/google/callback`          
         }
     };
     async googleCallBack(accessToken, refreshToken, profile, done) {        

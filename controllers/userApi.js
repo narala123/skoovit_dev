@@ -131,15 +131,18 @@ module.exports = function (express,passport) {
     Google Strategy
   */
 
-  api.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] }));
+    api.get('/auth/google/token', passport.authenticate('google-token'), (req, res)=> {
+      res.send(req.user);
+    });
+  // api.get('/auth/google',
+  // passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-  api.get('/auth/google/callback', 
-    passport.authenticate('google', { failureRedirect: '/user/auth/failure' }), (req, res)=> {
-      console.log(req,"req----------------")
-      return res.json({success:true,message:"login completed successfully"});
-    }
-  );
+  // api.get('/auth/google/callback', 
+  //   passport.authenticate('google', { failureRedirect: '/user/auth/failure' }), (req, res)=> {
+  //     console.log(req,"req----------------")
+  //     return res.json({success:true,message:"login completed successfully"});
+  //   }
+  // );
 
   api.get("/auth/failure",(req,res)=>{
     return res.json({success:false,message:"Please Check your credentials"});

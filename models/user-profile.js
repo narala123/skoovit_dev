@@ -24,7 +24,9 @@ const UserProfile = new Schema({
     socialMediaLinks: [
         {
             url:{ type: String },
-            platFormType:{ type: String }
+            platFormType:{ type: String },
+            followers: { type: Number },
+            isActive:{ type: Boolean, default:true },
         }
     ],
     experience:[

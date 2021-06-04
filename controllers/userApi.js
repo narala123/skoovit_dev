@@ -116,10 +116,17 @@ module.exports = function (express,passport) {
     res.json({ status: true, message: "success" });
   });
 
-  api.get("/auth/facebook", passport.authenticate('facebook',{scope:"email"}));
+  api.post("/auth/facebook", passport.authenticate('facbook-token',{scope:"email"}),function(req, res) {
+    console.log(req.user);
+    res.send(req.session.passport.user);
+    
+  });
 
-  api.get("/auth/facebook/callback",passport.authenticate('facebook', { successRedirect: '/user/auth/fbSucess',
-  failureRedirect: '/user/auth/failure' }))
+  api.get("/auth/facebook/callback",passport.authenticate('facebook', {failureRedirect: '/user/auth/failure'}), function(req, res) {
+    console.log(req.session);
+    res.send(req.session.passport.user);
+    
+  })
 
   api.get('/auth/fbSucess',(req,res)=>{
     return res.json({success:true,message:"login completed successfully"});

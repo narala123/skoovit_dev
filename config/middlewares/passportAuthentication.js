@@ -1,6 +1,7 @@
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const FacebookTokenStrategy = require("passport-facebook-token'")
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const userService = require("../../services/UserService");
@@ -24,8 +25,9 @@ class PassportAuthentication {
         return {
             clientID: process.env.FACEBOOK_STRATEGY_APP_ID,
             clientSecret: process.env.FACEBOOK_STRATEGY_APP_SECRET,
-            callbackURL: `https://localhost:${process.env.PORT}/user/auth/facebook/callback`,
-            profileFields: ['id', 'displayName', 'name', 'gender', 'picture.type(large)', 'email']
+            fbGraphVersion: 'v3.0'
+            //callbackURL: `https://localhost:${process.env.PORT}/user/auth/facebook/callback`,
+           // profileFields: ['id', 'displayName', 'name', 'gender', 'picture.type(large)', 'email']
         }
     }
     async fbCallBack(accessToken, refreshToken, profile, done) {
@@ -50,10 +52,12 @@ class PassportAuthentication {
             }
         } catch(e) {
             console.log(e,"errr")
-            return done(e, e);
+            return done(e, null);
         }
     };
-
+    facebookTokenAuthentication(){
+       await this.passport(new FacebookTokenStrategy(this.fbStrategyOptions(),this.fbCallBack))
+    }
     serializeUser(user, done) {
         done(null, user)
     };

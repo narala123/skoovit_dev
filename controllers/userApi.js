@@ -116,7 +116,7 @@ module.exports = function (express,passport) {
     res.json({ status: true, message: "success" });
   });
 
-  api.post("/auth/facebook", passport.authenticate('facbook-token',{scope:"email"}),function(req, res) {
+  api.post("/auth/facebook/token", passport.authenticate('facbook-token',{scope:"email"}),function(req, res) {
     console.log(req.user);
     res.send(req.session.passport.user);
     

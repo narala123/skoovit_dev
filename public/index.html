@@ -1,3 +1,15 @@
-<a href="/user/auth/facebook">Login with Facebook</a>
-
-<a href="/user/auth/google">Sign In with Google</a>
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js'></script>
+    </head>
+    <body>
+        <script>
+            let socket = io.connect('https://localhost:3002/chat');
+            socket.emit('pong',"hellow from clinet");
+            socket.on('ping',(data)=>{
+                console.log(data,"data from");
+            })
+        </script>
+    </body>
+</html>

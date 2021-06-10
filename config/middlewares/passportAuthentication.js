@@ -5,6 +5,7 @@ const GoogleTokenStrategy = require('passport-google-token').Strategy;
 const FacebookTokenStrategy = require("passport-facebook-token");
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+const jwt = require("jsonwebtoken");
 const userService = require("../../services/UserService");
 const userRoleService = require('../../services/userRoleService');
 
@@ -99,9 +100,10 @@ class PassportAuthentication {
         } catch(e) {
             return done(e, e);
         }        
-    };    
+    };   
+
     async configJWTStrategy() {
-       await this.passport.use(new JwtStrategy(this.jwtConfigOptions(), this.jwtCallBack));
+       await this.passport.use(new JwtStrategy(this.jwtConfigOptions(), this.jwtValidateToken));
     };
 
     jwtConfigOptions(){
@@ -113,10 +115,38 @@ class PassportAuthentication {
         }
     };
 
-    jwtCallBack(jwt_payload, done){
+    jwtValidateToken(jwt_payload, done){
+        // business logic
         console.log("jwt_payload", jwt_payload);
         return done(null, jwt_payload);
     };
+
+    async authenticate(req, res, next) {
+        return await this.passport.authenticate(
+          "jwt",
+          {
+            session: false,
+          },
+          (err, user, info) => {
+            if (user) {
+              req.user = user;
+              next(null, user);
+            } else if (info) {
+              res.json({ status: false, message: "you are not authorized" });
+            } else {
+              console.log(err);
+              res.json({ status: false, message: "something went wrong" });
+            }
+          }
+        )(req, res, next);
+    };
+    generateJwtToken(user) {
+        let obj = {
+          mobile: user.mobile         
+        };           
+        return jwt.sign( obj, process.env.SECRET_KEY );
+    };
+
 
 }
 

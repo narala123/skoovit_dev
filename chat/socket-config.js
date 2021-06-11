@@ -7,9 +7,9 @@ class SocketConfig {
     }
     socketInit(http){
         const { Server } = require("socket.io");
-         const io = new Server(http);
-         //let io = socket.of("/chat");
-         io.connect("on",this.clientConfiguration)
+         const socket = new Server(http,{ origins: "*:*" });
+         let io = socket.of("/chat");
+         io.on("connection",this.clientConfiguration)
     }
     async clientConfiguration(socket){
         socket.on("pong",(data)=>{

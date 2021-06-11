@@ -1,5 +1,6 @@
 require("dotenv").config();
 const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const express = require("express");
@@ -18,6 +19,7 @@ app.use(passport.session());
 app.use(session({secret:"thisissookvidev"}))
 let credentials = {key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')), cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))};
 let httpsServer = https.createServer(credentials, app);
+//let httpServer = http.createServer(app)
 const socket = new socketConfig(httpsServer);
 app.use(express.static(__dirname + "/public"));
 app.use("/uploads",express.static(__dirname + "/uploads"));

@@ -12,10 +12,21 @@ class SocketConfig {
          io.on("connection",this.clientConfiguration)
     }
     async clientConfiguration(socket){
+       // console.log(JSON.parse(socket.handshake.query.data));
+        let obj = JSON.parse(socket.handshake.query.data)
+        socket.userId = obj.userId;
+        socket.join(obj.userId);
+        socket.on("SEND_MESSAGE",(message)=>{ 
+            
+            socket.to(message["msg_toId"]).emit("RECEVIE_MESSAGE",message);
+            socket.to(message["msg_fromId"]).emit("RECEVIE_MESSAGE_ACK",message);
+
+        })
         socket.on("pong",(data)=>{
-            console.log("this is from client",data)
+           socket.to(socket.user).emit()
             socket.emit("ping","hello from server");
        });
+
     }
 } 
 

@@ -7,7 +7,7 @@
 
         <script>
 
-            let socket = io('https://localhost:3002/chat',{query:"data="+JSON.stringify({userId:1})});
+            let socket = io('https://ec2-65-2-141-68.ap-south-1.compute.amazonaws.com:3002/chat',{query:"data="+JSON.stringify({userId:1})});
             socket.emit('pong',"hellow from clinet");
             socket.on('ping',(data)=>{
                 console.log(data,"data from");

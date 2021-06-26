@@ -15,7 +15,7 @@ class SocketConfig {
          io.on("connection",this.clientConfiguration)
     }
     async clientConfiguration(socket){
-       //console.log(JSON.parse(socket.handshake.query.data));
+       console.log("client has been connected");
         let obj = JSON.parse(socket.handshake.query.data)
         socket.userId = obj.userId;
         socket.join(obj.userId);

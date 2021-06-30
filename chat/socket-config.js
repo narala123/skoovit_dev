@@ -6,28 +6,35 @@ class SocketConfig {
         this.socketInit(http);
     }
     socketInit(http){
-        const  socket = require("socket.io")(http, {cors: {
-            origin: '*'
-          }
-        });
-        // const socket = new Server();
-         let io = socket.of("/chat");
+     const Server = require("socket.io");
+     const socketServer = new Server(http, { origins: "*:*" });
+         let io = socketServer.of("/chat");
          io.on("connection",this.clientConfiguration)
     }
-    async clientConfiguration(socket){
+    async clientConfiguration(clientsocket){
        console.log("client has been connected");
-        let obj = JSON.parse(socket.handshake.query.data)
-        socket.userId = obj.userId;
-        socket.join(obj.userId);
-        socket.on("SEND_MESSAGE",(message)=>{ 
-            socket.to(message["msg_toId"]).emit("RECEVIE_MESSAGE",message);
-            socket.to(message["msg_fromId"]).emit("RECEVIE_MESSAGE_ACK",message);
+        console.log("socket",clientsocket.id);
+        try{
+        clientsocket.on("SEND_MESSAGE",(message)=>{ 
+            clientsocket.to(message["msg_toId"]).emit("RECEVIE_MESSAGE",message);
+            clientsocket.to(message["msg_fromId"]).emit("RECEVIE_MESSAGE_ACK",message);
 
         })
-        socket.on("pong",(data)=>{
-           socket.to(socket.user).emit()
-            socket.emit("ping","hello from server");
+        clientsocket.on("hello",(data)=>{
+            console.log(data);
+            clientsocket.emit("ping","hello from server");
        });
+       clientsocket.on("test",(data)=>{
+        console.log(data);
+        clientsocket.emit("ping","hello from server");
+   });
+       clientsocket.on("pong",(data)=>{
+        console.log(data);
+        clientsocket.emit("ping","hello from server");
+   });
+    }catch(err){
+        console.log("err",err)
+    }
 
     }
 } 

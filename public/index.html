@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js" integrity="sha512-iZIBSs+gDyTH0ZhUem9eQ1t4DcEn2B9lHxfRMeGQhyNdSUz+rb+5A3ummX6DQTOIs1XK0gOteOg/LPtSo9VJ+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js'></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js" integrity="sha512-iZIBSs+gDyTH0ZhUem9eQ1t4DcEn2B9lHxfRMeGQhyNdSUz+rb+5A3ummX6DQTOIs1XK0gOteOg/LPtSo9VJ+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
         <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 <meta content="utf-8" http-equiv="encoding">
     </head>
@@ -9,8 +10,15 @@
 
         <script>
 
-            let socket = io('https://localhost:3003/chat',{query:"data="+JSON.stringify({userId:1})});
-            socket.emit('pong',"hellow from clinet");
+            let socket = io('http://localhost:3003/chat',{query:"data="+JSON.stringify({userId:1})});
+            socket.on('connect', function(){
+             //socket.emit("test", "hello from client");
+             socket.emit("hello","hello from client");
+            });
+
+            socket.emit("test","hello world!!!!")
+            socket.emit("pong","New World!!!!")
+            
             socket.on('ping',(data)=>{
                 console.log(data,"data from");
             });

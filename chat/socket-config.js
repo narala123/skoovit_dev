@@ -7,7 +7,7 @@ class SocketConfig {
     }
     socketInit(http){
         const  socket = require("socket.io")(http, {cors: {
-            origin: '*',
+            origin: '*'
           }
         });
         // const socket = new Server();

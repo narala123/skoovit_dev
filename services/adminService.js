@@ -237,7 +237,7 @@ class AdminService {
       //console.error("error",e)
       return e.message;
     }
-  };
+  };  
 }
 
 module.exports = new AdminService();

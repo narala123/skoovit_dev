@@ -152,6 +152,23 @@ class UserService {
     } catch (e) {
       return e.message;
     }
+  };
+  // home page cats and sub-cats
+  async homeCategories(){
+    try {
+      const data = await this.db.Categories.aggregate([{
+        $lookup:{
+            from: "subcategories",
+            localField: "_id",
+            foreignField: "category",
+            as: "subcategories"
+        }
+      }]);      
+      return data;
+    } catch (e) {
+      console.error("error",e)
+      return e.message;
+    }
   }
 }
 

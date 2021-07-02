@@ -285,7 +285,8 @@ module.exports = function (express) {
             console.log("error", e)
             return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
-    });
+    });   
+
     function imageWorkerInit(files) {
         return new Promise((resolve, reject) => {
             let worker = new Worker(path.resolve("workers/imageCompressorWorker.js"), { workerData: { filename: files.filename, mimeType: files["originalname"].split(".")[files["originalname"].split(".").length - 1], destFilname: Date.now() + "." + files.originalname.split(".")[files["originalname"].split(".").length - 1], orginalFileName: files["originalname"] } });

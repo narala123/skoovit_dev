@@ -354,13 +354,9 @@ module.exports = function (express) {
       });
     
       api.get('/regionaladsinfo', async (req, res) =>{
-        try {
-          if(req.query.q){
+        try {          
             let regionalAdsData = await adminService.getRegionalAds();
-            return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: regionalAdsData, status: constants.STATUS_TRUE });
-          }else{
-            return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_TRUE });
-          }      
+            return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: regionalAdsData, status: constants.STATUS_TRUE });                
         }catch(e) {
           console.log("error", e)
           return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });

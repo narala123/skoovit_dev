@@ -268,7 +268,7 @@ class AdminService {
       return e.message;
     }
   };
-  async getRegionalAds(data) {
+  async getRegionalAds() {
     try {
       //console.log(data,"-------");
       let regionads = await this.db.RegionAds.find({});

@@ -12,13 +12,24 @@ module.exports = function (express) {
             if (!isUserExisted) {
                 return res.json({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
             }
-            req.body["userId"] = isUserExisted._id;
-            const createProfile = await userProfileService.createUserProfile(req.body);
-            if (createProfile && createProfile != null) {
-                return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: createProfile });
-            } else {
-                return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
-            }
+            const isProfileExisted = await userProfileService.getUserProfileWithUserId(req.params.id);
+            if(isProfileExisted) {
+                req.body["userId"] = isUserExisted._id;
+                const updateProfile = await userProfileService.userProfileUpdation(req.body, req.params.id);
+                if (updateProfile && updateProfile != null) {
+                    return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: updateProfile });
+                } else {
+                    return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                }
+            }else {
+                req.body["userId"] = isUserExisted._id;
+                const createProfile = await userProfileService.createUserProfile(req.body);
+                if (createProfile && createProfile != null) {
+                    return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: createProfile });
+                } else {
+                    return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                }
+            }            
         } catch (e) {
             console.log("error", e)
             return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });

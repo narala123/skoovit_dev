@@ -285,7 +285,87 @@ module.exports = function (express) {
             console.log("error", e)
             return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
-    });   
+    });
+    
+    api.post("/globalads", async (req, res) => {
+        try {
+            upload.ImgVideoUpload(req,res, async (err) => {
+                if (!err) {
+                    if (req.files.length > 0) {
+                        req.body.diplayContent = {
+                            url : req.files[0].filename,
+                            type: req.files[0].mimeType
+                        }
+                        req.body.expiryDate = new Date(req.body.expiryDate);
+                        let globalAdsdata = await adminService.createGlobalAds(req.body);
+                        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: globalAdsdata, status: constants.STATUS_TRUE });
+
+                    } else {
+                        let globalAdsdata = await adminService.createGlobalAds(req.body);
+                        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: globalAdsdata, status: constants.STATUS_TRUE });
+                    }
+                } else {
+                    console.log("err", err)
+                    return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                }
+            })            
+        } catch (e) {
+            console.log("error", e)
+            return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    api.post("/regionads", async (req, res) => {
+        try {
+            upload.ImgVideoUpload(req,res, async (err) => {
+                if (!err) {
+                    if (req.files.length > 0) {
+                        req.body.diplayContent = {
+                            url : req.files[0].filename,
+                            type: req.files[0].mimeType
+                        }
+                        req.body.expiryDate = new Date(req.body.expiryDate);
+                        let regionAdsdata = await adminService.createRegionAds(req.body);
+                        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: regionAdsdata, status: constants.STATUS_TRUE });
+
+                    } else {
+                        let regionAdsdata = await adminService.createRegionAds(req.body);
+                        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: regionAdsdata, status: constants.STATUS_TRUE });
+                    }
+                } else {
+                    console.log("err", err)
+                    return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                }
+            })            
+        } catch (e) {
+            console.log("error", e)
+            return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+    
+    api.get('/globaladsinfo', async (req, res) =>{
+        try {
+          let globalAdsData = await adminService.getGlobalAds();
+          return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: globalAdsData, status: constants.STATUS_TRUE });
+        }catch(e) {
+          console.log("error", e)
+          return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+      });
+    
+      api.get('/regionaladsinfo', async (req, res) =>{
+        try {
+          if(req.query.q){
+            let regionalAdsData = await adminService.getRegionalAds();
+            return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: regionalAdsData, status: constants.STATUS_TRUE });
+          }else{
+            return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_TRUE });
+          }      
+        }catch(e) {
+          console.log("error", e)
+          return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+      });
 
     function imageWorkerInit(files) {
         return new Promise((resolve, reject) => {

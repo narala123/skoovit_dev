@@ -169,7 +169,27 @@ class UserService {
       console.error("error",e)
       return e.message;
     }
-  }
+  };
+  async getGlobalAds(data) {
+    try {
+      //console.log(data,"-------");
+      let globalAds = await this.db.GlobalAds.find({expiryDate:{$gte:new Date()}, active:true});
+      return globalAds;
+    } catch (e) {
+      console.log("error",e)
+      return e.message;
+    }
+  };
+  async getRegionalAds(region) {
+    try {
+      //console.log(data,"-------");
+      let regionads = await this.db.RegionAds.find({expiryDate:{$gte:new Date()}, active:true, region:region});
+      return regionAds;
+    } catch (e) {
+      console.log("error",e)
+      return e.message;
+    }
+  };
 }
 
 module.exports = new UserService();

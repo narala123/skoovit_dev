@@ -13,6 +13,15 @@ class UserProfileService {
         }
     };
 
+    async getUserProfileWithUserId(userId) {
+        try {
+            return await this.db.UserProfiles.findOne({userId:userId});
+        } catch(e) {
+            console.log(e);
+            return e.message;
+        }
+    };
+
     async isProfileExisted(userId, profileId) {
         try {
             if(userId === null && profileId){
@@ -30,6 +39,14 @@ class UserProfileService {
     async updateUserProfile(data, profileId) {
         try {
             return await this.db.UserProfiles.findOneAndUpdate({_id:profileId},{$set:{experience:data.experience}},{new:true});
+        } catch(e) {
+            console.log(e);
+            return e.message;
+        }
+    };
+    async userProfileUpdation(data, userId) {
+        try {
+            return await this.db.UserProfiles.findOneAndUpdate({userId:userId},{$set:data},{new:true});
         } catch(e) {
             console.log(e);
             return e.message;

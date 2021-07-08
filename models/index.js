@@ -19,7 +19,9 @@ class Models {
       Languages:require("./languages"),
       Categories:require("./categories"),
       SubCategories:require("./sub-categories"),
-      Educations:require("./education")
+      Educations:require("./education"),
+      GlobalAds:require("./global-ads"),
+      RegionAds:require("./region-ads")
     };
   }
 }

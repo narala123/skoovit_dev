@@ -111,6 +111,31 @@ module.exports = function (express,passport) {
         return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
+
+  api.get('/globalads', async (req, res) =>{
+    try {
+      let globalAdsData = await userService.getGlobalAds();
+      return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: globalAdsData, status: constants.STATUS_TRUE });
+    }catch(e) {
+      console.log("error", e)
+      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }
+  });
+
+  api.get('/regionalads', async (req, res) =>{
+    try {
+      if(req.query.q){
+        let regionalAdsData = await userService.getregionalAds(req.query.q);
+        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: regionalAdsData, status: constants.STATUS_TRUE });
+      }else{
+        return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_TRUE });
+      }      
+    }catch(e) {
+      console.log("error", e)
+      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }
+  });
+
   /*
         To check valid token and user role, works as middleware.
         below of this function all Api's should have token.

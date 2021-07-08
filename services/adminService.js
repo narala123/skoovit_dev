@@ -237,7 +237,47 @@ class AdminService {
       //console.error("error",e)
       return e.message;
     }
-  };  
+  };
+  async createGlobalAds(data) {
+    try {
+      // console.log(data,"-------");
+      let globalAd = await this.db.GlobalAds.create(data);
+      return globalAd;
+    } catch (e) {
+      console.log("error",e)
+      return e.message;
+    }
+  };
+  async createRegionAds(data) {
+    try {
+      // console.log(data,"-------");
+      let regionAd = await this.db.RegionAds.create(data);
+      return regionAd;
+    } catch (e) {
+      console.log("error",e)
+      return e.message;
+    }
+  };
+  async getGlobalAds(data) {
+    try {
+      //console.log(data,"-------");
+      let globalAds = await this.db.GlobalAds.find({});
+      return globalAds;
+    } catch (e) {
+      console.log("error",e)
+      return e.message;
+    }
+  };
+  async getRegionalAds(data) {
+    try {
+      //console.log(data,"-------");
+      let regionads = await this.db.RegionAds.find({});
+      return regionAds;
+    } catch (e) {
+      console.log("error",e)
+      return e.message;
+    }
+  };   
 }
 
 module.exports = new AdminService();

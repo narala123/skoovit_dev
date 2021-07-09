@@ -21,7 +21,8 @@ class Models {
       SubCategories:require("./sub-categories"),
       Educations:require("./education"),
       GlobalAds:require("./global-ads"),
-      RegionAds:require("./region-ads")
+      RegionAds:require("./region-ads"),
+      Followers:require("./followers")
     };
   }
 }

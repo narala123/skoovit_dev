@@ -71,7 +71,9 @@ module.exports = function (express) {
     });
     api.get('/allprofilesinfo', async (req, res) => {
         try {
-            const fetchProfiles = await userProfileService.getUserProfiles();
+            // console.log(req.query.filters);
+            let filters = req.query.filters ? JSON.parse(req.query.filters) : [];
+            const fetchProfiles = await userProfileService.getUserProfiles(filters);
             if (fetchProfiles) {
                 return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: fetchProfiles });
             } else {
@@ -82,5 +84,20 @@ module.exports = function (express) {
             return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
     });
+    
+
+    // api.get('/userprofiles', async (req, res)=>{
+    //     try {
+    //         const profileInfo = await userProfileService.profileSearchFilter(req.query);
+    //         if (profileInfo.length > 0) {
+    //             return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: profileInfo });
+    //         } else {
+    //             return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    //         } 
+    //     }catch(e) {
+    //         console.log("error", e)
+    //         return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    //     }
+    // })
     return api;
 };

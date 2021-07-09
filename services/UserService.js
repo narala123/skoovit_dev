@@ -190,6 +190,48 @@ class UserService {
       return e.message;
     }
   };
+  async generateRequest(data) {
+    try {
+      //console.log(data,"-------");
+      let requestInfo = await this.db.Followers.create(data);
+      return requestInfo;
+    } catch (e) {
+      console.log("error",e)
+      return e.message;
+    }
+  };
+  async changeRequestSatus(status, followerId, userId) {
+    try {
+      //console.log(data,"-------");
+      let requestInfo = await this.db.Followers.findOneAndUpdate({followedBy:followerId, userId:userId},{$set:{requestStatus:status}});
+      return requestInfo;
+    } catch (e) {
+      console.log("error",e)
+      return e.message;
+    }
+  };
+  async unFollowRequest(status, followerId, userId) {
+    try {
+      //console.log(data,"-------");
+      let requestInfo = await this.db.Followers.deleteOne({followedBy:followerId, userId:userId});
+      return requestInfo;
+    } catch (e) {
+      console.log("error",e)
+      return e.message;
+    }
+  };
+
+  async followerslist(userId) {
+    try {
+      //console.log(data,"-------");
+      let list = await this.db.Followers.find({userId:userId});
+      return list;
+    } catch (e) {
+      console.log("error",e)
+      return e.message;
+    }
+  }
+
 }
 
 module.exports = new UserService();

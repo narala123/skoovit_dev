@@ -54,15 +54,55 @@ class UserProfileService {
     };
     async getUserProfile(profileId) {
         try {
-            return await this.db.UserProfiles.findOne({_id:profileId});
+            return await this.db.UserProfiles.aggreagte([{$match:{_id:profileId}},
+                {$lookup:{
+                    from: "followers",
+                    localField: "userId",
+                    foreignField: "userId",
+                    as: "followersInfo"
+                }},
+                {
+                    $match:{
+                        requestStatus:"Accepted"
+                    }
+                },
+                { $project: {
+                    followersInfo: 1,                    
+                    followersCount: { "$size": "$followersInfo" }
+                }}
+            ]);
         } catch(e) {
             console.log(e);
             return e.message;
         }
     };
-    async getUserProfiles() {
-        try {
-            return await this.db.UserProfiles.find({}).sort({createDate:-1});
+    async getUserProfiles(filters) {
+        try {     
+            let obj = {};       
+            if(filters.length > 0){                
+                obj = {
+                    $or: filters
+                }
+            }
+            const data = await this.db.UserProfiles.aggregate([{$match:obj},{$lookup:{
+                from: "countries",
+                localField: "country",
+                foreignField: "_id",
+                as: "countryName"
+                }},{$lookup:{
+                    from: "cities",
+                    localField: "city",
+                    foreignField: "_id",
+                    as: "cityName"
+                }},
+                {$lookup:{
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "userInfo"
+                }}
+            ]);
+            return data;
         } catch(e) {
             console.log(e);
             return e.message;
@@ -76,7 +116,7 @@ class UserProfileService {
             console.log(e);
             return e.message;
         }
-    }
+    };
     getGalleryCondition(type,data){
         let conditon = {};
         switch(type){
@@ -95,7 +135,16 @@ class UserProfileService {
         }
         return conditon
 
-    }
+    };
+
+    // async profileSearchFilter(filterInfo){
+    //     try {
+    //         if()
+    //         const data = 
+    //     }catch(e){
+
+    //     }
+    // }
 };
   
 module.exports = new UserProfileService();

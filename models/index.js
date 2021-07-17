@@ -22,7 +22,9 @@ class Models {
       Educations:require("./education"),
       GlobalAds:require("./global-ads"),
       RegionAds:require("./region-ads"),
-      Followers:require("./followers")
+      Followers:require("./followers"),
+      UserPosts:require("./user-posts"),
+      Skills:require("./skills")
     };
   }
 }

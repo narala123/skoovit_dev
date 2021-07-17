@@ -20,7 +20,7 @@ class AdminService {
     try {
       //console.log(data,"-------");
       let fetchCountries = await this.db.Categories.find({ active: true }).sort({
-        createDate: -1, active: -1
+        createDate: -1
       });
       return fetchCountries;
     } catch (e) {
@@ -28,11 +28,11 @@ class AdminService {
       return e.message;
     }
   }
-  async updateCategory(id, data) {
+  async updateCategory(cId, data) {
     try {
       //console.log(data,"-------");
       let updateCountry = await this.db.Categories.findOneAndUpdate(
-        { _id: id },
+        { _id: cId },
         { $set: data },
         { new: true }
       );
@@ -43,10 +43,10 @@ class AdminService {
     }
   }
 
-  async getCategory(id) {
+  async getCategory(cId) {
     try {
       //console.log(data,"-------");
-      let getCountry = await this.db.Categories.findOne({ _id: id });
+      let getCountry = await this.db.Categories.findOne({ _id: cId });
       return getCountry;
     } catch (e) {
       //console.error("error",e)
@@ -54,10 +54,10 @@ class AdminService {
     }
   }
 
-  async deleteCategory(id) {
+  async deleteCategory(cId) {
     try {
       //console.log(data,"-------");
-      let deletedCountry = await this.db.Categories.deleteOne({ _id: id });
+      let deletedCountry = await this.db.Categories.deleteOne({ _id: cId });
       return deletedCountry;
     } catch (e) {
       //console.error("error",e)
@@ -77,20 +77,20 @@ class AdminService {
       return e.message;
     }
   }
-  async fetchSubCategories(id) {
+  async fetchSubCategories(catId) {
     try {
       //console.log(data,"-------");
-      let fetchStates = await this.db.SubCategories.find({ category: id, active: true }).sort({ createDate: -1 });
+      let fetchStates = await this.db.SubCategories.find({ category: catId, active: true }).sort({ createDate: -1 });
       return fetchStates;
     } catch (e) {
       //console.error("error",e)
       return e.message;
     }
   }
-  async getSubCategory(id) {
+  async getSubCategory(subCId) {
     try {
       //console.log(data,"-------");
-      let getState = await this.db.SubCategories.findOne({ _id: id });
+      let getState = await this.db.SubCategories.findOne({ _id: subCId });
       return getState;
     } catch (e) {
       //console.error("error",e)
@@ -98,21 +98,21 @@ class AdminService {
     }
   }
 
-  async deleteSubCategory(id) {
+  async deleteSubCategory(subCId) {
     try {
       //console.log(data,"-------");
-      let deletedState = await this.db.SubCategories.deleteOne({ _id: id });
+      let deletedState = await this.db.SubCategories.deleteOne({ _id: subCId });
       return deletedState;
     } catch (e) {
       //console.error("error",e)
       return e.message;
     }
   }
-  async updateSubCategory(id, data) {
+  async updateSubCategory(subCId, data) {
     try {
       //console.log(data,"-------");
       let updateState = await this.db.SubCategories.findOneAndUpdate(
-        { _id: id },
+        { _id: subCId },
         { $set: data },
         { new: true }
       );
@@ -122,6 +122,31 @@ class AdminService {
       return e.message;
     }
   }
+
+  /*
+    Skills
+  */
+  async createSkills(data) {
+    try {
+      //console.log(data,"-------");
+      let skill = await this.db.Skills.create(data);
+      return skill;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  };
+  async fetchSkills(scId) {
+    try {
+      //console.log(data,"-------");
+      let skills = await this.db.Skills.find({subCategory:scId}).sort({skill:1});
+      return skills;
+    } catch (e) {
+      //console.error("error",e)
+      return e.message;
+    }
+  };
+
   /*
     languages
   */
@@ -244,7 +269,7 @@ class AdminService {
       let globalAd = await this.db.GlobalAds.create(data);
       return globalAd;
     } catch (e) {
-      console.log("error",e)
+      console.log("error", e)
       return e.message;
     }
   };
@@ -254,7 +279,7 @@ class AdminService {
       let regionAd = await this.db.RegionAds.create(data);
       return regionAd;
     } catch (e) {
-      console.log("error",e)
+      console.log("error", e)
       return e.message;
     }
   };
@@ -264,7 +289,7 @@ class AdminService {
       let globalAds = await this.db.GlobalAds.find({});
       return globalAds;
     } catch (e) {
-      console.log("error",e)
+      console.log("error", e)
       return e.message;
     }
   };
@@ -274,10 +299,10 @@ class AdminService {
       let regionads = await this.db.RegionAds.find({});
       return regionAds;
     } catch (e) {
-      console.log("error",e)
+      console.log("error", e)
       return e.message;
     }
-  };   
+  };
 }
 
 module.exports = new AdminService();

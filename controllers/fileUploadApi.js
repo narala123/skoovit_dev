@@ -1,17 +1,15 @@
 const upload = require("../config/middlewares/multerConfig");
-const path = require("path");
-const sharp = require("sharp");
 const UserProfileService = require("../services/userProfileService");
-const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
+const workerService = require("../utils/image-video-worker");
 const constants = require("../config/constants");
 module.exports = (app, express) => {
     let api = express.Router();
     api.post("/image", (req, res) => {
-        upload.Imageupload(req, res, (err) => {
+        upload.Imageupload(req, res, async (err) => {
             if (!err) {
                 let promises = [];
                 for (let i = 0; i < req.files.length; i++) {
-                    promises.push(imageWorkerInit(req.files[i]))
+                    promises.push(await workerService.imageWorkerInit(req.files[i]))
                 }
                 Promise.all(promises).then(async (data) => {
                     try {
@@ -33,11 +31,11 @@ module.exports = (app, express) => {
         })
     })
     api.post("/video", (req, res) => {
-        upload.Videoupload(req, res, (err) => {
+        upload.Videoupload(req, res, async (err) => {
             if (!err) {
                 let promises = [];
                 for (let i = 0; i < req.files.length; i++) {
-                    promises.push(videoWorkerInit(req.files[i]))
+                    promises.push(await workerService.videoWorkerInit(req.files[i]))
                 }
                 Promise.all(promises).then(async data => {
                     try {
@@ -102,47 +100,7 @@ module.exports = (app, express) => {
         });
 
     })
-
-    function imageWorkerInit(files) {
-        return new Promise((resolve, reject) => {
-            let worker = new Worker(path.resolve("workers/imageCompressorWorker.js"), { workerData: { filename: files.filename, mimeType: files["originalname"].split(".")[files["originalname"].split(".").length - 1], destFilname: Date.now() + "." + files.originalname.split(".")[files["originalname"].split(".").length - 1], orginalFileName: files["originalname"] } });
-            worker.on('error', (err) => {
-                console.log(err);
-                reject(err)
-            });
-            worker.on('exit', (code) => {
-                if (code != 0) {
-                    reject(new Error(`Worker stopped with exit code ${code}`));
-                } else {
-                    worker.terminate();
-                }
-            })
-            worker.on('message', (msg) => {
-                resolve(msg)
-            });
-
-        });
-    }
-
-    function videoWorkerInit(files) {
-        return new Promise((resolve, reject) => {
-            let worker = new Worker(path.resolve("workers/videoTranscoderWorker.js"), { workerData: { filename: files.filename, mimeType: files["originalname"].split(".")[files["originalname"].split(".").length - 1], destFilname: Date.now(), orginalFileName: files["originalname"] } });
-            worker.on('error', (err) => {
-                console.log(err);
-                reject(err)
-            });
-            worker.on('exit', (code) => {
-                if (code != 0) {
-                    reject(new Error(`Worker stopped with exit code ${code}`));
-                } else {
-                    worker.terminate();
-                }
-            })
-            worker.on('message', (msg) => {
-                resolve(msg)
-            });
-        });
-    }
+    
 
     return api;
 }

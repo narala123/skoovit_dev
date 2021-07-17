@@ -25,11 +25,11 @@ proc.stdout.on('data', function(data) {
 
 proc.stderr.setEncoding("utf8")
 proc.stderr.on('data', function(data) {
-    console.log("EERRPOR",data);
+    //console.log("EERRPOR",data);
 });
 
 proc.on('close', function(code) {
     fs.unlink(path.resolve("uploads/"+workerData.filename),()=>{
-    parentPort.postMessage({filename:workerData["destFilname"]+".mp4",originalName:workerData.orginalFileName});
+    parentPort.postMessage({filename:workerData["destFilname"]+".mp4",originalName:workerData.orginalFileName, type:"video"});
     });
 });

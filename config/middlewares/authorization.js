@@ -1,38 +1,46 @@
 const jwt = require('jsonwebtoken');
-
-module.exports.create_token = (userId,planId, userType)=> {
+module.exports.create_token = (userId,planId)=> {
 	try {		
 		return jwt.sign({
       		userId: userId,
       		planId: planId,
-      		userType: userType
     	}, process.env.SECRET_KEY);
 	}catch(err){
 		console.log(err);
-		return this.generateError(500,err);
+		return  err.message;
 	}	
 };
 
 
 
-module.exports.isValidUser = async(req,res,next)=>{
+module.exports.isValidUser = async function (req,res,next){
+	const userService = require("../../services/UserService");
 	try {
 		let token = req.query.token || req.body.token || req.headers['x-access-token'] || req.headers['authorization'];
-		if(await verify_token(token)){
-			next();
+		//console.log(token,"token");
+		const data = await verify_token(token)		
+		if(data){
+			console.log(data,"viwed person id")
+			const isUserExisted = await userService.getUser(data.userId);
+			if(isUserExisted){
+				req.user = data;
+				next();
+			}else{
+				return res.json({status:false,statusCode:401, message:"Not Authorized"});
+			}
 		}else{
-			return res.json({status:false,message:"not Authorized"});
+			return res.json({status:false,statusCode:401, message:"not Authorized"});
 		}		
 	}catch(err){
 		console.log(err);
-		return this.generateError(500,err);
+		return  err.message;
 	}
 };
-exports.verify_token = (token)=>{
+function verify_token(token){
 	try{
 		return token ? jwt.verify(token,process.env.SECRET_KEY) : {};
 	}catch(err){
-		return this.generateError(500,err);
+		return err.message;
 	}
 };
 

@@ -23,7 +23,7 @@ module.exports = function (express,passport) {
           //console.log(data,"data");  
           await userService.sendOtp(data.mobile);
           em.emit(eventNames.Assign_Plan_To_User, { userId: data._id });
-          return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: data });
+          return res.json({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, status: constants.STATUS_TRUE, data: data });
         } else {
           return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
@@ -38,9 +38,9 @@ module.exports = function (express,passport) {
     try {
       let data = await userService.sendOtp(req.body.mobile);
       if (data) {
-        return res.json({ statusCode: constants.STATUS_200, message: "OTP Sent Successfully, Please verify to enjoy the features." });
+        return res.json({ statusCode: constants.STATUS_200,status: constants.STATUS_TRUE, message: "OTP Sent Successfully, Please verify to enjoy the features." });
       } else {
-        return res.json({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404 });
+        return res.json({ statusCode: constants.STATUS_401, message: constants.STATUS_MSG_401,status: constants.STATUS_FALSE });
       }
     } catch (e) {
       console.log("error", e)
@@ -139,7 +139,7 @@ module.exports = function (express,passport) {
     try {      
       let requestData = await userService.generateRequest(req.body);
       if(requestData) {
-        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: regionalAdsData, status: constants.STATUS_TRUE });
+        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: requestData, status: constants.STATUS_TRUE });
       }else{
         return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_TRUE });
       } 
@@ -243,6 +243,23 @@ module.exports = function (express,passport) {
 
   api.get("/auth/failure",(req,res)=>{
     return res.json({success:false,message:"Please Check your credentials"});
+  });
+
+  // sample token creation
+
+  api.get('/token', async (req, res)=>{
+    // login userId --> 60b8dcecd7997d54c0504656
+    
+    // liked UserId --> 60f2f1b27a88b220d0573051
+    // planId --> 60b119d2bcf3b9406c60dec7
+    const data = await userPermission.create_token("60f2f1b27a88b220d0573051","60b119d2bcf3b9406c60dec7");
+    return res.json({message:"token", authorization:data});
+
+    // login userId token 
+    // --> "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGI4ZGNlY2Q3OTk3ZDU0YzA1MDQ2NTYiLCJwbGFuSWQiOiI2MGIxMTlkMmJjZjNiOTQwNmM2MGRlYzciLCJpYXQiOjE2MjY1MzQ2NjZ9.FZgSswly636Kp8OCPFb_PX9-W1i4qlEtoqqj60KE5zI"
+
+    // liked UserId token 
+    // --> "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGYyZjFiMjdhODhiMjIwZDA1NzMwNTEiLCJwbGFuSWQiOiI2MGIxMTlkMmJjZjNiOTQwNmM2MGRlYzciLCJpYXQiOjE2MjY1MzQ3MTF9.7yCvl5AdcMC38R_UC398vxHt-uiqZzwhUuPJBJbnfYU"
   });
 
 

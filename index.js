@@ -15,8 +15,8 @@ app.use(bodyParser.json({ limit: "50mb", extended: true }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cors());
 app.use(passport.initialize());
-app.use(passport.session());
-app.use(session({secret:"thisissookvidev"}))
+//app.use(passport.session());
+//app.use(session({secret:"thisissookvidev"}))
 let credentials = {key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')), cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))};
 //let httpsServer = https.createServer(credentials, app);
 let httpServer = http.createServer(app)

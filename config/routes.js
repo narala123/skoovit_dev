@@ -20,4 +20,7 @@ module.exports = function (app, express,passport) {
   let adminApi = require("../controllers/adminApi")(express);
   app.use('/admin',adminApi);
 
+  let userPostApi = require("../controllers/userpostApi")(express);
+  app.use('/userpost', userPostApi);
+
 };

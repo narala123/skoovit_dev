@@ -2,6 +2,7 @@ const upload = require("../config/middlewares/multerConfig");
 const adminService = require("../services/adminService");
 const constants = require("../config/constants");
 const path = require("path");
+const workerService = require("../utils/image-video-worker");
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 
 module.exports = function (express) {
@@ -18,7 +19,7 @@ module.exports = function (express) {
                     if (req.files.length > 0) {
                         let promises = [];
                         for (let i = 0; i < req.files.length; i++) {
-                            promises.push(imageWorkerInit(req.files[i]))
+                            promises.push(await workerService.imageWorkerInit(req.files[i]))
                         }
                         Promise.all(promises).then(async (data) => {
                             try {
@@ -100,7 +101,7 @@ module.exports = function (express) {
                     if (req.files.length > 0) {
                         let promises = [];
                         for (let i = 0; i < req.files.length; i++) {
-                            promises.push(imageWorkerInit(req.files[i]))
+                            promises.push(await workerService.imageWorkerInit(req.files[i]))
                         }
                         Promise.all(promises).then(async (data) => {
                             try {
@@ -165,6 +166,28 @@ module.exports = function (express) {
         try {
             let data = await adminService.deleteSubCategory(req.params.id);
             return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE });
+        } catch (e) {
+            console.log("error", e)
+            return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+    /*
+        skills
+    */
+    api.post("/createskills", async (req, res) => {
+        try {
+            //console.log(req.body);
+            let data = await adminService.createSkills(req.body);
+            return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+        } catch (e) {
+            console.log("error", e)
+            return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+    api.get("/getskills/:scId", async (req, res) => {
+        try {
+            let data = await adminService.fetchSkills(req.params.scId);
+            return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
         } catch (e) {
             console.log("error", e)
             return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
@@ -362,26 +385,6 @@ module.exports = function (express) {
           return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
       });
-
-    function imageWorkerInit(files) {
-        return new Promise((resolve, reject) => {
-            let worker = new Worker(path.resolve("workers/imageCompressorWorker.js"), { workerData: { filename: files.filename, mimeType: files["originalname"].split(".")[files["originalname"].split(".").length - 1], destFilname: Date.now() + "." + files.originalname.split(".")[files["originalname"].split(".").length - 1], orginalFileName: files["originalname"] } });
-            worker.on('error', (err) => {
-                console.log(err);
-                reject(err)
-            });
-            worker.on('exit', (code) => {
-                if (code != 0) {
-                    reject(new Error(`Worker stopped with exit code ${code}`));
-                } else {
-                    worker.terminate();
-                }
-            })
-            worker.on('message', (msg) => {
-                resolve(msg)
-            });
-
-        });
-    }
+    
     return api;
 };

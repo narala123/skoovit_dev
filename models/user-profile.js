@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const UserProfile = new Schema({
     userId:{ type: Schema.Types.ObjectId,ref:'users' },	
-    userName:{ type: String },
+    userName:{ type: String, unqiue:true },
     languages:{ type: Array },
     dob:{ type: String },
     gender:{ type: String },
@@ -33,6 +33,8 @@ const UserProfile = new Schema({
         {
             projectName:{ type: String },
             role:{ type: String },
+            from:{ type: String },
+            to:{ type: String },
             description:{ type: String },
             releasedDateAndTime:{ type: String },
             refferenceLink:{ type: Array },
@@ -41,6 +43,7 @@ const UserProfile = new Schema({
     gallery:{
         images: [
             {
+                type:{ type: String },
                 filename:{ type: String },
                 originalName:{ type: String },
                 location:{ type: String },
@@ -49,6 +52,7 @@ const UserProfile = new Schema({
         ],
         videos:[
             {
+                type:{ type: String },
                 filename:{ type: String },
                 originalName:{ type: String },
                 location:{ type: String },
@@ -57,6 +61,7 @@ const UserProfile = new Schema({
         ],
         audios:[
             {
+                type:{ type: String },
                 filename:{ type: String },
                 originalName:{ type: String },
                 location:{ type: String },
@@ -65,12 +70,24 @@ const UserProfile = new Schema({
         ],
         docs:[
             {
+                type:{ type: String },
                 filename:{ type: String },
                 originalName:{ type: String },
                 location:{ type: String },
                 awsId:{ type: String } 
             }
         ]
+    },
+    entityForm:{
+        name:{ type: String },
+        contactPerson:{ type: String },
+        estdYear:{ type: String },
+        location:{
+            address:{ type: String },
+            longitude:{ type: String },
+            lattitude:{ type: String }
+        },
+        about:{ type: String }
     },
     isActive:{ type: Boolean, default: true },
     createDate:{ type:Date, default:Date.now },

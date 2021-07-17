@@ -20,6 +20,7 @@ class MulterConfg {
               cb(null, constant.DESTINATION_FOLDER)
             },
             filename: function (req, file, cb) {
+              file.extname = "."+file.originalname.split('.')[1]
               cb(null, Date.now()+"."+file.originalname.split('.')[1])
             }
           })

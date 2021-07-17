@@ -54,8 +54,8 @@ class UserService {
 
   async getUser(id) {
     try {
-      let getuser = await this.db.User.findOne({ _id: id });
-      return getuser;
+      let isUser = await this.db.User.findOne({ _id: id });
+      return isUser;
     } catch (e) {
       return e.message;
     }
@@ -203,7 +203,7 @@ class UserService {
   async changeRequestSatus(status, followerId, userId) {
     try {
       //console.log(data,"-------");
-      let requestInfo = await this.db.Followers.findOneAndUpdate({followedBy:followerId, userId:userId},{$set:{requestStatus:status}});
+      let requestInfo = await this.db.Followers.findOneAndUpdate({followedBy:followerId, userId:userId},{$set:{requestStatus:status}},{new:true});
       return requestInfo;
     } catch (e) {
       console.log("error",e)

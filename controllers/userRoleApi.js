@@ -1,6 +1,6 @@
-let userPermission = require("../config/middlewares/authorization");
-let userRoleService = require("../services/userRoleService");
-let constants = require("../config/constants");
+const userPermission = require("../config/middlewares/authorization");
+const userRoleService = require("../services/userRoleService");
+const constants = require("../config/constants");
 
 
 module.exports = function (express) {

@@ -11,7 +11,7 @@ sharp(path.resolve("uploads/"+workerData.filename))
         parentPort.postMessage(err)
     }else{ 
       fs.unlink(path.resolve("uploads/"+workerData.filename),()=>{
-        parentPort.postMessage({filename:workerData.destFilname,originalName:workerData.orginalFileName});
+        parentPort.postMessage({filename:workerData.destFilname,originalName:workerData.orginalFileName, type:"image"});
       })   
     }
   })
@@ -24,7 +24,7 @@ sharp(path.resolve("uploads/"+workerData.filename))
         parentPort.postMessage(err)
     }else{
       fs.unlink(path.resolve("uploads/"+workerData.filename),()=>{
-        parentPort.postMessage({filename:workerData.destFilname,originalName:workerData.orginalFileName});
+        parentPort.postMessage({filename:workerData.destFilname,originalName:workerData.orginalFileName,type:"image"});
       })
     }
   })

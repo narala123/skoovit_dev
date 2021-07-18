@@ -93,8 +93,13 @@ api.post('/viewsupdate/:postId', async (req, res)=>{
 });
 api.get('/allselfposts', async (req, res)=>{
     try {
-        const data = await userPostService.getUserSelfPosts(req.user.userId);
-        return data;
+        const data = await userPostService.getUserSelfPosts(req.user.userId);   
+        if(data.status){
+            return res.json({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data.data, status: constants.STATUS_TRUE });
+        }else{
+            return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: data.data, status: constants.STATUS_FALSE });
+        } 
+       
     }catch(e){
         console.log("error", e)
         return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });

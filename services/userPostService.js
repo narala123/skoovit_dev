@@ -92,7 +92,7 @@ class UserService {
         return val.userId;
       });
       arr.push(userId);
-      const postData = await this.db.UserPosts.aggregate([{$match:{$or:[{userId:{$in:arr}},{visibleTo:"public"}]}},
+      let postData = await this.db.UserPosts.aggregate([{$match:{$or:[{userId:{$in:arr}},{visibleTo:"public"}]}},
         {
           $lookup: {
             from: "users",
@@ -101,6 +101,7 @@ class UserService {
             as: "userInfo"
           }
         },
+        {$unwind:"$userInfo"},
         {
           $project:{
             description:1,
@@ -114,20 +115,22 @@ class UserService {
             likes:1,
             views:1,
             isActive:1,
-            isViewd:{
-              $switch: {
-                branches: [
-                  { case: { $eq : [ "$views", userId ] }, then: true } , 
-                  { case: { $ne : [ "$views", userId ] }, then: false }                                                        
-                ],
-                
-              }
-            }     
+            name:"$userInfo.fullName",
+            email:"$userInfo.email",
+            profilePic:"$userInfo.profileUrl"
+            
           }
         }
       ]);
-      console.log(JSON.stringify(postData, null, 1),"postData")
-
+    postData = postData.filter(val=>{
+      (val.views.includes(userId))?val["isViewd"] = true:val["isViewd"] = false;
+      (val.likes.includes(userId))?val["isLiked"] = true:val["isLiked"] = false;
+      return val
+    })
+    return {
+      data: postData,
+      status:true,
+    };
     }catch(err){
       console.log(err);
       return {

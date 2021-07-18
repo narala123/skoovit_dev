@@ -130,7 +130,6 @@ class UserService {
           }
         }
         ]);
-        //console.log(userInfo,"userInfo");
         userInfo[0].token = await auth.create_token(loginUser._id, "Free", loginUser.userType);
         return userInfo;
       } else {

@@ -18,7 +18,7 @@ module.exports = function (express,passport) {
           return res.json({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404_R, status: constants.STATUS_FALSE });
         }
         req.body['userType'] = isUserRoleExisted._id;
-        const data = await userService.signup(req.body);
+        const data = JSON.parse(JSON.stringify(await userService.signup(req.body)));
         if (data) {
           //console.log(data,"data");  
           await userService.sendOtp(data.mobile);

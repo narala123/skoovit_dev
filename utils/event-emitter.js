@@ -18,7 +18,6 @@ class Events {
         planDetails["userId"] = data.userId;
         planDetails["planId"] = planDetails._id;  
         delete planDetails._id;
-        //console.log(planDetails,"planDetails");
         await this.plansService.createActivePlan(planDetails);
         await this.plansService.createPlanHistory(planDetails);
       })

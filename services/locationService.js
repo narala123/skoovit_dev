@@ -7,22 +7,34 @@ class LocationService {
     try {
       //console.log(data,"-------");
       let countryCreation = await this.db.Countries.create(data);
-      return countryCreation;
+      return {
+        data: countryCreation,
+        status: true
+      }
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
   async fetchCountries() {
     try {
       //console.log(data,"-------");
-      let fetchCountries = await this.db.Countries.find({active:true}).sort({
-        country:1
+      let fetchCountries = await this.db.Countries.find({ active: true }).sort({
+        country: 1
       });
-      return fetchCountries;
+      return {
+        data: fetchCountries,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
   async updateCountry(id, data) {
@@ -33,10 +45,16 @@ class LocationService {
         { $set: data },
         { new: true }
       );
-      return updateCountry;
+      return {
+        data: updateCountry,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 
@@ -44,10 +62,16 @@ class LocationService {
     try {
       //console.log(data,"-------");
       let getCountry = await this.db.Countries.findOne({ _id: id });
-      return getCountry;
+      return {
+        data: getCountry,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 
@@ -55,40 +79,64 @@ class LocationService {
     try {
       //console.log(data,"-------");
       let deletedCountry = await this.db.Countries.deleteOne({ _id: id });
-      return deletedCountry;
+      return {
+        data: deletedCountry,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
   async createState(data) {
     try {
       //console.log(data,"-------");
       let stateCreation = await this.db.States.create(data);
-      return stateCreation;
+      return {
+        data: stateCreation,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
   async fetchStates(id) {
     try {
       //console.log(data,"-------");
-      let fetchStates = await this.db.States.find({country:id, active:true}).sort({ createDate: -1, active:- 1});
-      return fetchStates;
+      let fetchStates = await this.db.States.find({ country: id, active: true }).sort({ createDate: -1, active: - 1 });
+      return {
+        data: fetchStates,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
   async getState(id) {
     try {
       //console.log(data,"-------");
       let getState = await this.db.States.findOne({ _id: id });
-      return getState;
+      return {
+        data: getState,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 
@@ -96,10 +144,16 @@ class LocationService {
     try {
       //console.log(data,"-------");
       let deletedState = await this.db.States.deleteOne({ _id: id });
-      return deletedState;
+      return {
+        data: deletedState,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
   async updateState(id, data) {
@@ -110,10 +164,16 @@ class LocationService {
         { $set: data },
         { new: true }
       );
-      return updateState;
+      return {
+        data: updateState,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 
@@ -121,30 +181,48 @@ class LocationService {
     try {
       //console.log(data,"-------");
       let cityCreation = await this.db.Cities.create(data);
-      return cityCreation;
+      return {
+        data: cityCreation,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
   async fetchCities(id) {
     try {
       //console.log(data,"-------");
-      let fetchCities = await this.db.Cities.find({state:id, active:true}).sort({ createDate: -1, active:-1 });
-      return fetchCities;
+      let fetchCities = await this.db.Cities.find({ state: id, active: true }).sort({ createDate: -1, active: -1 });
+      return {
+        data: fetchCities,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
   async getCity(id) {
     try {
       //console.log(data,"-------");
       let getCity = await this.db.Cities.findOne({ _id: id });
-      return getCity;
+      return {
+        data: getCity,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 
@@ -152,10 +230,16 @@ class LocationService {
     try {
       //console.log(data,"-------");
       let deletedCity = await this.db.Cities.deleteOne({ _id: id });
-      return deletedCity;
+      return {
+        data: deletedCity,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
   async updateCity(id, data) {
@@ -166,10 +250,16 @@ class LocationService {
         { $set: data },
         { new: true }
       );
-      return updateCity;
+      return {
+        data: updateCity,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 }

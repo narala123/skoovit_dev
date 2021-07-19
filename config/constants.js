@@ -14,7 +14,7 @@
         STATUS_MSG_500: "Internal Server Error.",
         STATUS_MSG_400: "Bad Request.",
         STATUS_MSG_404: "Deatils Not Found, Please signup.",
-        STATUS_MSG_401: "Unauthorized",
+        STATUS_MSG_401: "Oops something went wrong / Unauthorized",
         STATUS_MSG_404_R: "Roles Are Not Found, Please check with db Admin.",
         STATUS_MSG_409: "User Already Existed.",
         STATUS_MSG_426: "Upgrade Required.",

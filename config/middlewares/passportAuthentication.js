@@ -40,7 +40,7 @@ class PassportAuthentication {
                 return done(null, userInfo);
             }else {
                 const isUserRoleExisted = await userRoleService.isUserRoleExisted("user");
-                if (!isUserRoleExisted) {
+                if (!isUserRoleExisted.status) {
                     return done("error", null);
                 }
                 let data = {};

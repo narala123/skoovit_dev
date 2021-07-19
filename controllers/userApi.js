@@ -10,142 +10,142 @@ module.exports = function (express,passport) {
   api.post("/signup", async (req, res) => {
     try {
       const isUserExist = await userService.isUserExist(req.body);
-      if (isUserExist) {
-        return res.json({ statusCode: constants.STATUS_409, message: constants.STATUS_MSG_409, status: constants.STATUS_FALSE });
+      if (isUserExist.status) {
+        return res.status(constants.STATUS_409).send({ statusCode: constants.STATUS_409, message: constants.STATUS_MSG_409, status: constants.STATUS_FALSE });
       } else {
         const isUserRoleExisted = await userRoleService.isUserRoleExisted("user");
-        if (!isUserRoleExisted) {
-          return res.json({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404_R, status: constants.STATUS_FALSE });
+        if (!isUserRoleExisted.status) {
+          return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404_R, status: constants.STATUS_FALSE });
         }
         req.body['userType'] = isUserRoleExisted._id;
         const data = await userService.signup(req.body);
-        if (data) {
+        if (data.status) {
           //console.log(data,"data");  
-          await userService.sendOtp(data.mobile);
-          em.emit(eventNames.Assign_Plan_To_User, { userId: data._id });
-          return res.json({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, status: constants.STATUS_TRUE, data: data });
+          await userService.sendOtp(data.data.mobile);
+          em.emit(eventNames.Assign_Plan_To_User, { userId: data.data._id });
+          return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, status: constants.STATUS_TRUE, data: data.data });
         } else {
-          return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+          return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, data: data.data, status: constants.STATUS_FALSE });
         }
       }
     } catch (e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
   api.post("/sendotp", async (req, res) => {
     try {
       let data = await userService.sendOtp(req.body.mobile);
-      if (data) {
-        return res.json({ statusCode: constants.STATUS_200,status: constants.STATUS_TRUE, message: "OTP Sent Successfully, Please verify to enjoy the features." });
+      if (data.status) {
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200,status: constants.STATUS_TRUE, message: "OTP Sent Successfully, Please verify to enjoy the features." });
       } else {
-        return res.json({ statusCode: constants.STATUS_401, message: constants.STATUS_MSG_401,status: constants.STATUS_FALSE });
+        return res.status(constants.STATUS_401).send({ statusCode: constants.STATUS_401, message: constants.STATUS_MSG_401,status: constants.STATUS_FALSE });
       }
     } catch (e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
   api.post("/otpverification", async (req, res) => {
     try {
       const verifyOtpWithMobile = await userService.verifyOtp(req.body.mobile, req.body.otp);
-      if (verifyOtpWithMobile) {
-        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: verifyOtpWithMobile });
+      if (verifyOtpWithMobile.status) {
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: verifyOtpWithMobile.data });
       } else {
-        return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_OTPFAIL, status: constants.STATUS_FALSE });
+        return res.status(constants.STATUS_401).send({ statusCode: constants.STATUS_401, data: verifyOtpWithMobile.data, message: constants.STATUS_MSG_OTPFAIL, status: constants.STATUS_FALSE });
       }
     } catch (e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
   api.get("/getusers", async (req, res) => {
     try {
       let data = await userService.getUsers();
-      res.json({ statusCode: constants.STATUS_200, data: data });
+      return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:data.data });
     } catch (e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
   api.get("/getuser/:id", async (req, res) => {
     try {
       let data = await userService.getUser(req.params.id);
-      res.json({ statusCode: constants.STATUS_200, data: data });
+      return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:data.data });
     } catch (e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
   api.post("/isactive/:id", async (req, res) => {
     try {
       let data = await userService.isActive(req.params.id, req.body);
-      res.json({ statusCode: constants.STATUS_200, data: data });
+      return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:data.data });
     } catch (e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
   api.post("/isdelete/:id", async (req, res) => {
     try {
       let data = await userService.isDelete(req.params.id, req.body);
-      res.json({ statusCode: constants.STATUS_200, data: data });
+      return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:data.data });
     } catch (e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
   api.get("/homecategories", async (req, res) =>{
     try {
-        let catInfo = await userService.homeCategories();
-        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: catInfo, status: constants.STATUS_TRUE });
+        let data = await userService.homeCategories();
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:data.data });
 
     }catch(e) {
         console.log("error", e)
-        return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
   api.get('/globalads', async (req, res) =>{
     try {
-      let globalAdsData = await userService.getGlobalAds();
-      return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: globalAdsData, status: constants.STATUS_TRUE });
+      let data = await userService.getGlobalAds();
+      return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:data.data });
     }catch(e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
   api.get('/regionalads', async (req, res) =>{
     try {
       if(req.query.q){
-        let regionalAdsData = await userService.getregionalAds(req.query.q);
-        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: regionalAdsData, status: constants.STATUS_TRUE });
+        let data = await userService.getregionalAds(req.query.q);
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:data.data });
       }else{
-        return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_TRUE });
+        return res.res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_FALSE });
       }      
     }catch(e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
   api.post('/userrequests', async (req, res) =>{
     try {      
       let requestData = await userService.generateRequest(req.body);
-      if(requestData) {
-        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: requestData, status: constants.STATUS_TRUE });
+      if(requestData.status) {
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:requestData.data });
       }else{
-        return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_TRUE });
+        return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_FALSE });
       } 
     }catch(e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
   
@@ -153,41 +153,41 @@ module.exports = function (express,passport) {
   api.post('/requeststatus', async (req, res) =>{
     try {      
       let requestStatus = await userService.changeRequestSatus(req.body.status, req.body.followerId, req.body.userId);
-      if(requestStatus) {
-        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: requestStatus, status: constants.STATUS_TRUE });
+      if(requestStatus.status) {
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: requestStatus.data, status: constants.STATUS_TRUE });
       }else{
-        return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_TRUE });
+        return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_FALSE });
       } 
     }catch(e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 
   api.post('/unfollowrequest', async (req, res) =>{
     try {      
       let unFollowStatus = await userService.unFollowRequest(req.body.followerId, req.body.userId);
-      if(unFollowStatus) {
-        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200,status: constants.STATUS_TRUE });
+      if(unFollowStatus.status) {
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200,status: constants.STATUS_TRUE });
       }else{
-        return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_TRUE });
+        return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_FALSE });
       } 
     }catch(e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
   api.get('/requestlist', async (req, res) =>{
     try {      
       const list = await userService.followerslist( req.query.userId);
-      if(list) {
-        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200,data:list, status: constants.STATUS_TRUE });
+      if(list.status) {
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200,data:list.data, status: constants.STATUS_TRUE });
       }else{
-        return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_TRUE });
+        return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_FALSE });
       } 
     }catch(e) {
       console.log("error", e)
-      return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
 

@@ -14,9 +14,16 @@ class UserService {
 
   async isUserExist(data) {
     try {
-      return await this.db.User.findOne({ $or: [{ email: data.email }, { mobile: data.mobile }] });
+      const data =  await this.db.User.findOne({ $or: [{ email: data.email }, { mobile: data.mobile }] });
+      return {
+        data:data,
+        status: true
+      }
     } catch (e) {
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
 
@@ -33,31 +40,53 @@ class UserService {
           "planType": plansData.planType
         }
         em.emit(eventNames.Assign_Plan_To_User, { userId: signupdata._id });
-        return obj;
+        return {
+          data:obj,
+          status: true
+        };
       }else {
-        return await this.db.User.create(data);
+         const data = await this.db.User.create(data);
+         return {
+          data:data,
+          status: true
+        }
       }
     } catch (e) {
       console.error("error", e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 
   async getUsers() {
     try {
-      let getusers = await this.db.User.find({}).sort({ createDate: -1 });
-      return getusers;
+      let getusers = await this.db.User.find({},{otp:0}).sort({ createDate: -1 });
+      return {
+        data:getusers,
+        status: true
+      };
     } catch (e) {
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 
   async getUser(id) {
     try {
-      let isUser = await this.db.User.findOne({ _id: id });
-      return isUser;
+      let isUser = await this.db.User.findOne({ _id: id },{otp:0});
+      return {
+        data:isUser,
+        status: true
+      };
     } catch (e) {
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 
@@ -68,9 +97,15 @@ class UserService {
         { $set: value },
         { new: true }
       );
-      return isActive;
+      return {
+        data:isActive,
+        status: true
+      };
     } catch (e) {
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 
@@ -81,9 +116,15 @@ class UserService {
         { $set: value },
         { new: true }
       );
-      return isDelete;
+      return {
+        data:isDelete,
+        status: true
+      };
     } catch (e) {
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
 
@@ -92,13 +133,22 @@ class UserService {
       const verifyMobile = await this.db.User.findOne({ mobile: mobile });
       if (verifyMobile) {
         //let otp = this.otpGen();
-        return await this.db.User.findOneAndUpdate({ _id: verifyMobile._id }, { otp: 2021, otpTime: Date.now }, { new: true });
+        await this.db.User.findOneAndUpdate({ _id: verifyMobile._id }, { otp: 2021, otpTime: Date.now }, { new: true });
+        return {
+          data:verifyMobile,
+          status: true
+        };
       } else {
-        return verifyMobile;
+        return {
+          data:null,
+          status: false
+        };
       }
     } catch (e) {
-
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
 
@@ -132,25 +182,45 @@ class UserService {
         ]);
         //console.log(userInfo,"userInfo");
         userInfo[0].token = await auth.create_token(loginUser._id, "Free", loginUser.userType);
-        return userInfo;
+        return {
+          data:userInfo,
+          status: true
+        };
       } else {
-        return loginUser;
+        return {
+          data:userInfo,
+          status: true
+        };
       }
     } catch (e) {
       console.log(e);
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
   async isSocialMediaIdExisted(id, type) {
     try {
       if (type == "google") {
-        return this.db.User.findOne({ googleId: id });
+        const data = await this.db.User.findOne({ googleId: id });
+        return {
+          data:data,
+          status: true
+        };        
       }
       if (type == "facebook") {
-        return this.db.User.findOne({ facebookId: id });
+        const data =  this.db.User.findOne({ facebookId: id });
+        return {
+          data:data,
+          status: true
+        };
       }
     } catch (e) {
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
   // home page cats and sub-cats
@@ -164,60 +234,96 @@ class UserService {
             as: "subcategories"
         }
       }]);      
-      return data;
+      return {
+        data:data,
+        status: true
+      }; 
     } catch (e) {
       console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
   async getGlobalAds(data) {
     try {
       //console.log(data,"-------");
       let globalAds = await this.db.GlobalAds.find({expiryDate:{$gte:new Date()}, active:true});
-      return globalAds;
+      return {
+        data:globalAds,
+        status: true
+      }; 
     } catch (e) {
       console.log("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
   async getRegionalAds(region) {
     try {
       //console.log(data,"-------");
       let regionads = await this.db.RegionAds.find({expiryDate:{$gte:new Date()}, active:true, region:region});
-      return regionAds;
+      return {
+        data:regionads,
+        status: true
+      };
     } catch (e) {
       console.log("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
   async generateRequest(data) {
     try {
       //console.log(data,"-------");
       let requestInfo = await this.db.Followers.create(data);
-      return requestInfo;
+      return {
+        data:requestInfo,
+        status: true
+      };
     } catch (e) {
       console.log("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
   async changeRequestSatus(status, followerId, userId) {
     try {
       //console.log(data,"-------");
       let requestInfo = await this.db.Followers.findOneAndUpdate({followedBy:followerId, userId:userId},{$set:{requestStatus:status}},{new:true});
-      return requestInfo;
+      return {
+        data:requestInfo,
+        status: true
+      };
     } catch (e) {
       console.log("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
   async unFollowRequest(status, followerId, userId) {
     try {
       //console.log(data,"-------");
       let requestInfo = await this.db.Followers.deleteOne({followedBy:followerId, userId:userId});
-      return requestInfo;
+      return {
+        data:requestInfo,
+        status: true
+      };
     } catch (e) {
       console.log("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
 
@@ -225,10 +331,16 @@ class UserService {
     try {
       //console.log(data,"-------");
       let list = await this.db.Followers.find({userId:userId});
-      return list;
+      return {
+        data:list,
+        status: true
+      };
     } catch (e) {
       console.log("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 

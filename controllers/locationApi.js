@@ -45,6 +45,7 @@ module.exports = function (express) {
       let data = await locationService.getCountry(req.params.id);
       res.status(constants.STATUS_200).send({
         statusCode: constants.STATUS_200,
+        status: constants.STATUS_TRUE ,
         message: constants.STATUS_MSG_200,
         data: data,
       });

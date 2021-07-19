@@ -125,7 +125,7 @@ module.exports = function (express,passport) {
   api.get('/regionalads', async (req, res) =>{
     try {
       if(req.query.q){
-        let data = await userService.getregionalAds(req.query.q);
+        let data = await userService.getRegionalAds(req.query.q);
         return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:data.data });
       }else{
         return res.res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_FALSE });

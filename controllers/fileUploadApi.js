@@ -6,27 +6,32 @@ module.exports = (app, express) => {
     let api = express.Router();
     api.post("/image", (req, res) => {
         upload.Imageupload(req, res, async (err) => {
-            if (!err) {
-                let promises = [];
-                for (let i = 0; i < req.files.length; i++) {
-                    promises.push(await workerService.imageWorkerInit(req.files[i]))
-                }
-                Promise.all(promises).then(async (data) => {
-                    try {
-                        await UserProfileService.galleryUpdate(req.body.profileId, data, "image")
-                        return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
-                    } catch (e) {
-                        console.log("error", e)
-                        return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            try {
+                if (!err) {
+                    let promises = [];
+                    for (let i = 0; i < req.files.length; i++) {
+                        promises.push(await workerService.imageWorkerInit(req.files[i]))
                     }
+                    Promise.all(promises).then(async (data) => {
+                        try {
+                            await UserProfileService.galleryUpdate(req.body.profileId, data, "image")
+                            return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+                        } catch (e) {
+                            console.log("error", e)
+                            return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                        }
 
-                }).catch(err => {
-                    console.log("error", err)
+                    }).catch(err => {
+                        console.log("error", err)
+                        return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                    })
+                } else {
+                    //console.log("err", err)
                     return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
-                })
-            } else {
-                console.log("err", err)
-                return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                }
+            }catch(e){
+                console.log("err", e)
+                    return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
             }
         })
     })
@@ -86,7 +91,7 @@ module.exports = (app, express) => {
                     arr.push({ filename: req.files[i].filename, originalName: req.files[i].originalname })
                 }
                 try {
-                    await UserProfileService.galleryUpdate(req.body.profileId, arr, "doc")
+                    await UserProfileService.galleryUpdate(req.body.profileId, arr, "audio")
                     return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: arr, status: constants.STATUS_TRUE });
                 } catch (e) {
                     console.log("error", e)

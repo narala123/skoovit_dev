@@ -13,7 +13,7 @@ class AdminService {
       return countryCreation;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   async fetchCategories(id) {
@@ -25,7 +25,7 @@ class AdminService {
       return fetchCountries;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   async updateCategory(cId, data) {
@@ -39,7 +39,7 @@ class AdminService {
       return updateCountry;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
 
@@ -50,7 +50,7 @@ class AdminService {
       return getCountry;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
 
@@ -61,7 +61,7 @@ class AdminService {
       return deletedCountry;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   /*
@@ -74,7 +74,7 @@ class AdminService {
       return stateCreation;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   async fetchSubCategories(catId) {
@@ -84,7 +84,7 @@ class AdminService {
       return fetchStates;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   async getSubCategory(subCId) {
@@ -94,7 +94,7 @@ class AdminService {
       return getState;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
 
@@ -105,7 +105,7 @@ class AdminService {
       return deletedState;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   async updateSubCategory(subCId, data) {
@@ -119,7 +119,7 @@ class AdminService {
       return updateState;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
 
@@ -133,7 +133,7 @@ class AdminService {
       return skill;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   };
   async fetchSkills(scId) {
@@ -143,7 +143,7 @@ class AdminService {
       return skills;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   };
 
@@ -157,7 +157,7 @@ class AdminService {
       return cityCreation;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   async fetchLanguages() {
@@ -167,7 +167,7 @@ class AdminService {
       return fetchCities;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   async getLanguage(id) {
@@ -177,7 +177,7 @@ class AdminService {
       return getCity;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
 
@@ -188,7 +188,7 @@ class AdminService {
       return deletedCity;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   async updateLanguage(id, data) {
@@ -202,7 +202,7 @@ class AdminService {
       return updateCity;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   };
   /*
@@ -215,7 +215,7 @@ class AdminService {
       return cityCreation;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   async fetchEducations() {
@@ -225,7 +225,7 @@ class AdminService {
       return fetchCities;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   async getEducation(id) {
@@ -235,7 +235,7 @@ class AdminService {
       return getCity;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
 
@@ -246,7 +246,7 @@ class AdminService {
       return deletedCity;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   }
   async updateEducation(id, data) {
@@ -260,7 +260,7 @@ class AdminService {
       return updateCity;
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      throw new Error(e);
     }
   };
   async createGlobalAds(data) {
@@ -270,7 +270,7 @@ class AdminService {
       return globalAd;
     } catch (e) {
       console.log("error", e)
-      return e.message;
+      throw new Error(e);
     }
   };
   async createRegionAds(data) {
@@ -280,7 +280,7 @@ class AdminService {
       return regionAd;
     } catch (e) {
       console.log("error", e)
-      return e.message;
+      throw new Error(e);
     }
   };
   async getGlobalAds(data) {
@@ -290,7 +290,7 @@ class AdminService {
       return globalAds;
     } catch (e) {
       console.log("error", e)
-      return e.message;
+      throw new Error(e);
     }
   };
   async getRegionalAds() {
@@ -300,7 +300,7 @@ class AdminService {
       return regionAds;
     } catch (e) {
       console.log("error", e)
-      return e.message;
+      throw new Error(e);
     }
   };
 }

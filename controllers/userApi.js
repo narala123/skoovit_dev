@@ -135,7 +135,7 @@ module.exports = function (express,passport) {
       return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
-  api.post('/userrequests', async (req, res) =>{
+  api.post('/sendrequests', async (req, res) =>{
     try {      
       let requestData = await userService.generateRequest(req.body);
       if(requestData.status) {

@@ -9,7 +9,7 @@ class UserProfileService {
             return await this.db.UserProfiles.create(data);
         } catch(e){
             console.log(e);
-            return e.message;
+            throw new Error(e);
         }
     };
 
@@ -17,8 +17,8 @@ class UserProfileService {
         try {
             return await this.db.UserProfiles.findOne({userId:userId});
         } catch(e) {
-            console.log(e);
-            return e.message;
+            console.log(e);            
+            throw new Error(e);;
         }
     };
 
@@ -32,7 +32,7 @@ class UserProfileService {
             }            
         } catch(e){
             console.log(e);
-            return e.message;
+            throw new Error(e);
         }
     };
 
@@ -41,7 +41,7 @@ class UserProfileService {
             return await this.db.UserProfiles.findOneAndUpdate({_id:profileId},{$set:{experience:data.experience}},{new:true});
         } catch(e) {
             console.log(e);
-            return e.message;
+            throw new Error(e);
         }
     };
     async userProfileUpdation(data, userId) {
@@ -49,7 +49,7 @@ class UserProfileService {
             return await this.db.UserProfiles.findOneAndUpdate({userId:userId},{$set:data},{new:true});
         } catch(e) {
             console.log(e);
-            return e.message;
+            throw new Error(e);
         }
     };
     async getUserProfile(profileId) {
@@ -73,7 +73,7 @@ class UserProfileService {
             ]);
         } catch(e) {
             console.log(e);
-            return e.message;
+            throw new Error(e);
         }
     };
     async getUserProfiles(filters) {
@@ -105,7 +105,7 @@ class UserProfileService {
             return data;
         } catch(e) {
             console.log(e);
-            return e.message;
+            throw new Error(e);
         }
     };
 
@@ -114,7 +114,7 @@ class UserProfileService {
         return await this.db.UserProfiles.updateOne({_id:profileId},this.getGalleryCondition(type,data)).sort({createDate:-1});
         }catch(e){
             console.log(e);
-            return e.message;
+            throw new Error(e);
         }
     };
     getGalleryCondition(type,data){

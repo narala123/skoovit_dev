@@ -7,21 +7,33 @@ class PlanService {
     try {
       //console.log(data,"-------");
       let createPlan = await this.db.Plans.create(data);
-      return createPlan;
+      return {
+        data: createPlan,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
 
   async createActivePlan(data) {
     try {
-      console.log(data,"------Active plans-");
+      //console.log(data, "------Active plans-");
       let createPlan = await this.db.ActivePlans.create(data);
-      return createPlan;
+      return {
+        data: createPlan,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
 
@@ -29,23 +41,35 @@ class PlanService {
     try {
       //console.log(data,"-------");
       let createPlan = await this.db.UserPlanTransactions.create(data);
-      return createPlan;
+      return {
+        data: createPlan,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
 
   async getFreePlan() {
     try {
       //console.log(data,"-------");
-      let freePlan = await this.db.Plans.findOne({planType:"Free"},{_id:1,planType:1});
-      return freePlan;
+      let freePlan = await this.db.Plans.findOne({ planType: "Free" }, { _id: 1, planType: 1 });
+      return {
+        data: freePlan,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
-  }; 
+  };
 
   async getPlans() {
     try {
@@ -53,21 +77,33 @@ class PlanService {
       let getPlans = await this.db.Plans.find({}).sort({
         createDate: -1,
       });
-      return getPlans;
+      return {
+        data: getPlans,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
 
   async getPlan(id) {
     try {
       //console.log(data,"-------");
-      let getPlan = await this.db.Plans.findOne({ _id: id });
-      return getPlan;
+      let getPlan = await this.db.Plans.findOne({ _id: i });
+      return {
+        data: getPlan,
+        status: true
+      };
     } catch (e) {
-      //console.error("error",e)
-      return e.message;
+      //console.error("error",e)      
+      return {
+        data: e.message,
+        status: false
+      }
     }
   };
 
@@ -79,20 +115,32 @@ class PlanService {
         { $set: data },
         { new: true }
       );
-      return updatePlan;
+      return {
+        data: updatePlan,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
   async deletePlan(id) {
     try {
       //console.log(data,"-------");
       let deletePlan = await this.db.Plans.deleteOne({ _id: id });
-      return deletePlan;
+      return {
+        data: deletePlan,
+        status: true
+      };
     } catch (e) {
       //console.error("error",e)
-      return e.message;
+      return {
+        data: e.message,
+        status: false
+      }
     }
   }
 }

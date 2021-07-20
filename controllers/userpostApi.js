@@ -29,22 +29,22 @@ module.exports = function (express) {
                     req.body.userId = req.user.userId;
                     const postData = await userPostService.createSelfPost(req.body);                    
                     if(postData.status){
-                        return res.json({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: postData.data, status: constants.STATUS_TRUE });
+                        return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: postData.data, status: constants.STATUS_TRUE });
                     }else{
-                        return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: postData.data, status: constants.STATUS_FALSE });
+                        return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: postData.data, status: constants.STATUS_FALSE });
                     }                    
                 } catch (e) {
                     console.log("error", e)
-                    return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                    return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                 }
             }).catch(err => {
                 console.log("error", err)
-                return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_500, data:err.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
             })
         })
         } catch(e){
             console.log("error", e)
-            return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_500,data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
     });
 api.post('/likesupdate/:postId', async (req, res)=>{
@@ -54,19 +54,19 @@ api.post('/likesupdate/:postId', async (req, res)=>{
             if(likesdata.status){
                 const data = await userPostService.selfPostLikesUpdate(likesdata.data._id, req.user.userId );
                 if(data.status){
-                    return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data.data, status: constants.STATUS_TRUE });
+                    return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data.data, status: constants.STATUS_TRUE });
                 }else{
-                    return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: data.data, status: constants.STATUS_FALSE });
+                    return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: data.data, status: constants.STATUS_FALSE });
                 }
             }else{
-                return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: "Invalid post", status: constants.STATUS_FALSE });
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: "Invalid post", status: constants.STATUS_FALSE });
             }
         }else{
-            return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: "Invalid URL", status: constants.STATUS_FALSE });
+            return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: "Invalid URL", status: constants.STATUS_FALSE });
         }
     }catch(e){
         console.log("error", e)
-        return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        return res.json({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
 });
 api.post('/viewsupdate/:postId', async (req, res)=>{
@@ -76,33 +76,33 @@ api.post('/viewsupdate/:postId', async (req, res)=>{
             if(viewsdata.status){
                 const data = await userPostService.selfPostViewsUpdate(viewsdata.data._id, req.user.userId );
                 if(data.status){
-                    return res.json({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data.data, status: constants.STATUS_TRUE });
+                    return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data.data, status: constants.STATUS_TRUE });
                 }else{
-                    return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: data.data, status: constants.STATUS_FALSE });
+                    return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: data.data, status: constants.STATUS_FALSE });
                 }
             }else{
-                return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: "Invalid post", status: constants.STATUS_FALSE });
+                return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: "Invalid post", status: constants.STATUS_FALSE });
             }
         }else{
-            return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: "Invalid URL", status: constants.STATUS_FALSE });
+            return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: "Invalid URL", status: constants.STATUS_FALSE });
         }
     }catch(e){
         console.log("error", e)
-        return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
 });
 api.get('/allselfposts', async (req, res)=>{
     try {
         const data = await userPostService.getUserSelfPosts(req.user.userId);   
         if(data.status){
-            return res.json({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data.data, status: constants.STATUS_TRUE });
+            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data.data, status: constants.STATUS_TRUE });
         }else{
-            return res.json({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: data.data, status: constants.STATUS_FALSE });
+            return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: data.data, status: constants.STATUS_FALSE });
         } 
        
     }catch(e){
         console.log("error", e)
-        return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
 });
 api.post("/postcomment",async (req,res)=>{
@@ -110,27 +110,27 @@ api.post("/postcomment",async (req,res)=>{
         req.body.userId = req.user.userId;
         const data = await userPostService.createComment(req.body);
         return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data, status: constants.STATUS_TRUE });
-    }catch(err){
-        console.log("error", err)
-        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }catch(e){
+        console.log("error", e)
+        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
 });
 api.put("/commentlikesupdate/:commentId",async (req,res)=>{
     try{
         const data =  await userPostService.commentLikesUpdate(req.params.commentId,req.user.userId);
         return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data.data, status: constants.STATUS_TRUE });
-    }catch(err){
-        console.log("error", err)
-        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }catch(e){
+        console.log("error", e)
+        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
 });
 api.get("/getcomments/:postId",async (req,res)=>{
     try{
        const data = await userPostService.userComments(req.params.postId,req.user.userId);
-       return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data, status: constants.STATUS_TRUE });
-    }catch(err){
-        console.log("error", err)
-        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+       return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+    }catch(e){
+        console.log("error", e)
+        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message,  message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
 });
 

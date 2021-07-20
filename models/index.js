@@ -24,7 +24,9 @@ class Models {
       RegionAds:require("./region-ads"),
       Followers:require("./followers"),
       UserPosts:require("./user-posts"),
-      Skills:require("./skills")
+      Skills:require("./skills"),
+      UserPostComments:require("./user-post-comments"),
+      UserPostSubComments:require('./user-post-subcomments')
     };
   }
 }

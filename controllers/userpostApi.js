@@ -105,7 +105,34 @@ api.get('/allselfposts', async (req, res)=>{
         return res.json({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
 });
-
+api.post("/postcomment",async (req,res)=>{
+    try{
+        req.body.userId = req.user.userId;
+        const data = await userPostService.createComment(req.body);
+        return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data, status: constants.STATUS_TRUE });
+    }catch(err){
+        console.log("error", err)
+        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }
+});
+api.put("/commentlikesupdate/:commentId",async (req,res)=>{
+    try{
+        const data =  await userPostService.commentLikesUpdate(req.params.commentId,req.user.userId);
+        return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data.data, status: constants.STATUS_TRUE });
+    }catch(err){
+        console.log("error", err)
+        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }
+});
+api.get("/getcomments/:postId",async (req,res)=>{
+    try{
+       const data = await userPostService.userComments(req.params.postId,req.user.userId);
+       return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data, status: constants.STATUS_TRUE });
+    }catch(err){
+        console.log("error", err)
+        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }
+});
 
 return api;
 };  

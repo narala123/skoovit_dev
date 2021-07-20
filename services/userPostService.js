@@ -1,6 +1,6 @@
 const db = require("../models");
 const auth = require("../config/middlewares/authorization");
-
+const mongoose = require('mongoose');
 class UserService {
     constructor() {
       this.db = db;
@@ -101,6 +101,14 @@ class UserService {
             as: "userInfo"
           }
         },
+        {
+          $lookup:{
+            from:"userpostcomments",
+            localField:"_id",
+            foreignField:"postId",
+            as:"commentsInfo"
+          }
+        },
         {$unwind:"$userInfo"},
         {
           $project:{
@@ -117,8 +125,10 @@ class UserService {
             isActive:1,
             name:"$userInfo.fullName",
             email:"$userInfo.email",
-            profilePic:"$userInfo.profileUrl"
-            
+            profilePic:"$userInfo.profileUrl",
+            viewsCount:{$size: "$views"},
+            likesCount:{$size: "$likes"},
+            commentsCount: { $cond: { if: { $isArray: "$commentsInfo" }, then: { $size: "$commentsInfo" }, else: "NA"} },
           }
         }
       ]);
@@ -139,6 +149,82 @@ class UserService {
       };
     } 
   };
+ async createComment(commentInfo){
+   try{
+    let saveComment = await this.db.UserPostComments.create(commentInfo);
+    return saveComment
+   }catch(err){
+    throw new Error(err.message)
+   }
+ }
+
+ async commentLikesUpdate(commentId,userId){
+  let query = {};
+  let msg;
+  try{
+  const isLikeExisted = await  this.db.UserPostComments.findOne({_id:commentId,likes:{$in:[userId]}});
+  if(isLikeExisted){
+    query = {$pull:{likes:{$in:[userId]}}};
+    msg = "unliked"
+  }else{
+    query = {$push:{likes:userId}};
+    msg = "liked"
+  }      
+  const likeStatus = await this.db.UserPostComments.updateOne({_id:commentId},query);
+  return {
+    data: msg,
+    status:true
+  };
+}catch(err){
+   throw new Error(err.message);
+}
+ }
+ async userComments(postId,userId){
+  try {
+    
+    let postData = await this.db.UserPostComments.aggregate([{$match:{postId:mongoose.Types.ObjectId(postId)}},{
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "userInfo"
+      }
+    },
+    {
+      $lookup:{
+        from:"userpostsubcomments",
+        localField:"_id",
+        foreignField:"commentId",
+        as:"commentsInfo"
+      }
+    },
+    {$unwind:"$userInfo"},
+    {
+      $project:{
+        comment:1,
+        likes:1,
+        isActive:1,
+        name:"$userInfo.fullName",
+        email:"$userInfo.email",
+        profilePic:"$userInfo.profileUrl",
+        likesCount:{$size: "$likes"},
+        subCommentsCount: { $cond: { if: { $isArray: "$commentsInfo" }, then: { $size: "$commentsInfo" }, else: "NA"} },
+      }
+    }
+  ]);
+  postData = postData.filter(val=>{
+    (val.likes.includes(userId))?val["isLiked"] = true:val["isLiked"] = false;
+    return val
+  })
+  return postData;
+    
+  }catch(err){
+    console.log(err);
+    throw new Error(err.message);
+  } 
+ }
 };
+
+
 
 module.exports = new UserService();

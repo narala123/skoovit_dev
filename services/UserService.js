@@ -127,7 +127,18 @@ class UserService {
       }
     }
   };
-
+  async profilePicUpdate(id, value) {
+    try {
+      let profileInfo = await this.db.User.findOneAndUpdate(
+        { _id: id },
+        { $set: value },
+        { new: true }
+      );
+      return profileInfo
+    } catch (e) {
+      throw e.message;
+    }
+  };
   async sendOtp(mobile) {
     try {
       const verifyMobile = await this.db.User.findOne({ mobile: mobile });

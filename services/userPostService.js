@@ -223,6 +223,48 @@ class UserService {
       throw new Error(err);
     }
   }
+  async createSubComments(commentInfo){
+    try {
+      let saveComment = await this.db.UserPostSubComments.create(commentInfo);
+      return saveComment
+    } catch (err) {
+      throw new Error(err)
+    }
+  }
+  async userSubComments(commentId, userId) {
+    try {
+
+      let postData = await this.db.UserPostSubComments.aggregate([{ $match: { commentId: mongoose.Types.ObjectId(commentId) } }, {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userInfo"
+        }
+      },
+      { $unwind: "$userInfo" },
+      {
+        $project: {
+          comment: 1,
+          likes: 1,
+          isActive: 1,
+          name: "$userInfo.fullName",
+          email: "$userInfo.email",
+          profilePic: "$userInfo.profileUrl",
+        }
+      }
+      ]);
+      postData = postData.filter(val => {
+        (val.likes.includes(userId)) ? val["isLiked"] = true : val["isLiked"] = false;
+        return val
+      })
+      return postData;
+
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  }
 };
 
 

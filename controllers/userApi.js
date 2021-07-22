@@ -4,6 +4,7 @@ let userService = require("../services/UserService");
 let userRoleService = require('../services/userRoleService');
 const em = require('../utils/event-emitter');
 const eventNames = require('../config/event-emitter-constants');
+const upload = require("../config/middlewares/multerConfig");
 //const passport = require("../config/middlewares/passportAuthentication");
 module.exports = function (express,passport) {
   let api = express.Router();
@@ -276,6 +277,20 @@ module.exports = function (express,passport) {
     // --> "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGYyZjFiMjdhODhiMjIwZDA1NzMwNTEiLCJwbGFuSWQiOiI2MGIxMTlkMmJjZjNiOTQwNmM2MGRlYzciLCJpYXQiOjE2MjY1MzQ3MTF9.7yCvl5AdcMC38R_UC398vxHt-uiqZzwhUuPJBJbnfYU"
   });
 
+  api.put("/profilepic",async(req,res)=>{
+    upload.Imageupload(req, res, async (err) => {
+       try{
+        let obj = {};
+        obj["profileUrl"] = req.files[0].filename
+        let data = await userService.profilePicUpdate(req.user.userId,obj);
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:data });
+      } catch (e) {
+        console.log("error", e)
+        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+      }
+
+    })
+  })
 
 
   return api;

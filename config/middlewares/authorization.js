@@ -20,7 +20,6 @@ module.exports.isValidUser = async function (req,res,next){
 		//console.log(token,"token");
 		const data = await verify_token(token)		
 		if(data){
-			console.log(data,"viwed person id")
 			const isUserExisted = await userService.getUser(data.userId);
 			if(isUserExisted){
 				req.user = data;

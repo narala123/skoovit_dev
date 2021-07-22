@@ -89,6 +89,7 @@ const UserProfile = new Schema({
         },
         about:{ type: String }
     },
+    watchedUsers:{type: Array },
     isActive:{ type: Boolean, default: true },
     createDate:{ type:Date, default:Date.now },
     modifiedDate:{ type:Date, default:Date.now }

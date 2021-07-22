@@ -52,6 +52,7 @@ class UserProfileService {
             throw new Error(e);
         }
     };
+    // with post gallery
     async getUserProfile(profileId) {
         try {
             return await this.db.UserProfiles.aggreagte([{$match:{_id:profileId}},
@@ -76,6 +77,7 @@ class UserProfileService {
             throw new Error(e);
         }
     };
+    // for all registered user profiles
     async getUserProfiles(filters) {
         try {     
             let obj = {};       
@@ -108,6 +110,43 @@ class UserProfileService {
             throw new Error(e);
         }
     };
+    // for profiles wathed  user profiles list
+    async getUserProfileViwersList(viwersList) {
+        try { 
+            const data = await this.db.UserProfiles.aggregate([{$match:{userId:{$in:viwersList}}},{$lookup:{
+                from: "countries",
+                localField: "country",
+                foreignField: "_id",
+                as: "countryName"
+                }},{$lookup:{
+                    from: "cities",
+                    localField: "city",
+                    foreignField: "_id",
+                    as: "cityName"
+                }},
+                {$lookup:{
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "userInfo"
+                }}
+            ]);
+            return data;
+        } catch(e) {
+            console.log(e);
+            throw new Error(e);
+        }
+    };
+
+    async userProfileViwedListUpdate(userId, toUserId) {
+        try {
+            const data = await this.db.UserProfiles.updateOne({userId:toUserId},{$addToSet:{watchedUsers:userId}});
+            return data;
+        } catch(e) {
+            console.log(e);
+            throw new Error(e);
+        }
+    }
 
     async galleryUpdate(profileId, data,type){
        try{

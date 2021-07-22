@@ -6,6 +6,7 @@ const userProfileService = require("../services/userProfileService");
 
 module.exports = function (express) {
     let api = express.Router();
+    api.use(userPermission.isValidUser); // token checking below all api's
     api.post('/create/:id', async (req, res) => {
         try {
             const isUserExisted = await userService.getUser(req.params.id);
@@ -69,6 +70,21 @@ module.exports = function (express) {
             return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message,  message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
     });
+    // if profiles checks any one their userid will update in wathedUSers list
+    api.post('/watched', async (req, res)=>{
+        try {   
+            const viewersUpdate = await userProfileService.userProfileViwedListUpdate(req.user.userId, req.body.toUserId);
+            if(viewersUpdate){
+                return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: viewersUpdate });
+            }else{
+                return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: "Invalid post", status: constants.STATUS_FALSE });
+            }            
+        }catch(e){
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+    // for all registered profiles list
     api.get('/allprofilesinfo', async (req, res) => {
         try {
             // console.log(req.query.filters);
@@ -84,7 +100,22 @@ module.exports = function (express) {
             return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message,  message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
     });
-    
+    // for user profiles who wathed their list
+    api.get('/viwerslist', async (req, res) => {
+        try {
+            // console.log(req.query.filters);   
+            const viwedUsers = await userProfileService.getUserProfileWithUserId(req.user.userId);  
+            if (viwedUsers) {
+                const fetchProfiles = await userProfileService.getUserProfileViwersList(viwedUsers.watchedUsers);
+                return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: fetchProfiles });
+            } else {
+                return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            }
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message,  message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
 
     // api.get('/userprofiles', async (req, res)=>{
     //     try {

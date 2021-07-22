@@ -62,6 +62,7 @@ module.exports = function (express,passport) {
     }
   });
 
+  api.use(userPermission.isValidUser); // token checking below all api's
   api.get("/getusers", async (req, res) => {
     try {
       let data = await userService.getUsers();
@@ -180,6 +181,19 @@ module.exports = function (express,passport) {
   api.get('/requestlist', async (req, res) =>{
     try {      
       const list = await userService.followerslist( req.query.userId);
+      if(list.status) {
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200,data:list.data, status: constants.STATUS_TRUE });
+      }else{
+        return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_FALSE });
+      } 
+    }catch(e) {
+      console.log("error", e)
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }
+  });
+  api.get('/fanslist', async (req, res) =>{
+    try {      
+      const list = await userService.requestAcceptedfansList( req.user.userId);
       if(list.status) {
         return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200,data:list.data, status: constants.STATUS_TRUE });
       }else{

@@ -342,6 +342,46 @@ class UserService {
       }
     }
   }
+  async requestAcceptedfansList(userId){
+    try {
+      let list = await this.db.Followers.aggregate([{$match:{userId:userId}},
+        {
+          $lookup:{
+            from: "users",
+            localField: "followedBy",
+            foreignField: "_id",
+            as: "fansInfo"
+          }
+        },
+        { $unwind:"$fansInfo" },
+        {
+          $lookup:{
+            from: "userprofile",
+            localField: "followedBy",
+            foreignField: "userId",
+            as: "fanProfileInfo"
+          }
+        },
+        { $unwind:"$fanProfileInfo" },
+        {
+          $project:{
+            "email": "$fansInfo.email",
+            "fullName": "$fansInfo.fullName",
+            "profileUrl":"$fansInfo.profileUrl",
+            "userName":"$fanProfileInfo.userName",
+            "category":"$fanProfileInfo.category"
+          }
+        }
+    ]);
+      return list;
+    } catch(e){
+      console.log("error",e)
+      return {
+        data: e.message,
+        status: false
+      }
+    }
+  }
 
 }
 

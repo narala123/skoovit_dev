@@ -137,6 +137,8 @@ module.exports = function (express,passport) {
       return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
+  
+  // one user can send(followedBy) the friend request to another user(userId)
   api.post('/sendrequests', async (req, res) =>{
     try {      
       let requestData = await userService.generateRequest(req.body);
@@ -151,7 +153,7 @@ module.exports = function (express,passport) {
     }
   });
   
-
+  // user can change the request status of request
   api.post('/requeststatus', async (req, res) =>{
     try {      
       let requestStatus = await userService.changeRequestSatus(req.body.status, req.body.followerId, req.body.userId);
@@ -192,9 +194,26 @@ module.exports = function (express,passport) {
       return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
   });
+
+  // get requested accpted fans list
   api.get('/fanslist', async (req, res) =>{
     try {      
       const list = await userService.requestAcceptedfansList( req.user.userId);
+      if(list.status) {
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200,data:list.data, status: constants.STATUS_TRUE });
+      }else{
+        return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_FALSE });
+      } 
+    }catch(e) {
+      console.log("error", e)
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }
+  });
+
+  // for user follwed and his followers list for tagpeople at self post
+  api.get('/tagfanslist', async (req, res) =>{
+    try {      
+      const list = await userService.getToTagFansList( req.user.userId);
       if(list.status) {
         return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200,data:list.data, status: constants.STATUS_TRUE });
       }else{
@@ -267,7 +286,7 @@ module.exports = function (express,passport) {
     
     // liked UserId --> 60f2f1b27a88b220d0573051
     // planId --> 60b119d2bcf3b9406c60dec7
-    const data = await userPermission.create_token("60f2f1b27a88b220d0573051","60b119d2bcf3b9406c60dec7");
+    const data = await userPermission.create_token("60b119e0bcf3b9406c60dec8","60b119d2bcf3b9406c60dec7");
     return res.json({message:"token", authorization:data});
 
     // login userId token 

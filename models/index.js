@@ -26,7 +26,10 @@ class Models {
       UserPosts:require("./user-posts"),
       Skills:require("./skills"),
       UserPostComments:require("./user-post-comments"),
-      UserPostSubComments:require('./user-post-subcomments')
+      UserPostSubComments:require('./user-post-subcomments'),
+      RequirementPosts:require('./user-requirement-post'),
+      UserAdvProfiles:require('./user-advertisement'),
+      Notifications:require('./notifications')
     };
   }
 }

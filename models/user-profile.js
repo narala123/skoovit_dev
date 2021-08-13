@@ -79,6 +79,7 @@ const UserProfile = new Schema({
         ]
     },
     entityForm:{
+        logo_url:{ type: String },
         name:{ type: String },
         contactPerson:{ type: String },
         estdYear:{ type: String },
@@ -87,7 +88,8 @@ const UserProfile = new Schema({
             longitude:{ type: String },
             lattitude:{ type: String }
         },
-        about:{ type: String }
+        about:{ type: String },
+        servicesOffers:[]
     },
     watchedUsers:{type: Array },
     isActive:{ type: Boolean, default: true },

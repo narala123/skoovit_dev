@@ -1,5 +1,5 @@
 const db = require("../models");
-
+const mongoose = require('mongoose');
 class UserProfileService {
     constructor() {
         this.db = db;
@@ -81,7 +81,7 @@ class UserProfileService {
                                     "input": "$postInfo",
                                     "as": "post",
                                     "cond": {
-                                        "$eq": [ "$$post.visibleTo", "public" ]
+                                        "$eq": ["$$post.visibleTo", "public"]
                                     }
                                 }
                             }, 0
@@ -217,14 +217,87 @@ class UserProfileService {
 
     };
 
-    // async profileSearchFilter(filterInfo){
-    //     try {
-    //         if()
-    //         const data = 
-    //     }catch(e){
+    // entity logo updation
+    async entityUpdate(userId, eInfo) {
+        try {
+            const entityInfo = await this.db.UserProfiles.findOneAndUpdate(
+                { userId: mongoose.Types.ObjectId(userId) },
+                { $set: { entityForm: eInfo } },
+                { new: true }
+            );
+            return entityInfo
+        } catch (e) {
+            throw new Error(e);
+        }
+    };
 
-    //     }
-    // }
+    // create requirement posts  updateRequirement
+    async createRequirement(data) {
+        try {
+            const requirementPost = await this.db.RequirementPosts.create(data);
+            return requirementPost;
+        } catch (e) {
+            throw new Error(e);
+        }
+    };
+
+    // update requirement posts  
+    async updateRequirement(data, reqId) {
+        try {
+            const requirementPost = await this.db.RequirementPosts.findOneAndUpdate({ _id: reqId }, { $set: data });
+            return requirementPost;
+        } catch (e) {
+            throw new Error(e);
+        }
+    };
+
+
+    // [{"city":"60e7b35230bb5f2bbcebc0cf"},{"country":"60e7b30330bb5f2bbcebc0cc"},{"state":"60e7b33b30bb5f2bbcebc0ce"},{"languages":"Telugu"},{"category":"Actor"},{"subcategory":"side Actor"},{"gender":"Male"}]
+    // get all requirments by userId (user self reqs) getAllRequirements
+    async getRequirementsByUserId(userId, filters) {
+        try {
+            let obj = {};
+            if (filters.length > 0) {
+                obj = {
+                    userId: userId,
+                    $or: filters
+                }
+            }else{
+                obj = {
+                    userId: userId                    
+                }
+            };
+            const reqPosts = await this.db.RequirementPosts.aggregate([{ $mathc: obj }]);
+            return reqPosts;
+        } catch (e) {
+            throw new Error(e);
+        }
+    };
+
+    // get all requirments to all registered users 
+    async getAllRequirements(filters) {
+        try {
+            let obj = {};
+            if (filters.length > 0) {
+                obj = {
+                    expiredOn : { 
+                        $gte: new Date()
+                    },                 
+                    $or: filters
+                }
+            }else{
+                obj = {
+                    expiredOn : { 
+                        $gte: new Date()
+                    }
+                }
+            }
+            const reqPosts = await this.db.RequirementPosts.aggregate([{ $mathc: obj }]);
+            return reqPosts;
+        } catch (e) {
+            throw new Error(e);
+        }
+    };
 };
 
 module.exports = new UserProfileService();

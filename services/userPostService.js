@@ -1,5 +1,8 @@
 const db = require("../models");
 const auth = require("../config/middlewares/authorization");
+const em = require('../utils/event-emitter');
+const eventNames = require('../config/event-emitter-constants');
+
 const mongoose = require('mongoose');
 class UserService {
   constructor() {
@@ -37,6 +40,9 @@ class UserService {
       };
     }
   };
+
+
+  // user post like and unlikes
   async selfPostLikesUpdate(postId, userId) {
     try {
       let query = {};
@@ -50,6 +56,14 @@ class UserService {
         msg = "liked"
       }
       const likeStatus = await this.db.UserPosts.updateOne({ _id: postId }, query);
+      if(msg == "liked"){
+        let obj = {};
+        obj["entity_type"] = "Like";
+        obj["userId"] = userId;
+        obj["postId"] = postId;
+        obj["recieverId"] = ifLikeExisted.userId;
+        em.emit(eventNames.GENERATE_NOTIFICATION, obj);
+      }
       return {
         data: msg,
         status: true
@@ -149,9 +163,13 @@ class UserService {
       };
     }
   };
+  // save comment on user posts
   async createComment(commentInfo) {
     try {
       let saveComment = await this.db.UserPostComments.create(commentInfo);
+      let obj = { ...saveComment };
+      obj["entity_type"] = "Comment";
+      em.emit(eventNames.GENERATE_NOTIFICATION, obj);
       return saveComment
     } catch (err) {
       throw new Error(err)
@@ -170,7 +188,7 @@ class UserService {
         query = { $push: { likes: userId } };
         msg = "liked"
       }
-      const likeStatus = await this.db.UserPostComments.updateOne({ _id: commentId }, query);
+      const likeStatus = await this.db.UserPostComments.updateOne({ _id: commentId }, query);     
       return {
         data: msg,
         status: true

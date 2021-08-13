@@ -136,7 +136,7 @@ class UserService {
       );
       return profileInfo
     } catch (e) {
-      throw e.message;
+      throw new Error(e);
     }
   };
   async sendOtp(mobile) {
@@ -288,10 +288,14 @@ class UserService {
       }
     }
   };
+  // followed by means follower(who has sent a friend request) and userId means logged in users- userId
   async generateRequest(data) {
     try {
       //console.log(data,"-------");
-      let requestInfo = await this.db.Followers.create(data);
+      const requestInfo = await this.db.Followers.create(data);
+      let obj = {...requestInfo};
+      obj["entity_type"] = "Request";      
+      em.emit(eventNames.GENERATE_NOTIFICATION, obj);
       return {
         data:requestInfo,
         status: true
@@ -304,10 +308,17 @@ class UserService {
       }
     }
   };
+  // to change the request status of friend request (default--> pending, user can change to Accept/reject)
+  // followerId is request Raised person id and user id mean logged in users id he can change the status
   async changeRequestSatus(status, followerId, userId) {
     try {
       //console.log(data,"-------");
       let requestInfo = await this.db.Followers.findOneAndUpdate({followedBy:followerId, userId:userId},{$set:{requestStatus:status}},{new:true});
+      let obj = {...requestInfo};
+      if(obj['requestStatus'] == "Accept") {
+        obj["entity_type"] = "Accept";      
+        em.emit(eventNames.GENERATE_NOTIFICATION, obj);
+      }      
       return {
         data:requestInfo,
         status: true
@@ -381,6 +392,45 @@ class UserService {
             "profileUrl":"$fansInfo.profileUrl",
             "userName":"$fanProfileInfo.userName",
             "category":"$fanProfileInfo.category"
+          }
+        }
+    ]);
+      return list;
+    } catch(e){
+      console.log("error",e)
+      return {
+        data: e.message,
+        status: false
+      }
+    }
+  }
+  // to get followed by and followers list at tags people
+  async getToTagFansList(userId){
+    try {
+      let list = await this.db.Followers.aggregate([{$match:{$or:[{userId:userId, followedBy:userId}]}},
+        {
+          $lookup:{
+            from: "users",
+            localField: "followedBy",
+            foreignField: "_id",
+            as: "userFollowedInfo"
+          }
+        },
+        { $unwind:"$userFollowedInfo" },
+        {
+          $lookup:{
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userFollowersInfo"
+          }
+        },
+        { $unwind:"$fanProfileInfo" },
+        {
+          $project:{
+            "email": "$userFollowedInfo.email",
+            "fullName": "$userFollowedInfo.fullName",
+            "profileUrl":"$userFollowedInfo.profileUrl"            
           }
         }
     ]);

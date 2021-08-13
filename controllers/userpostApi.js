@@ -91,6 +91,8 @@ api.post('/viewsupdate/:postId', async (req, res)=>{
         return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
 });
+
+// get all users self posts to all fans created posts
 api.get('/allselfposts', async (req, res)=>{
     try {
         const data = await userPostService.getUserSelfPosts(req.user.userId);   
@@ -104,6 +106,8 @@ api.get('/allselfposts', async (req, res)=>{
         return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
 });
+
+// create comment on users posts (req.body need userId, and PostId and comment)
 api.post("/postcomment",async (req,res)=>{
     try{
         req.body.userId = req.user.userId;
@@ -114,6 +118,8 @@ api.post("/postcomment",async (req,res)=>{
         return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
 });
+
+// to update likes count on users posts 
 api.put("/commentlikesupdate/:commentId",async (req,res)=>{
     try{
         const data =  await userPostService.commentLikesUpdate(req.params.commentId,req.user.userId);
@@ -123,6 +129,8 @@ api.put("/commentlikesupdate/:commentId",async (req,res)=>{
         return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
     }
 });
+
+// get comments on user posts
 api.get("/getcomments/:postId",async (req,res)=>{
     try{
        const data = await userPostService.userComments(req.params.postId,req.user.userId);
@@ -133,6 +141,7 @@ api.get("/getcomments/:postId",async (req,res)=>{
     }
 });
 
+// write sub comments on user post comments
 api.post("/postsubcomment",async (req,res)=>{
     try{
         req.body.userId = req.user.userId;
@@ -144,6 +153,7 @@ api.post("/postsubcomment",async (req,res)=>{
     }
 });
 
+// get sub comments on user post commnets
 api.get("/getsubcomments/:commentId",async (req,res)=>{
     try{
        const data = await userPostService.userSubComments(req.params.commentId,req.user.userId);

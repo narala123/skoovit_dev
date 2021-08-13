@@ -51,8 +51,8 @@ class NotificationService {
             throw new Error(e);
         }
     };
-    // to update notifications for update read false/true delete 
-    async updatedeleteNotifications(notificationId) {
+    // to update notifications for delete status as true 
+    async updateDeleteNotifications(notificationId) {
         try {
             //console.log(data,"-------");
             const data = await this.db.Notifications.findOneUpdate({_id:notificationId},{$set:{isDelete:true}});

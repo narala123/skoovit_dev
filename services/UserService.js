@@ -45,9 +45,9 @@ class UserService {
           status: true
         };
       }else {
-         const data = await this.db.User.create(data);
+         const signupdata = await this.db.User.create(data);
          return {
-          data:data,
+          data:signupdata,
           status: true
         }
       }

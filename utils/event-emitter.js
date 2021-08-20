@@ -16,12 +16,14 @@ class Events {
     intializeListeners() {        
         this.em.on(this.eventNames.Assign_Plan_To_User, async(data)=>{
         let planDetails = await this.plansService.getFreePlan();
-        planDetails = JSON.parse(JSON.stringify(planDetails));        
-        planDetails["userId"] = data.userId;
-        planDetails["planId"] = planDetails._id;  
-        delete planDetails._id;
-        await this.plansService.createActivePlan(planDetails);
-        await this.plansService.createPlanHistory(planDetails);
+        planDetails = JSON.parse(JSON.stringify(planDetails));   
+        let obj = {};     
+        obj["userId"] = data.userId;
+        obj["planId"] = planDetails.data._id;  
+        obj["planType"] = planDetails.data.planType; 
+        delete planDetails.data._id;
+        await this.plansService.createActivePlan(obj);
+        await this.plansService.createPlanHistory(obj);
       });
       this.em.on(this.eventNames.GENERATE_NOTIFICATION, async(data)=>{
         let notifyObj = await this.getNotificationObject(data);

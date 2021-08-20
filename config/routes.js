@@ -24,7 +24,7 @@ module.exports = function (app, express,passport) {
   app.use('/userpost', userPostApi);
 
   let userAdvProfileApi = require("../controllers/userAdvProfileApi")(express);
-  app.use('/user', userAdvProfileApi);
+  app.use('/useradv', userAdvProfileApi);
 
   let notificationApi = require("../controllers/notificationApi")(express);
   app.use('/notification',notificationApi);

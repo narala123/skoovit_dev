@@ -194,7 +194,7 @@ class UserService {
         userInfo[0].token = await auth.create_token(loginUser._id, "Free", loginUser.userType);
         return {
           data:userInfo,
-          status: true
+          status:  true
         };
       } else {
         return {

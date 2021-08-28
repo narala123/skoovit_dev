@@ -70,7 +70,7 @@ module.exports = (app, express) => {
                 if (!err) {
                     let arr = [];
                     let obj = {};
-                    for (let i = 0; req.files.length; i++) {
+                    for (let i = 0; i<req.files.length; i++) {
                         obj["filename"] = req.files[i].filename;
                         obj["originalName"] = req.files[i].originalname;
                         arr.push(JSON.parse(JSON.stringify(obj)));
@@ -99,7 +99,7 @@ module.exports = (app, express) => {
                 if (!err) {
                     let arr = [];
                     let obj = {};
-                    for (let i = 0; req.files.length; i++) {
+                    for (let i = 0; i<req.files.length; i++) {
                         obj["filename"] = req.files[i].filename;
                         obj["originalName"] = req.files[i].originalname;
                         arr.push(JSON.parse(JSON.stringify(obj)));

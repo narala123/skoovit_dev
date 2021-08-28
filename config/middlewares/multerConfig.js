@@ -6,7 +6,7 @@ class MulterConfg {
     constructor(){
         this.Imageupload = multer({storage: this.destinationStorage(), fileFilter:this.filterImage}).array('image');
         this.Videoupload = multer({storage: this.destinationStorage(), fileFilter:this.filterVideo}).array('video');
-        this.docUpload = multer({storage: this.destinationStorage(),fileFilter:this.filterdoc, limits:{fileSize:1000}}).array('doc');
+        this.docUpload = multer({storage: this.destinationStorage(),fileFilter:this.filterdoc, limits:{fieldSize:1*1024*1024}}).array('doc');
         this.audioUpload = multer({storage: this.destinationStorage()}).array('audio');
         this.ImgVideoUpload = multer({storage: this.destinationStorage()}).array('image');
     }

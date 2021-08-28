@@ -69,8 +69,12 @@ module.exports = (app, express) => {
             upload.docUpload(req, res, async (err) => {
                 if (!err) {
                     let arr = [];
+                    let obj = {};
                     for (let i = 0; req.files.length; i++) {
-                        arr.push({ filename: req.files[i].filename, originalName: req.files[i].originalname })
+                        obj["filename"] = req.files[i].filename;
+                        obj["originalName"] = req.files[i].originalname;
+                        arr.push(JSON.parse(JSON.stringify(obj)));
+                        obj = {};
                     }
                     try {
                         await UserProfileService.galleryUpdate(req.body.profileId, arr, "doc")
@@ -94,8 +98,12 @@ module.exports = (app, express) => {
             upload.audioUpload(req, res, async (err) => {
                 if (!err) {
                     let arr = [];
+                    let obj = {};
                     for (let i = 0; req.files.length; i++) {
-                        arr.push({ filename: req.files[i].filename, originalName: req.files[i].originalname })
+                        obj["filename"] = req.files[i].filename;
+                        obj["originalName"] = req.files[i].originalname;
+                        arr.push(JSON.parse(JSON.stringify(obj)));
+                        obj = {};
                     }
                     try {
                         await UserProfileService.galleryUpdate(req.body.profileId, arr, "audio")

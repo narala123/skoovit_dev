@@ -97,7 +97,11 @@ class UserProfileService {
             {
                 $project: {
                     followersInfo: 1,
-                    followersCount: { "$size": "$followersInfo" }
+                    followersCount: { "$size": "$followersInfo" },
+                    gallery:1,
+                    experience:1,
+                    _id:1
+
                 }
             }
             ]);

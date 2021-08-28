@@ -10,7 +10,7 @@
 
         <script>
 
-            let socket = io('http://localhost:3003/chat',{query:"data="+JSON.stringify({userId:1})});
+            let socket = io('http://localhost:3002/chat',{query:"data="+JSON.stringify({userId:1})});
             socket.on('connect', function(){
              //socket.emit("test", "hello from client");
              socket.emit("hello","hello from client");

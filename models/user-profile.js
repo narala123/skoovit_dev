@@ -27,6 +27,7 @@ const UserProfile = new Schema({
             platFormType:{ type: String },
             followers: { type: Number },
             isActive:{ type: Boolean, default:true },
+            followersCount:{ type: Number, default:0 }
         }
     ],
     experience:[

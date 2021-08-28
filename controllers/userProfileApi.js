@@ -15,7 +15,7 @@ module.exports = function (express) {
             }
             const isProfileExisted = await userProfileService.getUserProfileWithUserId(req.params.id);
             if (isProfileExisted) {
-                req.body["userId"] = isUserExisted._id;
+                req.body["userId"] = isUserExisted.data._id;
                 const updateProfile = await userProfileService.userProfileUpdation(req.body, req.params.id);
                 if (updateProfile && updateProfile != null) {
                     return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, status: constants.STATUS_TRUE, data: updateProfile });
@@ -23,7 +23,7 @@ module.exports = function (express) {
                     return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                 }
             } else {
-                req.body["userId"] = isUserExisted._id;
+                req.body["userId"] = isUserExisted.data._id;
                 const createProfile = await userProfileService.createUserProfile(req.body);
                 if (createProfile && createProfile != null) {
                     return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, status: constants.STATUS_TRUE, data: createProfile });
@@ -40,7 +40,7 @@ module.exports = function (express) {
         try {
             const isProfileExisted = await userProfileService.isProfileExisted(req.params.uId, req.params.pId);
             if (!isProfileExisted) {
-                return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
             }
             const updateProfile = await userProfileService.updateUserProfile(req.body, req.params.pId);
             if (updateProfile) {

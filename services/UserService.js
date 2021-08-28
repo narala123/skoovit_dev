@@ -78,8 +78,9 @@ class UserService {
   async getUser(id) {
     try {
       let isUser = await this.db.User.findOne({ _id: id },{otp:0});
+      let info = JSON.parse(JSON.stringify(isUser));
       return {
-        data:isUser,
+        data:info ,
         status: true
       };
     } catch (e) {

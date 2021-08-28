@@ -55,7 +55,7 @@ class UserProfileService {
     // with post gallery
     async getUserProfile(profileId) {
         try {
-            return await this.db.UserProfiles.aggreagte([{ $match: { _id: profileId } },
+            return await this.db.UserProfiles.aggregate([{ $match: { _id: profileId } },
             {
                 $lookup: {
                     from: "followers",

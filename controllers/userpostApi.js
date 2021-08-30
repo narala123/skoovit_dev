@@ -26,7 +26,7 @@ module.exports = function (express) {
             Promise.all(promises).then(async (data) => {
                 try {                    
                     req.body.postGallary = data;
-                    console.log(req.user.userId,"token id")
+                    //console.log(req.user.userId,"token id")
                     req.body["userId"] = req.user.userId;
                     const postData = await userPostService.createSelfPost(req.body);                    
                     if(postData.status){

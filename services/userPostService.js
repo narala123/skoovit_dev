@@ -10,7 +10,7 @@ class UserService {
   }
   async createSelfPost(data) {
     try {
-      console.log(data,"data")
+      //console.log(data,"data")
       const selfPost = await this.db.UserPosts.create(data);
       return {
         data: selfPost,

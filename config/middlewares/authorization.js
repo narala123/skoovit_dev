@@ -17,7 +17,7 @@ module.exports.isValidUser = async function (req,res,next){
 	const userService = require("../../services/UserService");
 	try {
 		let token = req.query.token || req.body.token || req.headers['x-access-token'] || req.headers['authorization'];
-		//console.log(token,"token");
+		console.log(token,"token");
 		const data = await verify_token(token)		
 		if(data){
 			const isUserExisted = await userService.getUser(data.userId);

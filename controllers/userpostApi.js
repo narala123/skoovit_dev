@@ -27,7 +27,7 @@ module.exports = function (express) {
                 try {                    
                     req.body.postGallary = data;
                     console.log(req.user.userId,"token id")
-                    req.body.userId = req.user.userId;
+                    req.body["userId"] = req.user.userId;
                     const postData = await userPostService.createSelfPost(req.body);                    
                     if(postData.status){
                         return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: postData.data, status: constants.STATUS_TRUE });

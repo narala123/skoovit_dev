@@ -16,7 +16,7 @@ module.exports.create_token = (userId,planId)=> {
 module.exports.isValidUser = async function (req,res,next){
 	const userService = require("../../services/UserService");
 	try {
-		let token = req.query.token || req.body.token || req.headers['x-access-token'] || req.headers['authorization'];
+		let token = req.query.token || req.body.token || req.headers['x-access-token'] || req.headers['authorization']  || req.headers['Authorization'];
 		console.log(token,"token");
 		const data = await verify_token(token)		
 		if(data){
@@ -37,7 +37,7 @@ module.exports.isValidUser = async function (req,res,next){
 };
 function verify_token(token){
 	try{
-		return token ? jwt.verify(token,process.env.SECRET_KEY) : {};
+		return token ? jwt.verify(token,process.env.SECRET_KEY) : null;
 	}catch(err){
 		return err.message;
 	}

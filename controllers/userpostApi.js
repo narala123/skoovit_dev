@@ -26,6 +26,7 @@ module.exports = function (express) {
             Promise.all(promises).then(async (data) => {
                 try {                    
                     req.body.postGallary = data;
+                    console.log(req.user.userId,"token id")
                     req.body.userId = req.user.userId;
                     const postData = await userPostService.createSelfPost(req.body);                    
                     if(postData.status){
@@ -39,7 +40,7 @@ module.exports = function (express) {
                 }
             }).catch(err => {
                 console.log("error", err)
-                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_500, data:err.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:err.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
             })
         })
         } catch(e){
@@ -158,6 +159,17 @@ api.get("/getsubcomments/:commentId",async (req,res)=>{
     try{
        const data = await userPostService.userSubComments(req.params.commentId,req.user.userId);
        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+    }catch(e){
+        console.log("error", e)
+        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message,  message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }
+});
+
+// get sub comments on user post commnets
+api.get("/skoovcount/:username",async (req,res)=>{
+    try{
+       const data = await userPostService.getSkoovCount(req.params.username);
+       return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, count: data, status: constants.STATUS_TRUE });
     }catch(e){
         console.log("error", e)
         return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message,  message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });

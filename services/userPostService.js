@@ -10,6 +10,7 @@ class UserService {
   }
   async createSelfPost(data) {
     try {
+      console.log(data,"data")
       const selfPost = await this.db.UserPosts.create(data);
       return {
         data: selfPost,
@@ -99,6 +100,7 @@ class UserService {
       };
     }
   };
+  // get all users self posts to all fans created posts
   async getUserSelfPosts(userId) {
     try {
       const followersList = await this.db.Followers.find({ followedBy: userId }, { userId: 1 });
@@ -279,6 +281,18 @@ class UserService {
       return postData;
 
     } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  };
+
+  // get skoov count for users
+
+  getSkoovCount(userName){
+    try {   
+      const count = this.db.UserPosts.countDocuments({tagPeople:userName});
+      return count;
+    }catch (err) {
       console.log(err);
       throw new Error(err);
     }

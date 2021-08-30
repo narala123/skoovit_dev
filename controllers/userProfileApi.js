@@ -60,6 +60,7 @@ module.exports = function (express) {
                 return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
             }
             const fetchProfile = await userProfileService.getUserProfile(req.params.pId);
+            console.log(fetchProfile);
             if (fetchProfile && fetchProfile != null) {
                 return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: fetchProfile });
             } else {

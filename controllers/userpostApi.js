@@ -29,13 +29,13 @@ module.exports = function (express) {
                     req.body.userId = req.user.userId;
                     const postData = await userPostService.createSelfPost(req.body);                    
                     if(postData.status){
-                        return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: postData.data, status: constants.STATUS_TRUE });
+                        return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: postData.data, status: constants.STATUS_TRUE });
                     }else{
-                        return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: postData.data, status: constants.STATUS_FALSE });
+                        return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: postData.data, status: constants.STATUS_FALSE });
                     }                    
                 } catch (e) {
                     console.log("error", e)
-                    return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                    return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                 }
             }).catch(err => {
                 console.log("error", err)

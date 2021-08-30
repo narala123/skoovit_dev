@@ -54,8 +54,11 @@ class UserProfileService {
     };
     // with post gallery
     async getUserProfile(profileId) {
+        console.log(profileId)
         try {
-            return await this.db.UserProfiles.aggregate([{ $match: { _id: profileId } },
+             //return await this.db.UserProfiles.find({_id:profileId})
+             //let id = mongoose.Schema.(profileId)
+            const data =  await this.db.UserProfiles.aggregate([{ $match: { "_id": mongoose.Types.ObjectId(profileId) } },
             {
                 $lookup: {
                     from: "followers",
@@ -89,22 +92,23 @@ class UserProfileService {
                     }
                 }
             },
-            {
-                $match: {
-                    requestStatus: "Accepted"
-                }
-            },
-            {
-                $project: {
-                    followersInfo: 1,
-                    followersCount: { "$size": "$followersInfo" },
-                    gallery:1,
-                    experience:1,
-                    _id:1
+            // {
+            //     $match: {
+            //         requestStatus: "Accepted"
+            //     }
+            // },
+            // {
+            //     $project: {
+            //         followersInfo: 1,
+            //         followersCount: { "$size": "$followersInfo" },
+            //         gallery:1,
+            //         experience:1,
+            //         _id:1
 
-                }
-            }
+            //     }
+            // }
             ]);
+            return data;
         } catch (e) {
             console.log(e);
             throw new Error(e);

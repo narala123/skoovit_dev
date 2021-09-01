@@ -93,10 +93,10 @@ api.post('/viewsupdate/:postId', async (req, res)=>{
     }
 });
 
-// get all users self posts to all fans created posts
-api.get('/allselfposts', async (req, res)=>{
+// get all users of their posts to all fans and their created posts
+api.get('/allposts', async (req, res)=>{
     try {
-        const data = await userPostService.getUserSelfPosts(req.user.userId);   
+        const data = await userPostService.getUserPosts(req.user.userId);   
         if(data.status){
             return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data.data, status: constants.STATUS_TRUE });
         }else{

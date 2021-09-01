@@ -52,9 +52,10 @@ class UserProfileService {
             throw new Error(e);
         }
     };
-    // with post gallery
-    async getUserProfile(profileId) {
-        console.log(profileId)
+
+    // with post gallery of self user profile info
+    async getSelfUserProfile(profileId) {
+        //console.log(profileId)
         try {
              //return await this.db.UserProfiles.find({_id:profileId})
              //let id = mongoose.Schema.(profileId)
@@ -69,7 +70,50 @@ class UserProfileService {
             },
             {
                 $lookup: {
-                    from: "userpost",
+                    from: "userposts",
+                    localField: "userId",
+                    foreignField: "userId",
+                    as: "postInfo"
+                }
+            },                        
+            {
+                $project: {
+                    followersInfo: 1,
+                    followersCount: { "$size": "$followersInfo" },
+                    gallery:1,
+                    postInfo:1,
+                    userId:1,
+                    experience:1,
+                    _id:1
+
+                }
+            }
+            ]);
+            return data;
+        } catch (e) {
+            console.log(e);
+            throw new Error(e);
+        }
+    };
+
+    // with post gallery of other user profile info(to check other users profiles)
+    async getUserProfile(profileId) {
+        //console.log(profileId)
+        try {
+             //return await this.db.UserProfiles.find({_id:profileId})
+             //let id = mongoose.Schema.(profileId)
+            const data =  await this.db.UserProfiles.aggregate([{ $match: { "_id": mongoose.Types.ObjectId(profileId) } },
+            {
+                $lookup: {
+                    from: "followers",
+                    localField: "userId",
+                    foreignField: "userId",
+                    as: "followersInfo"
+                }
+            },
+            {
+                $lookup: {
+                    from: "userposts",
                     localField: "userId",
                     foreignField: "userId",
                     as: "postInfo"
@@ -78,35 +122,28 @@ class UserProfileService {
             {
                 "$addFields": {
                     "postInfo": {
-                        "$arrayElemAt": [
-                            {
-                                "$filter": {
-                                    "input": "$postInfo",
-                                    "as": "post",
-                                    "cond": {
-                                        "$eq": ["$$post.visibleTo", "public"]
-                                    }
-                                }
-                            }, 0
-                        ]
+                        "$filter": {
+                            "input": "$postInfo",
+                            "as": "postInfo",
+                            "cond": {
+                                "$eq": ["$$postInfo.visibleTo", "public"]
+                            }
+                        }
                     }
                 }
-            },
-            // {
-            //     $match: {
-            //         requestStatus: "Accepted"
-            //     }
-            // },
-            // {
-            //     $project: {
-            //         followersInfo: 1,
-            //         followersCount: { "$size": "$followersInfo" },
-            //         gallery:1,
-            //         experience:1,
-            //         _id:1
+            },            
+            {
+                $project: {
+                    followersInfo: 1,
+                    followersCount: { "$size": "$followersInfo" },
+                    gallery:1,
+                    postInfo:1,
+                    userId:1,
+                    experience:1,
+                    _id:1
 
-            //     }
-            // }
+                }
+            }
             ]);
             return data;
         } catch (e) {
@@ -114,7 +151,7 @@ class UserProfileService {
             throw new Error(e);
         }
     };
-    // for all registered user profiles
+    // for all registered user profiles to display list of user profiles 
     async getUserProfiles(filters) {
         try {
             let obj = {};
@@ -140,6 +177,14 @@ class UserProfileService {
             },
             {
                 $lookup: {
+                    from: "states",
+                    localField: "state",
+                    foreignField: "_id",
+                    as: "stateName"
+                }
+            },
+            {
+                $lookup: {
                     from: "users",
                     localField: "userId",
                     foreignField: "_id",
@@ -153,7 +198,7 @@ class UserProfileService {
             throw new Error(e);
         }
     };
-    // for profiles wathed  user profiles list
+    // for profiles watched  user profiles list(who are watched their list)
     async getUserProfileViwersList(viwersList) {
         try {
             const data = await this.db.UserProfiles.aggregate([{ $match: { userId: { $in: viwersList } } }, {
@@ -173,6 +218,14 @@ class UserProfileService {
             },
             {
                 $lookup: {
+                    from: "states",
+                    localField: "state",
+                    foreignField: "_id",
+                    as: "stateName"
+                }
+            },
+            {
+                $lookup: {
                     from: "users",
                     localField: "userId",
                     foreignField: "_id",
@@ -186,7 +239,7 @@ class UserProfileService {
             throw new Error(e);
         }
     };
-
+    // watched list
     async userProfileViwedListUpdate(userId, toUserId) {
         try {
             const data = await this.db.UserProfiles.updateOne({ userId: toUserId }, { $addToSet: { watchedUsers: userId } });

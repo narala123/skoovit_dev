@@ -53,6 +53,28 @@ module.exports = function (express) {
             return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
     });
+
+    // to see seld profile info with self posts info
+    api.get('/selfinfo/:pId', async (req, res) => {
+        try {
+            const isProfileExisted = await userProfileService.isProfileExisted(null, req.params.pId);
+            if (!isProfileExisted) {
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
+            }
+            const fetchProfile = await userProfileService.getSelfUserProfile(req.params.pId);
+            //console.log(fetchProfile);
+            if (fetchProfile && fetchProfile != null) {
+                return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: fetchProfile });
+            } else {
+                return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            }
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    // to see others profile info with their post info
     api.get('/info/:pId', async (req, res) => {
         try {
             const isProfileExisted = await userProfileService.isProfileExisted(null, req.params.pId);
@@ -60,7 +82,7 @@ module.exports = function (express) {
                 return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
             }
             const fetchProfile = await userProfileService.getUserProfile(req.params.pId);
-            console.log(fetchProfile);
+            //console.log(fetchProfile);
             if (fetchProfile && fetchProfile != null) {
                 return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: fetchProfile });
             } else {

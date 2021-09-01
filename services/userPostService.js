@@ -100,8 +100,8 @@ class UserService {
       };
     }
   };
-  // get all users self posts to all fans created posts
-  async getUserSelfPosts(userId) {
+  // get all users  posts to all fans and their created posts
+  async getUserPosts(userId) {
     try {
       const followersList = await this.db.Followers.find({ followedBy: userId }, { userId: 1 });
       let arr = followersList.map(val => {

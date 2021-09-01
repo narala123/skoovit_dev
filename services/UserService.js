@@ -180,12 +180,21 @@ class UserService {
           }
         },
         {
+          $lookup: {
+            from: "userprofile",
+            localField: "_id",
+            foreignField: "userId",
+            as: "profileInfo"
+          }
+        },
+        {
           $unwind: "$planInfo"
         }, {
           $project: {
             "email": 1,
             "mobile": 1,
             "_id": 1,
+            "profileInfo" : 1,
             "activePlan": {
               "planType": "$planInfo.planType"
             }

@@ -181,7 +181,7 @@ class UserService {
         },
         {
           $lookup: {
-            from: "userprofile",
+            from: "userprofiles",
             localField: "_id",
             foreignField: "userId",
             as: "profileInfo"

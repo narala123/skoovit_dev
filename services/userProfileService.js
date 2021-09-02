@@ -25,7 +25,7 @@ class UserProfileService {
     async isProfileExisted(userId, profileId) {
         try {
             if (userId === null && profileId) {
-                return await this.db.UserProfiles.findOne({ _id: profileId });
+                return await this.db.UserProfiles.findOne({ $or:[{_id: profileId },{userId:profileId}]});
             }
             if (userId && profileId) {
                 return await this.db.UserProfiles.findOne({ _id: profileId, userId: userId });

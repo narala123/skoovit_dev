@@ -59,9 +59,9 @@ module.exports = function (express) {
         try {
             const isProfileExisted = await userProfileService.isProfileExisted(null, req.params.pId);
             if (!isProfileExisted) {
-                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404_C, status: constants.STATUS_FALSE });
             }
-            const fetchProfile = await userProfileService.getSelfUserProfile(req.params.pId);
+            const fetchProfile = await userProfileService.getSelfUserProfile(isProfileExisted._id);
             //console.log(fetchProfile);
             if (fetchProfile && fetchProfile != null) {
                 return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: fetchProfile });
@@ -79,9 +79,9 @@ module.exports = function (express) {
         try {
             const isProfileExisted = await userProfileService.isProfileExisted(null, req.params.pId);
             if (!isProfileExisted) {
-                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404_C, status: constants.STATUS_FALSE });
             }
-            const fetchProfile = await userProfileService.getUserProfile(req.params.pId);
+            const fetchProfile = await userProfileService.getUserProfile(isProfileExisted._id);
             //console.log(fetchProfile);
             if (fetchProfile && fetchProfile != null) {
                 return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: fetchProfile });

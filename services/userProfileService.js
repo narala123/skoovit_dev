@@ -61,33 +61,78 @@ class UserProfileService {
              //let id = mongoose.Schema.(profileId)
             const data =  await this.db.UserProfiles.aggregate([{ $match: { "_id": mongoose.Types.ObjectId(profileId) } },
             {
-                $lookup: {
-                    from: "followers",
-                    localField: "userId",
-                    foreignField: "userId",
-                    as: "followersInfo"
-                }
-            },
-            {
-                $lookup: {
-                    from: "userposts",
-                    localField: "userId",
-                    foreignField: "userId",
-                    as: "postInfo"
-                }
-            },                        
-            {
-                $project: {
-                    followersInfo: 1,
-                    followersCount: { "$size": "$followersInfo" },
-                    gallery:1,
-                    postInfo:1,
-                    userId:1,
-                    experience:1,
-                    _id:1
+                    $lookup: {
+                        from: "followers",
+                        localField: "userId",
+                        foreignField: "userId",
+                        as: "followersInfo"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "userposts",
+                        localField: "userId",
+                        foreignField: "userId",
+                        as: "postInfo"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "userInfo"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "countries",
+                        localField: "country",
+                        foreignField: "_id",
+                        as: "countryName"
+                    }
+                }, 
+                {
+                    $lookup: {
+                        from: "cities",
+                        localField: "city",
+                        foreignField: "_id",
+                        as: "cityName"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "states",
+                        localField: "state",
+                        foreignField: "_id",
+                        as: "stateName"
+                    }
+                },
+                {
+                    $project: {
+                        followersInfo: 1,
+                        followersCount: { "$size": "$followersInfo" },
+                        gallery: 1,
+                        postInfo: 1,
+                        userId: 1,
+                        userInfo: 1,
+                        countryName: 1,
+                        stateName: 1,
+                        cityName: 1,
+                        experience: 1,
+                        category: 1,
+                        subCategory: 1,
+                        physicalStats: 1,
+                        socialMediaLinks: 1,
+                        skills: 1,
+                        education: 1,
+                        entityForm: 1,
+                        languages: 1,
+                        userName: 1,
+                        _id: 1
 
+                    }
                 }
-            }
             ]);
             return data;
         } catch (e) {
@@ -103,7 +148,7 @@ class UserProfileService {
              //return await this.db.UserProfiles.find({_id:profileId})
              //let id = mongoose.Schema.(profileId)
             const data =  await this.db.UserProfiles.aggregate([{ $match: { "_id": mongoose.Types.ObjectId(profileId) } },
-            {
+             {
                 $lookup: {
                     from: "followers",
                     localField: "userId",
@@ -117,6 +162,38 @@ class UserProfileService {
                     localField: "userId",
                     foreignField: "userId",
                     as: "postInfo"
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "userInfo"
+                }
+            },
+            {
+                $lookup: {
+                    from: "countries",
+                    localField: "country",
+                    foreignField: "_id",
+                    as: "countryName"
+                }
+            }, 
+            {
+                $lookup: {
+                    from: "cities",
+                    localField: "city",
+                    foreignField: "_id",
+                    as: "cityName"
+                }
+            },
+            {
+                $lookup: {
+                    from: "states",
+                    localField: "state",
+                    foreignField: "_id",
+                    as: "stateName"
                 }
             },
             {
@@ -136,11 +213,24 @@ class UserProfileService {
                 $project: {
                     followersInfo: 1,
                     followersCount: { "$size": "$followersInfo" },
-                    gallery:1,
-                    postInfo:1,
-                    userId:1,
-                    experience:1,
-                    _id:1
+                    gallery: 1,
+                    postInfo: 1,
+                    userId: 1,
+                    userInfo: 1,
+                    countryName: 1,
+                    stateName: 1,
+                    cityName: 1,
+                    experience: 1,
+                    category: 1,
+                    subCategory: 1,
+                    physicalStats: 1,
+                    socialMediaLinks: 1,
+                    skills: 1,
+                    education: 1,
+                    entityForm: 1,
+                    languages: 1,
+                    userName: 1,
+                    _id: 1
 
                 }
             }

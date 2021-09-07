@@ -49,6 +49,7 @@ class UserService {
       let query = {};
       let msg;
       const ifLikeExisted = await this.db.UserPosts.findOne({ _id: postId, likes: { $in: [userId] } });
+      console.log(ifLikeExisted,"iflikeexiste");
       if (ifLikeExisted) {
         query = { $pull: { likes: { $in: [userId] } } };
         msg = "unliked"
@@ -57,6 +58,7 @@ class UserService {
         msg = "liked"
       }
       const likeStatus = await this.db.UserPosts.updateOne({ _id: postId }, query);
+      console.log(likeStatus,"likeStatus");
       if(msg == "liked"){
         let obj = {};
         obj["entity_type"] = "Like";

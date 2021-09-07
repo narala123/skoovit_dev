@@ -53,7 +53,7 @@ module.exports.admin_create_token = (adminId)=> {
 
 
 module.exports.isAdmin = async function (req,res,next){
-	const adminService = require("../../services/AdminService");
+	const adminService = require("../../services/adminService");
 	try {
 		let token = req.query.token || req.body.token || req.headers['x-access-token'] || req.headers['authorization']  || req.headers['Authorization'];
 		//console.log(token,"token");

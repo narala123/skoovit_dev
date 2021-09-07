@@ -13,7 +13,8 @@ const args = [
     '-b:a', '44.1k', 
     '-r', '15', 
     '-b:v', '128k', 
-    '-c:v','h264', 
+    '-c:v','h264',
+    '-seekable', 0, 
     '-f', 'mp4', path.resolve("uploads/"+workerData["destFilname"]+".mp4")
 ];
 

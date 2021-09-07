@@ -81,7 +81,7 @@ class Events {
     }
 
     async getUserNameAndImage(userId){
-        return await this.db.Users({_id:userId},{fullName:1, profileUrl:1});
+        return await this.db.User({_id:userId},{fullName:1, profileUrl:1});
     } 
     async getReveiverUserIdByPostId(postId){
         return await this.db.UserPosts({_id:postId},{userId:1});

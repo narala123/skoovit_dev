@@ -57,7 +57,7 @@ api.post('/likesupdate/:postId', async (req, res)=>{
                 if(data.status){
                     return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data.data, status: constants.STATUS_TRUE });
                 }else{
-                    return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: data.data, status: constants.STATUS_FALSE });
+                    return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: data.data, status: constants.STATUS_FALSE });
                 }
             }else{
                 return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: "Invalid post", status: constants.STATUS_FALSE });

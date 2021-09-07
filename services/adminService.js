@@ -1,8 +1,40 @@
 const db = require("../models");
+const auth = require("../config/middlewares/authorization");
+
 class AdminService {
   constructor() {
     this.db = db;
   }
+
+  // get admin by user name and password
+  async validateAdmin(email, password) {
+    try {
+      //console.log(email,"-------",password);
+      let admin = await this.db.Admin.findOne({ email: email, password:password });
+      //console.log(await auth.admin_create_token(admin._id));
+      let data = JSON.parse(JSON.stringify(admin));
+      data.token=  await auth.admin_create_token(data._id);
+      return data;
+    } catch (e) {
+      //console.error("error",e)
+      throw new Error(e);
+    }
+  }
+
+  // get admin by Id for validation
+  async getAdmin(id) {
+    try {
+      //console.log(data,"-------");
+      const admin = await this.db.Admin.findOne({ _id:id});      
+      return admin;
+    } catch (e) {
+      //console.error("error",e)
+      throw new Error(e);
+    }
+  };
+
+
+
   /*
     categories
 */
@@ -139,7 +171,7 @@ class AdminService {
   async fetchSkills(scId) {
     try {
       //console.log(data,"-------");
-      let skills = await this.db.Skills.find({subCategory:scId}).sort({skill:1});
+      let skills = await this.db.Skills.find({ subCategory: scId }).sort({ skill: 1 });
       return skills;
     } catch (e) {
       //console.error("error",e)
@@ -303,6 +335,47 @@ class AdminService {
       throw new Error(e);
     }
   };
+  /*
+      Manage users
+    */
+
+    // get all users list by admin
+  async allUsersInfo() {
+    try {
+      //console.log(data,"-------");
+      let users = await this.db.User.find({isDelete:false});
+      return users;
+    } catch (e) {
+      console.log("error", e)
+      throw new Error(e);
+    }
+  };
+
+   // hide or block user by admin
+   async userHideOrBlockStatusUpdate(userId, updateInfo) {
+    try {
+      //console.log(data,"-------");
+      let user = await this.db.User.findOneAndUpdate({_id:userId},{$set:updateInfo});
+      return user;
+    } catch (e) {
+      console.log("error", e)
+      throw new Error(e);
+    }
+  };
+
+  // delete user by admin
+  async userDeleteStatusUpdate(userId) {
+    try {
+      //console.log(data,"-------");
+      let user = await this.db.User.findOneAndUpdate({_id:userId},{$set:{isDelete:true}});
+      return user;
+    } catch (e) {
+      console.log("error", e)
+      throw new Error(e);
+    }
+  };
+
+
 }
 
 module.exports = new AdminService();

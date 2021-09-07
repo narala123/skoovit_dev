@@ -1,4 +1,5 @@
 const upload = require("../config/middlewares/multerConfig");
+const AdminPermission = require("../config/middlewares/authorization");
 const adminService = require("../services/adminService");
 const constants = require("../config/constants");
 const path = require("path");
@@ -7,6 +8,25 @@ const { Worker, isMainThread, parentPort, workerData } = require('worker_threads
 
 module.exports = function (express) {
     let api = express.Router();
+
+    // admin login
+    api.post('/login', async (req, res) => {
+        try {
+            const data = await adminService.validateAdmin(req.body.email, req.body.password);
+            //console.log(data);
+            if(data != null){
+                return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+            }else {
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, status: constants.STATUS_FALSE });
+            }
+            
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    api.use(AdminPermission.isAdmin); // token checking below all api's
     /*
         categories
     */

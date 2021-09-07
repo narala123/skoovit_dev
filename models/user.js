@@ -53,6 +53,7 @@ const User = new Schema({
   profileUrl: { type: String },
   isMobileVerified:{ type: Boolean, default: false },
   active: { type: Boolean, default: true },
+  isBlocked:{ type: Boolean, default:false },
   isDelete: { type: Boolean, default: false },
   isLoggedIn: { type: Boolean, default: true },
   createDate: { type: Date, default: Date.now },

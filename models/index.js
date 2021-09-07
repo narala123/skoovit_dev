@@ -7,6 +7,7 @@ class Models {
 
   init() {
     return {
+      Admin:require("./admin"),
       UserRoles: require("./userRoles"),
       Countries: require("./countries"),
       States: require("./states"),

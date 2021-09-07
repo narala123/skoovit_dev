@@ -29,35 +29,16 @@ class Events {
             let notifyObj = await this.getNotificationObject(data);
             await this.notificationService.saveNotifications(notifyObj);
         })
-    };
-
-    async getUserNameAndImage(userId) {
-        try {
-            return await this.db.User({ _id: userId }, { fullName: 1, profileUrl: 1 });
-        } catch (err) {
-            console.log(err);
-            return err;
-        }
-
     }
-    async getReveiverUserIdByPostId(postId) {
-        try {
-            return await this.db.UserPosts({ _id: postId }, { userId: 1 });
-        } catch (err) {
-            console.log(err);
-            return err;
-        }
-    }
-
-    
 
     async getNotificationObject(data) {
+        console.log(data,"data--->")
         let obj = {};
         switch (data["entity_type"]) {
             case "Request":
                 obj["senderId"] = data["followedBy"];
                 obj["receiverId"] = data["userId"];
-                const userInfo = await getUserNameAndImage(data["followedBy"]);
+                const userInfo = await this.getUserNameAndImage(data["followedBy"]);
                 obj["senderName"] = userInfo.fullName || null;
                 obj["senderImage"] = userInfo.profileUrl || null;
                 obj["content"] = "Friend request on your wall";
@@ -67,7 +48,7 @@ class Events {
             case "Accept":
                 obj["senderId"] = data["userId"];
                 obj["receiverId"] = data["followedBy"];
-                const userInfoStatus = await getUserNameAndImage(data["userId"]);
+                const userInfoStatus = await this.getUserNameAndImage(data["userId"]);
                 obj["senderName"] = userInfoStatus.fullName || null;
                 obj["senderImage"] = userInfoStatus.profileUrl || null;
                 obj["content"] = "Your Request Has been Accepted";
@@ -76,8 +57,8 @@ class Events {
                 break;
             case "Comment":
                 obj["senderId"] = data["userId"];
-                const receiverInfo = await getReveiverUserIdByPostId(data["postId"]);
-                const userInfoComment = await getUserNameAndImage(data["userId"]);
+                const receiverInfo = await this.getReveiverUserIdByPostId(data["postId"]);
+                const userInfoComment = await this.getUserNameAndImage(data["userId"]);
                 obj["receiverId"] = receiverInfo.userId;
                 obj["senderName"] = userInfoComment.fullName || null;
                 obj["senderImage"] = userInfoComment.profileUrl || null;
@@ -88,7 +69,7 @@ class Events {
                 break;
             case "Like":
                 obj["senderId"] = data["userId"];
-                const userInfoLike = await getUserNameAndImage(data["userId"]);
+                const userInfoLike = await this.getUserNameAndImage(data["userId"]);
                 console.log(userInfoLike);
                 obj["receiverId"] = data["recieverId"];
                 obj["senderName"] = userInfoLike.fullName || null;
@@ -99,9 +80,25 @@ class Events {
                 break;
         }
         return obj;
-    };
+    }
 
-    
+    async getUserNameAndImage(userId) {
+        try {
+            return await this.db.User({ _id: userId }, { fullName: 1, profileUrl: 1 });
+        } catch (err) {
+            console.log(err);
+            return err;
+        }
+
+    };
+    async getReveiverUserIdByPostId(postId) {
+        try {
+            return await this.db.UserPosts({ _id: postId }, { userId: 1 });
+        } catch (err) {
+            console.log(err);
+            return err;
+        }
+    };
 
 
 }

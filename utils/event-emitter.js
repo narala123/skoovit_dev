@@ -29,7 +29,27 @@ class Events {
             let notifyObj = await this.getNotificationObject(data);
             await this.notificationService.saveNotifications(notifyObj);
         })
+    };
+
+    async getUserNameAndImage(userId) {
+        try {
+            return await this.db.User({ _id: userId }, { fullName: 1, profileUrl: 1 });
+        } catch (err) {
+            console.log(err);
+            return err;
+        }
+
     }
+    async getReveiverUserIdByPostId(postId) {
+        try {
+            return await this.db.UserPosts({ _id: postId }, { userId: 1 });
+        } catch (err) {
+            console.log(err);
+            return err;
+        }
+    }
+
+    
 
     async getNotificationObject(data) {
         let obj = {};
@@ -79,25 +99,9 @@ class Events {
                 break;
         }
         return obj;
-    }
+    };
 
-    async getUserNameAndImage(userId) {
-        try {
-            return await this.db.User({ _id: userId }, { fullName: 1, profileUrl: 1 });
-        } catch (err) {
-            console.log(err);
-            return err;
-        }
-
-    }
-    async getReveiverUserIdByPostId(postId) {
-        try {
-            return await this.db.UserPosts({ _id: postId }, { userId: 1 });
-        } catch (err) {
-            console.log(err);
-            return err;
-        }
-    }
+    
 
 
 }

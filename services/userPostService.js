@@ -57,14 +57,14 @@ class UserService {
         query = { $push: { likes: userId } };
         msg = "liked"
       }
-      const likeStatus = await this.db.UserPosts.updateOne({ _id: postId }, query);
+      const likeStatus = await this.db.UserPosts.findOneAndUpdate({ _id: postId }, query);
       console.log(likeStatus,"likeStatus");
       if(msg == "liked"){
         let obj = {};
         obj["entity_type"] = "Like";
         obj["userId"] = userId;
         obj["postId"] = postId;
-        obj["recieverId"] = ifLikeExisted.userId;
+        obj["recieverId"] = likeStatus.userId;
         em.emit(eventNames.GENERATE_NOTIFICATION, obj);
       }
       return {

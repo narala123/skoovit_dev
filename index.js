@@ -25,16 +25,18 @@ app.use(express.static(__dirname + "/public"));
 
 function setMp4FileHeader(req,res,next){
   let urlArr = req.url.split(".");
+     console.log("urlArr",urlArr);
   let fileType = urlArr[urlArr.length-1];
   if (fileType == "mp4") {
     let range = req.headers.range
-    const videoSize = fs.statSync("uploads" + req.url).size
+    const videoSize = fs.statSync("uploads" + req.url).size;
+    console.log("videoSize",videoSize);
     const CHUNK_SIZE = 10 ** 6; // 1MB
 
     var start = Number(range.replace(/\D/g, ""));
-    
+    console.log("start",start);
     var end = Math.min(start + CHUNK_SIZE, videoSize - 1);
-  
+     console.log("end",end);
     // Create headers
     const contentLength = end - start + 1;
     

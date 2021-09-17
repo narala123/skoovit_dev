@@ -26,7 +26,7 @@ module.exports = function (express) {
         }
     });
 
-    api.use(AdminPermission.isAdmin); // token checking below all api's
+    // api.use(AdminPermission.isAdmin); // token checking below all api's
     /*
         categories
     */

@@ -30,7 +30,9 @@ class Models {
       UserPostSubComments:require('./user-post-subcomments'),
       RequirementPosts:require('./user-requirement-post'),
       UserAdvProfiles:require('./user-advertisement'),
-      Notifications:require('./notifications')
+      Notifications:require('./notifications'),
+      SavedRequirements:require('./user-saved-requirements'),
+      AppliedRequirements:require('./user-applied-requirements')
     };
   }
 }

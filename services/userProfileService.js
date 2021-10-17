@@ -418,7 +418,7 @@ class UserProfileService {
                     userId: userId                    
                 }
             };
-            const reqPosts = await this.db.RequirementPosts.aggregate([{ $mathc: obj }]);
+            const reqPosts = await this.db.RequirementPosts.aggregate([{ $match: obj }]);
             return reqPosts;
         } catch (e) {
             throw new Error(e);
@@ -443,12 +443,85 @@ class UserProfileService {
                     }
                 }
             }
-            const reqPosts = await this.db.RequirementPosts.aggregate([{ $mathc: obj }]);
+            const reqPosts = await this.db.RequirementPosts.aggregate([{ $match: obj }]);
             return reqPosts;
         } catch (e) {
             throw new Error(e);
         }
     };
+
+    // get requirement by requiremet Id
+    async finOneRequirement(reqId) {
+        try {
+            const requirementPost = await this.db.RequirementPosts.findOne({ _id: reqId });
+            return requirementPost;
+        } catch (e) {
+            throw new Error(e);
+        }
+    };
+
+    
+  // saving requirments by users ( to save requirements)
+  async saveRequirementsByUsers(data) {
+    try {
+      const saveInfo = await this.db.SavedRequirements.create(data);
+      return saveInfo;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  };
+  // get saved requirements by userid
+  async getSavedRequirementsByUserId(userId) {
+    try {
+      const savedInfo = await this.db.SavedRequirements.aggregate([{ $match: { userId: mongoose.Types.ObjectId(userId) } }, {
+        $lookup: {
+          from: "savedrequirements",
+          localField: "requirementId",
+          foreignField: "_id",
+          as: "requirementsInfo"
+        }
+      },
+      { $unwind: "$requirementsInfo" }
+      ]);
+      return savedInfo;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  };
+
+  // applying requirments by users ( to save requirements of applied ingo)
+  async saveApplicationsByUsers(data) {
+    try {
+      const aplliedInfo = await this.db.AppliedRequirements.create(data);
+      return aplliedInfo;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  };
+
+  // get applied requirements info by userid
+  async getAppliedRequirementsByUserId(userId) {
+    try {
+      const appliedInfo = await this.db.appliedrequirements.aggregate([{ $match: { requirementAplliedUserId: mongoose.Types.ObjectId(userId) } }, {
+        $lookup: {
+          from: "savedrequirements",
+          localField: "requirementId",
+          foreignField: "_id",
+          as: "appliedrequirementsInfo"
+        }
+      },
+      { $unwind: "$appliedrequirementsInfo" },
+
+      ]);
+      return appliedInfo;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  };
 };
 
 module.exports = new UserProfileService();

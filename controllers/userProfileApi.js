@@ -54,7 +54,7 @@ module.exports = function (express) {
         }
     });
 
-    // to see seld profile info with self posts info
+    // to see self profile info with self posts info
     api.get('/selfinfo/:pId', async (req, res) => {
         try {
             const isProfileExisted = await userProfileService.isProfileExisted(null, req.params.pId);
@@ -216,7 +216,7 @@ module.exports = function (express) {
         }
     });
 
-    // get requirement info by userId
+    // get all requirements info by userId
     api.get("/requirements", async (req, res) => {
         try {
             let filters = req.query.filters ? status(constants.STATUS_500).send.parse(req.query.filters) : [];            
@@ -237,6 +237,82 @@ module.exports = function (express) {
         } catch (e) {
             aconsole.log("error", e)
             return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    api.get("/requirement/:reqId", async (req, res) => {
+        try {
+            const data = await userProfileService.finOneRequirement(req.params.reqId);
+            if(data) {
+                return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: data }); 
+            }else {
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: null, status: constants.STATUS_FALSE });
+            }                                      
+        } catch (e) {
+            aconsole.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+     // saving the requirements for user ( saved requirements) ( to save requirements)
+     api.post('/saverequirements', async (req, res) => {
+        try {
+            req.body.userId = req.user.userId;
+            const data = await userProfileService.saveRequirementsByUsers(req.body);
+            if (data) {
+                return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data, status: constants.STATUS_TRUE });
+            } else {
+                return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: null, status: constants.STATUS_FALSE });
+            }
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    // get user saved requirements by userId
+    api.get('/savedrequirements', async (req, res) => {
+        try {
+            const data = await userProfileService.getSavedRequirementsByUserId(req.user.userId);
+            if (data && data.length > 0) {
+                return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data, status: constants.STATUS_TRUE });
+            } else {
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, data: null, status: constants.STATUS_FALSE });
+            }
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    // appplying to the posted requirment by user
+    api.post('/selfapplications', async (req, res) => {
+        try {
+            req.body.requirementAplliedUserId = req.user.userId;
+            const data = await userProfileService.saveApplicationsByUsers(req.body);
+            if (data) {
+                return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+            } else {
+                return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, data: null, status: constants.STATUS_FALSE });
+            }
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    // get user slef applied requirements by userId
+    api.get('/selfapplicationslist', async (req, res) => {
+        try {
+            const data = await userProfileService.getAppliedRequirementsByUserId(req.user.userId);
+            if (data && data.length > 0) {
+                return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+            } else {
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, data: null, status: constants.STATUS_FALSE });
+            }
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
     });
 

@@ -70,7 +70,7 @@ class Events {
             case "Like":
                 obj["senderId"] = data["userId"];
                 const userInfoLike = await this.getUserNameAndImage(data["userId"]);
-                //console.log(userInfoLike);
+                //,nnnnconsole.log(userInfoLike);
                 obj["receiverId"] = data["recieverId"];
                 obj["senderName"] = userInfoLike.fullName || null;
                 obj["senderImage"] = userInfoLike.profileUrl || null;

@@ -59,7 +59,7 @@ class UserService {
       }
       const likeStatus = await this.db.UserPosts.findOneAndUpdate({ _id: postId }, query);
       //console.log(likeStatus,"likeStatus");
-      if(msg == "liked"){
+      if (msg == "liked") {
         let obj = {};
         obj["entity_type"] = "Like";
         obj["userId"] = userId;
@@ -174,7 +174,7 @@ class UserService {
       let obj = { ...saveComment };
       obj["entity_type"] = "Comment";
       em.emit(eventNames.GENERATE_NOTIFICATION, obj);
-      return saveComment
+      return saveComment;
     } catch (err) {
       throw new Error(err)
     }
@@ -192,7 +192,7 @@ class UserService {
         query = { $push: { likes: userId } };
         msg = "liked"
       }
-      const likeStatus = await this.db.UserPostComments.updateOne({ _id: commentId }, query);     
+      const likeStatus = await this.db.UserPostComments.updateOne({ _id: commentId }, query);
       return {
         data: msg,
         status: true
@@ -245,7 +245,7 @@ class UserService {
       throw new Error(err);
     }
   }
-  async createSubComments(commentInfo){
+  async createSubComments(commentInfo) {
     try {
       let saveComment = await this.db.UserPostSubComments.create(commentInfo);
       return saveComment
@@ -290,17 +290,17 @@ class UserService {
 
   // get skoov count for users
 
-  getSkoovCount(userName){
-    try {   
-      const count = this.db.UserPosts.countDocuments({tagPeople:userName});
+  async getSkoovCount(userName) {
+    try {
+      const count = await this.db.UserPosts.countDocuments({ tagPeople: userName });
       return count;
-    }catch (err) {
+    } catch (err) {
       console.log(err);
       throw new Error(err);
     }
-  }
-};
+  };
 
+};
 
 
 module.exports = new UserService();

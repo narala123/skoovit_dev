@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const RequirementPosts = new Schema({
     userId:{ type: Schema.Types.ObjectId,ref:'users' },	
     req_title:{ type: String },
-    nameToBeDiplayed: { type: String } ,
+    nameToBeDisplayed: { type: String } ,
     description:{ type: String },
     lookingFor : {
         category: { type: String },
@@ -28,7 +28,7 @@ const RequirementPosts = new Schema({
     isActive:{ type: Boolean },
     emailAlerts:{ type: Boolean, default:false},
     tags:{ type: Array },    
-    createDate:{ type:Date, default:Date.now },
+    createdDate:{ type:Date, default:Date.now },
     modifiedDate:{ type:Date, default:Date.now }
 });
 

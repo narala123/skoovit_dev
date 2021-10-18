@@ -111,7 +111,7 @@ module.exports = function (express) {
     api.get('/allprofilesinfo', async (req, res) => {
         try {
             // console.log(req.query.filters);
-            let filters = req.query.filters ? status(constants.STATUS_500).send.parse(req.query.filters) : [];
+            let filters = req.query.filters ? JSON.parse(req.query.filters) : [];
             const fetchProfiles = await userProfileService.getUserProfiles(filters);
             if (fetchProfiles) {
                 return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: fetchProfiles });
@@ -218,8 +218,26 @@ module.exports = function (express) {
 
     // get all requirements info by userId
     api.get("/requirements", async (req, res) => {
-        try {
-            let filters = req.query.filters ? status(constants.STATUS_500).send.parse(req.query.filters) : [];            
+        try {            
+            let filters = req.query.filters ? JSON.parse(req.query.filters) : [];  
+            
+            if(filters.length > 0){
+                for(let i = 0; i<filters.length; i++){
+                    if(filters[i].category){
+                        filters[i]["lookingFor.category"] = filters[i].category;
+                        delete filters[i].category;
+                    }
+                    if(filters[i].subCategory){
+                        filters[i]["lookingFor.subCategory"] = filters[i].subCategory;
+                        delete filters[i].subCategory; 
+                    }
+                    if(filters[i].remuneration){
+                        filters[i]["lookingFor.remuneration"] = filters[i].remuneration;
+                        delete filters[i].remuneration;
+                    }
+                }
+            }   
+            //console.log(filters,"filters")       
             const data = await userProfileService.getRequirementsByUserId(req.user.userId, filters);
             return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: data });                           
         } catch (e) {
@@ -231,7 +249,23 @@ module.exports = function (express) {
     // get all requirements info 
     api.get("/requirementslist", async (req, res) => {
         try {
-            let filters = req.query.filters ? status(constants.STATUS_500).send.parse(req.query.filters) : [];            
+            let filters = req.query.filters ? JSON.parse(req.query.filters) : [];  
+            if(filters.length > 0){
+                for(let i = 0; i<filters.length; i++){
+                    if(filters[i].category){
+                        filters[i]["lookingFor.category"] = filters[i].category;
+                        delete filters[i].category;
+                    }
+                    if(filters[i].subCategory){
+                        filters[i]["lookingFor.subCategory"] = filters[i].subCategory;
+                        delete filters[i].subCategory; 
+                    }
+                    if(filters[i].remuneration){
+                        filters[i]["lookingFor.remuneration"] = filters[i].remuneration;
+                        delete filters[i].remuneration;
+                    }
+                }
+            }         
             const data = await userProfileService.getAllRequirements(filters);
             return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: data });                           
         } catch (e) {

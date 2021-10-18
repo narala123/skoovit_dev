@@ -403,7 +403,7 @@ class UserProfileService {
     };
 
 
-    // [{"city":"60e7b35230bb5f2bbcebc0cf"},{"country":"60e7b30330bb5f2bbcebc0cc"},{"state":"60e7b33b30bb5f2bbcebc0ce"},{"languages":"Telugu"},{"category":"Actor"},{"subcategory":"side Actor"},{"gender":"Male"}]
+    // [{"languages":"Telugu"},{"category":"Actor"},{"subCategory":"side Actor"},{"gender":"Male"},{"locations":"surat"},{"remuneration":"102313"}]
     // get all requirments by userId (user self reqs) getAllRequirements
     async getRequirementsByUserId(userId, filters) {
         try {

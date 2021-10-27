@@ -6,7 +6,7 @@ const AdminPermission = require("../config/middlewares/authorization");
 module.exports = function (express) {
     let api = express.Router();
 
-    api.use(AdminPermission.isAdmin); // token checking below all api's
+    //api.use(AdminPermission.isAdmin); // token checking below all api's
     // get all users list by admin
     api.get('/allusers', async (req, res) => {
         try {

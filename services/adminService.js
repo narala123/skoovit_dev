@@ -168,11 +168,47 @@ class AdminService {
       throw new Error(e);
     }
   };
-  async fetchSkills(scId) {
+  async fetchSkill(scId) {
     try {
       //console.log(data,"-------");
-      let skills = await this.db.Skills.find({ subCategory: scId }).sort({ skill: 1 });
-      return skills;
+      let skill = await this.db.Skills.findOne({ _id: scId }).sort({ skill: 1 });
+      return skill;
+    } catch (e) {
+      //console.error("error",e)
+      throw new Error(e);
+    }
+  };
+
+  async getSkills(id) {
+    try {
+      //console.log(data,"-------");
+      let getSkills = await this.db.Skills.find({}).sort({skill:1});
+      return getSkills;
+    } catch (e) {
+      //console.error("error",e)
+      throw new Error(e);
+    }
+  }
+
+  async deleteSkill(id) {
+    try {
+      //console.log(data,"-------");
+      let deleted = await this.db.Skills.deleteOne({ _id: id });
+      return deleted;
+    } catch (e) {
+      //console.error("error",e)
+      throw new Error(e);
+    }
+  }
+  async updateSkill(id, data) {
+    try {
+      //console.log(data,"-------");
+      let updateSkill = await this.db.Skills.findOneAndUpdate(
+        { _id: id },
+        { $set: data },
+        { new: true }
+      );
+      return updateSkill;
     } catch (e) {
       //console.error("error",e)
       throw new Error(e);
@@ -295,6 +331,10 @@ class AdminService {
       throw new Error(e);
     }
   };
+
+  /*
+    gloabal and reginal ads
+    */
   async createGlobalAds(data) {
     try {
       // console.log(data,"-------");
@@ -374,6 +414,65 @@ class AdminService {
       throw new Error(e);
     }
   };
+
+  /*
+    services
+  */
+    async createService(data) {
+      try {
+        //console.log(data,"-------");
+        let cityCreation = await this.db.Services.create(data);
+        return cityCreation;
+      } catch (e) {
+        //console.error("error",e)
+        throw new Error(e);
+      }
+    }
+    async fetchServices() {
+      try {
+        //console.log(data,"-------");
+        let fetchService = await this.db.Services.find({ active: true }).sort({ createDate: -1 });
+        return fetchService;
+      } catch (e) {
+        //console.error("error",e)
+        throw new Error(e);
+      }
+    }
+    async getService(id) {
+      try {
+        //console.log(data,"-------");
+        let getService = await this.db.Services.findOne({ _id: id });
+        return getService;
+      } catch (e) {
+        //console.error("error",e)
+        throw new Error(e);
+      }
+    }
+  
+    async deleteService(id) {
+      try {
+        //console.log(data,"-------");
+        let deleted = await this.db.Services.deleteOne({ _id: id });
+        return deleted;
+      } catch (e) {
+        //console.error("error",e)
+        throw new Error(e);
+      }
+    }
+    async updateService(id, data) {
+      try {
+        //console.log(data,"-------");
+        let updateService = await this.db.Services.findOneAndUpdate(
+          { _id: id },
+          { $set: data },
+          { new: true }
+        );
+        return updateService;
+      } catch (e) {
+        //console.error("error",e)
+        throw new Error(e);
+      }
+    };
 
 
 }

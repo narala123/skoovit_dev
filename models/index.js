@@ -32,7 +32,8 @@ class Models {
       UserAdvProfiles:require('./user-advertisement'),
       Notifications:require('./notifications'),
       SavedRequirements:require('./user-saved-requirements'),
-      AppliedRequirements:require('./user-applied-requirements')
+      AppliedRequirements:require('./user-applied-requirements'),
+      Services:require('./services')
     };
   }
 }

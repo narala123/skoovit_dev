@@ -132,7 +132,6 @@ module.exports = function (express) {
                                 console.log("error", e)
                                 return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                             }
-
                         }).catch(err => {
                             console.log("error", err)
                             return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:err.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
@@ -203,10 +202,40 @@ module.exports = function (express) {
             return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
     });
-    api.get("/getskills/:scId", async (req, res) => {
+    api.get("/getskill/:scId", async (req, res) => {
         try {
-            let data = await adminService.fetchSkills(req.params.scId);
+            let data = await adminService.fetchSkill(req.params.scId);
             return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+    api.post("/updateskill/:sid", async (req, res) => {
+        try {
+            //console.log(req.body);
+            let data = await adminService.updateSkill(req.params.sid, req.body);
+            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    api.get("/getskills", async (req, res) => {
+        try {
+            let data = await adminService.getSkills();
+            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    api.post("/deleteskill/:sid", async (req, res) => {
+        try {
+            let data = await adminService.deleteSkill(req.params.sid);
+            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE });
         } catch (e) {
             console.log("error", e)
             return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
@@ -329,6 +358,10 @@ module.exports = function (express) {
         }
     });
     
+    /*
+      
+     to create global ads
+     */
     api.post("/globalads", async (req, res) => {
         try {
             upload.ImgVideoUpload(req,res, async (err) => {
@@ -403,6 +436,59 @@ module.exports = function (express) {
           return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message,  message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
       });
+
+      /*
+        services
+    */
+    api.post("/createservice", async (req, res) => {
+        try {
+            //console.log(req.body);
+            let data = await adminService.createService(req.body);
+            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+    api.get("/getservices", async (req, res) => {
+        try {
+            let data = await adminService.fetchServices();
+            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+    api.post("/updateservice/:sid", async (req, res) => {
+        try {
+            //console.log(req.body);
+            let data = await adminService.updateService(req.params.sid, req.body);
+            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    api.get("/getservice/:sid", async (req, res) => {
+        try {
+            let data = await adminService.getService(req.params.sid);
+            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    api.post("/deleteservice/:sid", async (req, res) => {
+        try {
+            let data = await adminService.deleteService(req.params.sid);
+            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE });
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
     
     return api;
 };

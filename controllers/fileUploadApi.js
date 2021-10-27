@@ -18,11 +18,11 @@ module.exports = (app, express) => {
                             return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
                         } catch (e) {
                             console.log("error", e)
-                            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                         }
                     }).catch(err => {
                         console.log("error", err)
-                        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:err.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: err.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                     })
                 } else {
                     //console.log("err", err)
@@ -31,29 +31,40 @@ module.exports = (app, express) => {
             })
         } catch (e) {
             console.log("err", e)
-            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
     });
     api.post("/video", (req, res) => {
         try {
             upload.Videoupload(req, res, async (err) => {
                 if (!err) {
-                    let promises = [];
+                    //let promises = [];
+                    // for (let i = 0; i < req.files.length; i++) {
+                    //     promises.push(await workerService.videoWorkerInit(req.files[i]))
+                    // }
+                    // Promise.all(promises).then(async data => {
+                    //     try {
+                    //         await UserProfileService.galleryUpdate(req.body.profileId, data, "video")
+                    //         return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+                    //     } catch (e) {
+                    //         console.log("error", e)
+                    //         return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                    //     }
+                    // }).catch(err => {
+                    //     console.log(err);
+                    //     return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:err.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                    // })
+                    let data = [];
                     for (let i = 0; i < req.files.length; i++) {
-                        promises.push(await workerService.videoWorkerInit(req.files[i]))
+                        data.push({filename:req.files[i].filename,originalName:req.files[i].orginalFileName, type:"video"})
                     }
-                    Promise.all(promises).then(async data => {
-                        try {
-                            await UserProfileService.galleryUpdate(req.body.profileId, data, "video")
-                            return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
-                        } catch (e) {
-                            console.log("error", e)
-                            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
-                        }
-                    }).catch(err => {
-                        console.log(err);
-                        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:err.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
-                    })
+                    try {
+                        await UserProfileService.galleryUpdate(req.body.profileId, data, "video")
+                        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+                    } catch (e) {
+                        console.log("error", e)
+                        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                    }
                 } else {
                     //console.log("err", err)
                     return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
@@ -61,7 +72,7 @@ module.exports = (app, express) => {
             })
         } catch (e) {
             console.log("err", e)
-            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
     });
     api.post("/doc", (req, res) => {
@@ -70,7 +81,7 @@ module.exports = (app, express) => {
                 if (!err) {
                     let arr = [];
                     let obj = {};
-                    for (let i = 0; i<req.files.length; i++) {
+                    for (let i = 0; i < req.files.length; i++) {
                         obj["filename"] = req.files[i].filename;
                         obj["originalName"] = req.files[i].originalname;
                         arr.push(JSON.parse(JSON.stringify(obj)));
@@ -81,7 +92,7 @@ module.exports = (app, express) => {
                         return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: arr, status: constants.STATUS_TRUE });
                     } catch (e) {
                         console.log("error", e)
-                        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                     }
                 } else {
                     //console.log("err", err)
@@ -90,7 +101,7 @@ module.exports = (app, express) => {
             });
         } catch (e) {
             console.log("err", e)
-            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
     });
     api.post("/audio", (req, res) => {
@@ -99,7 +110,7 @@ module.exports = (app, express) => {
                 if (!err) {
                     let arr = [];
                     let obj = {};
-                    for (let i = 0; i<req.files.length; i++) {
+                    for (let i = 0; i < req.files.length; i++) {
                         obj["filename"] = req.files[i].filename;
                         obj["originalName"] = req.files[i].originalname;
                         arr.push(JSON.parse(JSON.stringify(obj)));
@@ -110,7 +121,7 @@ module.exports = (app, express) => {
                         return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: arr, status: constants.STATUS_TRUE });
                     } catch (e) {
                         console.log("error", e)
-                        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+                        return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
                     }
                 } else {
                     //console.log("err", err)
@@ -119,7 +130,7 @@ module.exports = (app, express) => {
             });
         } catch (e) {
             console.log("err", e)
-            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500,data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
         }
     });
     return api;

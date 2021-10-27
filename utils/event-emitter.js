@@ -62,7 +62,7 @@ class Events {
                 obj["receiverId"] = receiverInfo.userId;
                 obj["senderName"] = userInfoComment.fullName || null;
                 obj["senderImage"] = userInfoComment.profileUrl || null;
-                obj["content"] = "Commnted on your post";
+                obj["content"] = "someone commented on your post";
                 obj["entity_type"] = data["entity_type"];
                 obj["entityId"] = data["postId"];
                 obj["comment"] = data["comment"];
@@ -74,7 +74,7 @@ class Events {
                 obj["receiverId"] = data["recieverId"];
                 obj["senderName"] = userInfoLike.fullName || null;
                 obj["senderImage"] = userInfoLike.profileUrl || null;
-                obj["content"] = "Commnted on your post";
+                obj["content"] = "someone liked on your post";
                 obj["entity_type"] = data["entity_type"];
                 obj["entityId"] = data["postId"];
                 break;

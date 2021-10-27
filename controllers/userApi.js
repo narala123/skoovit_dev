@@ -300,7 +300,8 @@ module.exports = function (express,passport) {
     upload.Imageupload(req, res, async (err) => {
        try{
         let obj = {};
-        obj["profileUrl"] = req.files[0].filename
+        obj["profileUrl"] = req.files[0].filename;
+        obj["modifiedDate"] = Date.now();
         let data = await userService.profilePicUpdate(req.user.userId,obj);
         return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:data });
       } catch (e) {

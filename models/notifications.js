@@ -12,6 +12,7 @@ const Notification = new Schema({
     comment:{ type: String },
     entity_type:{ type: String },
     entityId:{ type: String },
+    commentId:{ type: String },
     createDate:{ type:Date, default:Date.now },
     modifiedDate:{ type:Date, default:Date.now }
 });

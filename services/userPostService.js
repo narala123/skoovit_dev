@@ -146,6 +146,8 @@ class UserService {
           profilePic: "$userInfo.profileUrl",
           viewsCount: { $size: "$views" },
           likesCount: { $size: "$likes" },
+          createDate:1,
+          modifiedDate:1,
           commentsCount: { $cond: { if: { $isArray: "$commentsInfo" }, then: { $size: "$commentsInfo" }, else: "NA" } },
         }
       }
@@ -201,6 +203,8 @@ class UserService {
       throw new Error(err);
     }
   }
+
+
   async userComments(postId, userId) {
     try {
 
@@ -230,6 +234,8 @@ class UserService {
           email: "$userInfo.email",
           profilePic: "$userInfo.profileUrl",
           likesCount: { $size: "$likes" },
+          createDate:1,
+          modifiedDate:1,
           subCommentsCount: { $cond: { if: { $isArray: "$commentsInfo" }, then: { $size: "$commentsInfo" }, else: "NA" } },
         }
       }
@@ -248,10 +254,13 @@ class UserService {
   async createSubComments(commentInfo) {
     try {
       let saveComment = await this.db.UserPostSubComments.create(commentInfo);
-      return saveComment
+      let obj = { ...saveComment };
+      obj["entity_type"] = "SubComment";
+      em.emit(eventNames.GENERATE_NOTIFICATION, obj);
+      return saveComment;
     } catch (err) {
       throw new Error(err)
-    }
+    };
   }
   async userSubComments(commentId, userId) {
     try {
@@ -270,6 +279,8 @@ class UserService {
           comment: 1,
           likes: 1,
           isActive: 1,
+          createDate:1,
+          modifiedDate:1,
           name: "$userInfo.fullName",
           email: "$userInfo.email",
           profilePic: "$userInfo.profileUrl",
@@ -284,6 +295,29 @@ class UserService {
 
     } catch (err) {
       console.log(err);
+      throw new Error(err);
+    }
+  };
+
+  // likes count updation
+  async subCommentLikesUpdate(subCommentId, userId) { 
+    let query = {};
+    let msg;
+    try {
+      const isLikeExisted = await this.db.UserPostSubComments.findOne({ _id: subCommentId, likes: { $in: [userId] } });
+      if (isLikeExisted) {
+        query = { $pull: { likes: { $in: [userId] } } };
+        msg = "unliked"
+      } else {
+        query = { $push: { likes: userId } };
+        msg = "liked"
+      }
+      const likeStatus = await this.db.UserPostSubComments.updateOne({ _id: subCommentId }, query);
+      return {
+        data: msg,
+        status: true
+      };
+    } catch (err) {
       throw new Error(err);
     }
   };

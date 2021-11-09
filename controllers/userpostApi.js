@@ -132,6 +132,17 @@ module.exports = function (express) {
         }
     });
 
+    // to update likes count on users posts 
+    api.put("/subcommentlikesupdate/:subcommentId", async (req, res) => {
+        try {
+            const data = await userPostService.subCommentLikesUpdate(req.params.subcommentId, req.user.userId);
+            return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data.data, status: constants.STATUS_TRUE });
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
     // get comments on user posts
     api.get("/getcomments/:postId", async (req, res) => {
         try {
@@ -147,7 +158,7 @@ module.exports = function (express) {
     api.post("/postsubcomment", async (req, res) => {
         try {
             req.body.userId = req.user.userId;
-            const data = await userPostService.userSubComments(req.body);
+            const data = await userPostService.createSubComments(req.body);
             return res.status(constants.STATUS_201).send({ statusCode: constants.STATUS_201, message: constants.STATUS_MSG_201, data: data, status: constants.STATUS_TRUE });
         } catch (e) {
             console.log("error", e)

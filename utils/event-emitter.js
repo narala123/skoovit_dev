@@ -28,7 +28,7 @@ class Events {
         this.em.on(this.eventNames.GENERATE_NOTIFICATION, async (data) => {
             let notifyObj = await this.getNotificationObject(data);
             await this.notificationService.saveNotifications(notifyObj);
-        })
+        });
     }
 
     async getNotificationObject(data) {
@@ -74,9 +74,21 @@ class Events {
                 obj["receiverId"] = data["recieverId"];
                 obj["senderName"] = userInfoLike.fullName || null;
                 obj["senderImage"] = userInfoLike.profileUrl || null;
-                obj["content"] = "someone liked on your post";
+                obj["content"] = "someone liked your post";
                 obj["entity_type"] = data["entity_type"];
                 obj["entityId"] = data["postId"];
+                break;
+            case "SubComment":
+                obj["senderId"] = data["userId"];
+                const userInfoSubComments = await this.getUserNameAndImage(data["userId"]);
+                //,nnnnconsole.log(userInfoLike);
+                obj["receiverId"] = data["recieverId"];
+                obj["senderName"] = userInfoSubComments.fullName || null;
+                obj["senderImage"] = userInfoSubComments.profileUrl || null;
+                obj["content"] = "someone commented your comment";
+                obj["entity_type"] = data["entity_type"];
+                obj["entityId"] = data["postId"];
+                obj["commentId"] = data["commentId"];
                 break;
         }
         return obj;
@@ -84,7 +96,7 @@ class Events {
 
     async getUserNameAndImage(userId) {
         try {
-            return await this.db.User({ _id: userId }, { fullName: 1, profileUrl: 1 });
+            return await this.db.User.findOne({ _id: userId }, { fullName: 1, profileUrl: 1 });
         } catch (err) {
             console.log(err);
             return err;
@@ -93,7 +105,7 @@ class Events {
     };
     async getReveiverUserIdByPostId(postId) {
         try {
-            return await this.db.UserPosts({ _id: postId }, { userId: 1 });
+            return await this.db.UserPosts.findOne({ _id: postId }, { userId: 1 });
         } catch (err) {
             console.log(err);
             return err;

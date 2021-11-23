@@ -173,7 +173,7 @@ class UserService {
   async createComment(commentInfo) {
     try {
       let saveComment = await this.db.UserPostComments.create(commentInfo);
-      let obj = { ...saveComment };
+      let obj = JSON.parse(JSON.stringify(saveComment));
       obj["entity_type"] = "Comment";
       em.emit(eventNames.GENERATE_NOTIFICATION, obj);
       return saveComment;
@@ -254,7 +254,7 @@ class UserService {
   async createSubComments(commentInfo) {
     try {
       let saveComment = await this.db.UserPostSubComments.create(commentInfo);
-      let obj = { ...saveComment };
+      let obj = JSON.parse(JSON.stringify(saveComment));
       obj["entity_type"] = "SubComment";
       em.emit(eventNames.GENERATE_NOTIFICATION, obj);
       return saveComment;

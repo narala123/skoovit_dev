@@ -32,7 +32,7 @@ class Events {
     }
 
     async getNotificationObject(data) {
-        //console.log(data,"data--->")
+        console.log(data,"data--->")
         let obj = {};
         switch (data["entity_type"]) {
             case "Request":
@@ -62,7 +62,7 @@ class Events {
                 obj["receiverId"] = receiverInfo.userId;
                 obj["senderName"] = userInfoComment.fullName || null;
                 obj["senderImage"] = userInfoComment.profileUrl || null;
-                obj["content"] = "someone commented on your post";
+                obj["content"] = `${userInfoLike.fullName} commented on your post`;
                 obj["entity_type"] = data["entity_type"];
                 obj["entityId"] = data["postId"];
                 obj["comment"] = data["comment"];
@@ -74,7 +74,7 @@ class Events {
                 obj["receiverId"] = data["recieverId"];
                 obj["senderName"] = userInfoLike.fullName || null;
                 obj["senderImage"] = userInfoLike.profileUrl || null;
-                obj["content"] = "someone liked your post";
+                obj["content"] = `${userInfoLike.fullName} liked your post`;
                 obj["entity_type"] = data["entity_type"];
                 obj["entityId"] = data["postId"];
                 break;
@@ -85,7 +85,7 @@ class Events {
                 obj["receiverId"] = data["recieverId"];
                 obj["senderName"] = userInfoSubComments.fullName || null;
                 obj["senderImage"] = userInfoSubComments.profileUrl || null;
-                obj["content"] = "someone commented your comment";
+                obj["content"] = `${userInfoLike.fullName} commented your comment`;
                 obj["entity_type"] = data["entity_type"];
                 obj["entityId"] = data["postId"];
                 obj["commentId"] = data["commentId"];

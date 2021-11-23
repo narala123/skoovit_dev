@@ -173,12 +173,23 @@ module.exports = function (express) {
 
     // upate user entity logo
     api.put("/entity", async (req, res) => {
+
         upload.Imageupload(req, res, async (err) => {
             try {
                 if (req.files.length > 0) {
                     req.body.logo_url = req.files[0].filename;
                 }
-                const data = await userProfileService.entityUpdate(req.user.userId, req.body);
+                let keys = Object.keys(req.body);
+                let data = {};
+                const getEntityInfo = await userProfileService.getEntityForm(req.user.userId);
+                if(getEntityInfo && getEntityInfo != null) {
+                    for( let i = 0;i<keys.length;i++){
+                        getEntityInfo[keys[i]] = req.body[keys[i]];
+                    }
+                    data = await userProfileService.entityUpdate(req.user.userId, getEntityInfo);
+                }else{
+                    data = await userProfileService.entityUpdate(req.user.userId, req.body);
+                }
                 return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data: data });
             } catch (e) {
                 console.log("error", e)
@@ -339,6 +350,21 @@ module.exports = function (express) {
     api.get('/selfapplicationslist', async (req, res) => {
         try {
             const data = await userProfileService.getAppliedRequirementsByUserId(req.user.userId);
+            if (data && data.length > 0) {
+                return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+            } else {
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, data: null, status: constants.STATUS_FALSE });
+            }
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+
+    // get user name by search
+    api.get('/getusernames', async (req,res) =>{
+        try {
+            const data = await userProfileService.getUserNameBySearch(req.body.name);
             if (data && data.length > 0) {
                 return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
             } else {

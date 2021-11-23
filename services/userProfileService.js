@@ -367,6 +367,17 @@ class UserProfileService {
         return conditon
 
     };
+    async getEntityForm(userId){
+        try {
+            const entityInfo = await this.db.UserProfiles.findOne(
+                { userId: mongoose.Types.ObjectId(userId) },{entityForm:1}            
+            );
+
+            return JSON.parse(JSON.stringify(entityInfo));
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
 
     // entity logo updation
     async entityUpdate(userId, eInfo) {
@@ -503,25 +514,34 @@ class UserProfileService {
   };
 
   // get applied requirements info by userid
-  async getAppliedRequirementsByUserId(userId) {
-    try {
-      const appliedInfo = await this.db.appliedrequirements.aggregate([{ $match: { requirementAplliedUserId: mongoose.Types.ObjectId(userId) } }, {
-        $lookup: {
-          from: "savedrequirements",
-          localField: "requirementId",
-          foreignField: "_id",
-          as: "appliedrequirementsInfo"
-        }
-      },
-      { $unwind: "$appliedrequirementsInfo" },
+    async getAppliedRequirementsByUserId(userId) {
+        try {
+        const appliedInfo = await this.db.AppliedRequirements.aggregate([{ $match: { requirementAplliedUserId: mongoose.Types.ObjectId(userId) } }, {
+            $lookup: {
+            from: "savedrequirements",
+            localField: "requirementId",
+            foreignField: "_id",
+            as: "appliedrequirementsInfo"
+            }
+        },
+        { $unwind: "$appliedrequirementsInfo" },
 
-      ]);
-      return appliedInfo;
-    } catch (err) {
-      console.log(err);
-      throw new Error(err);
+        ]);
+        return appliedInfo;
+        } catch (err) {
+        console.log(err);
+        throw new Error(err);
+        }
+    };
+    async getUserNameBySearch(name){
+        try {
+            return await this.db.UserProfiles.find({userName:{$regex:name,$options:"$i"}});            
+        } catch (err) {
+            console.log(err);
+            throw new Error(err);
+        }
     }
-  };
+
 };
 
 module.exports = new UserProfileService();

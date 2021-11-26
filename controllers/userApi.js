@@ -141,6 +141,7 @@ module.exports = function (express,passport) {
   // one user can send(followedBy) the friend request to another user(userId)
   api.post('/sendrequests', async (req, res) =>{
     try {      
+      req.body.followedBy =  req.user.userId;
       let requestData = await userService.generateRequest(req.body);
       if(requestData.status) {
         return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, status: constants.STATUS_TRUE, data:requestData.data });

@@ -1,4 +1,6 @@
 const db = require("../models");
+const em = require('../utils/event-emitter');
+const eventNames = require('../config/event-emitter-constants');
 const mongoose = require('mongoose');
 class UserProfileService {
     constructor() {
@@ -540,7 +542,29 @@ class UserProfileService {
             console.log(err);
             throw new Error(err);
         }
-    }
+    };
+    async createInfluencer(data){
+        try {
+            const data = await this.db.Influencer.create(data); 
+            let obj = {};
+            obj["entity_type"] = "Influencer";
+            obj["userId"] = data.clientId;
+            obj["entityId"]  = data._id;
+            obj["recieverId"] = data.influencerId;            
+            em.emit(eventNames.GENERATE_NOTIFICATION, obj);           
+        } catch (err) {
+            console.log(err);
+            throw new Error(err);
+        }
+    };
+    async getInfluenceRequest(entityId){
+        try {
+            return await this.db.Influencer.findOne({_id:entityId});                        
+        } catch (err) {
+            console.log(err);
+            throw new Error(err);
+        }
+    };
 
 };
 

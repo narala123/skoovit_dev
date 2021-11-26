@@ -362,10 +362,39 @@ module.exports = function (express) {
     });
 
     // get user name by search
-    api.get('/getusernames', async (req,res) =>{
+    api.get('/getusernames/:name', async (req,res) =>{
         try {
-            const data = await userProfileService.getUserNameBySearch(req.body.name);
-            if (data && data.length > 0) {
+            const data = await userProfileService.getUserNameBySearch(req.params.name);            
+            if (data) {
+                return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+            } else {
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, data: null, status: constants.STATUS_FALSE });
+            }
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+    // influnecer request
+    api.post('/requestinfluencer',async (req,res) =>{
+        try {
+            req.body.clientId = req.user.userId;
+            const data = await userProfileService.createInfluencer(req.body);
+            if (data) {
+                return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
+            } else {
+                return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, data: null, status: constants.STATUS_FALSE });
+            }
+        } catch (e) {
+            console.log("error", e)
+            return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data: e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+        }
+    });
+    // influncer request info
+    api.get('/influencerequest/:entityId',async (req,res) =>{
+        try {
+            const data = await userProfileService.getInfluenceRequest(req.params.entityId);
+            if (data) {
                 return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200, data: data, status: constants.STATUS_TRUE });
             } else {
                 return res.status(constants.STATUS_404).send({ statusCode: constants.STATUS_404, message: constants.STATUS_MSG_404, data: null, status: constants.STATUS_FALSE });

@@ -62,7 +62,7 @@ class Events {
                 obj["receiverId"] = receiverInfo.userId;
                 obj["senderName"] = userInfoComment.fullName || null;
                 obj["senderImage"] = userInfoComment.profileUrl || null;
-                obj["content"] = `${userInfoLike.fullName} commented on your post`;
+                obj["content"] = `${userInfoComment.fullName} commented on your post`;
                 obj["entity_type"] = data["entity_type"];
                 obj["entityId"] = data["postId"];
                 obj["comment"] = data["comment"];
@@ -85,10 +85,21 @@ class Events {
                 obj["receiverId"] = data["recieverId"];
                 obj["senderName"] = userInfoSubComments.fullName || null;
                 obj["senderImage"] = userInfoSubComments.profileUrl || null;
-                obj["content"] = `${userInfoLike.fullName} commented your comment`;
+                obj["content"] = `${userInfoSubComments.fullName} commented your comment`;
                 obj["entity_type"] = data["entity_type"];
                 obj["entityId"] = data["postId"];
                 obj["commentId"] = data["commentId"];
+                break;
+            case "Influencer":
+                obj["senderId"] = data["userId"];
+                const clientInfo = await this.getUserNameAndImage(data["userId"]);
+                //,nnnnconsole.log(userInfoLike);
+                obj["receiverId"] = data["recieverId"];
+                obj["senderName"] = clientInfo.fullName || null;
+                obj["senderImage"] = clientInfo.profileUrl || null;
+                obj["content"] = `${clientInfo.fullName} raised a request for your influence`;
+                obj["entity_type"] = data["entity_type"];
+                obj["entityId"] = data["entityId"];
                 break;
         }
         return obj;

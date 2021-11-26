@@ -52,7 +52,7 @@ module.exports = function (express) {
         try {
             if (req.params.postId) {
                 const likesdata = await userPostService.selfPostOne(req.params.postId);
-                console.log(req.user, "token");
+                //console.log(req.user, "token");
                 if (likesdata.status) {
                     const data = await userPostService.selfPostLikesUpdate(likesdata.data._id, req.user.userId);
                     if (data.status) {

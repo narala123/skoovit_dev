@@ -13,7 +13,8 @@ const UserProfile = new Schema({
     aboutMe:{ type: String },
     category:{ type: String },
     subCategory: { type: Array },
-    education:{ type: String },
+    education:{ type: String },    
+    isInfluencer:{ type: Boolean, default:false},
     skills:{ type: Array },
     physicalStats:{
         height:{ type: String },

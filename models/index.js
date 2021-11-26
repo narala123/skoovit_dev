@@ -33,7 +33,8 @@ class Models {
       Notifications:require('./notifications'),
       SavedRequirements:require('./user-saved-requirements'),
       AppliedRequirements:require('./user-applied-requirements'),
-      Services:require('./services')
+      Services:require('./services'),
+      Influencer:require('./influncer')
     };
   }
 }

@@ -452,7 +452,27 @@ class UserService {
         status: false
       }
     }
-  }
+  };
+  //most followers and count their profiles
+  async mostFollowersList(userId){
+    try { 
+      const data = await this.db.Followers.aggregate([
+        {"$group" : {
+          _id:{userId:"$userId"}, followersCount:{$sum:1}}
+        },
+        {$lookup:{
+          from:"users",localField:"_id.userId",foreignField:"_id",as:"user"}
+        },
+        {$unwind:"$user"},
+        { $sort:{followersCount : -1}}
+      ]);
+      return data;
+
+    }catch(e){
+      throw new Error(e);
+    }
+  };
+  
 
 }
 

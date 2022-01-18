@@ -44,7 +44,7 @@ class NotificationService {
     async updateReadStatusNotifications(notificationId) {
         try {
             //console.log(data,"-------");
-            const data = await this.db.Notifications.findOneUpdate({_id:notificationId},{$set:{isRead:true}});
+            const data = await this.db.Notifications.findOneAndUpdate({_id:notificationId},{$set:{isRead:true}});
             return data;
         } catch (e) {
             //console.error("error",e)
@@ -55,7 +55,7 @@ class NotificationService {
     async updateDeleteNotifications(notificationId) {
         try {
             //console.log(data,"-------");
-            const data = await this.db.Notifications.findOneUpdate({_id:notificationId},{$set:{isDelete:true}});
+            const data = await this.db.Notifications.findOneAndUpdate({_id:notificationId},{$set:{isDelete:true}});
             return data;
         } catch (e) {
             //console.error("error",e)

@@ -27,7 +27,7 @@ class UserProfileService {
     async isProfileExisted(userId, profileId) {
         try {
             if (userId === null && profileId) {
-                return await this.db.UserProfiles.findOne({ $or:[{_id: profileId },{userId:profileId}]});
+                return await this.db.UserProfiles.findOne({ $or: [{ _id: profileId }, { userId: profileId }] });
             }
             if (userId && profileId) {
                 return await this.db.UserProfiles.findOne({ _id: profileId, userId: userId });
@@ -59,98 +59,10 @@ class UserProfileService {
     async getSelfUserProfile(profileId) {
         //console.log(profileId)
         try {
-             //return await this.db.UserProfiles.find({_id:profileId})
-             //let id = mongoose.Schema.(profileId)
-            const data =  await this.db.UserProfiles.aggregate([{ $match: { "_id": mongoose.Types.ObjectId(profileId) } },
+            //return await this.db.UserProfiles.find({_id:profileId})
+            //let id = mongoose.Schema.(profileId)
+            const data = await this.db.UserProfiles.aggregate([{ $match: { "_id": mongoose.Types.ObjectId(profileId) } },
             {
-                    $lookup: {
-                        from: "followers",
-                        localField: "userId",
-                        foreignField: "userId",
-                        as: "followersInfo"
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "userposts",
-                        localField: "userId",
-                        foreignField: "userId",
-                        as: "postInfo"
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "userId",
-                        foreignField: "_id",
-                        as: "userInfo"
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "countries",
-                        localField: "country",
-                        foreignField: "_id",
-                        as: "countryName"
-                    }
-                }, 
-                {
-                    $lookup: {
-                        from: "cities",
-                        localField: "city",
-                        foreignField: "_id",
-                        as: "cityName"
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "states",
-                        localField: "state",
-                        foreignField: "_id",
-                        as: "stateName"
-                    }
-                },
-                {
-                    $project: {
-                        followersInfo: 1,
-                        followersCount: { "$size": "$followersInfo" },
-                        gallery: 1,
-                        postInfo: 1,
-                        userId: 1,
-                        userInfo: 1,
-                        countryName: 1,
-                        stateName: 1,
-                        cityName: 1,
-                        experience: 1,
-                        category: 1,
-                        subCategory: 1,
-                        physicalStats: 1,
-                        socialMediaLinks: 1,
-                        skills: 1,
-                        education: 1,
-                        entityForm: 1,
-                        languages: 1,
-                        userName: 1,
-                        _id: 1
-
-                    }
-                }
-            ]);
-            return data;
-        } catch (e) {
-            console.log(e);
-            throw new Error(e);
-        }
-    };
-
-    // with post gallery of other user profile info(to check other users profiles)
-    async getUserProfile(profileId) {
-        //console.log(profileId)
-        try {
-             //return await this.db.UserProfiles.find({_id:profileId})
-             //let id = mongoose.Schema.(profileId)
-            const data =  await this.db.UserProfiles.aggregate([{ $match: { "_id": mongoose.Types.ObjectId(profileId) } },
-             {
                 $lookup: {
                     from: "followers",
                     localField: "userId",
@@ -181,7 +93,95 @@ class UserProfileService {
                     foreignField: "_id",
                     as: "countryName"
                 }
-            }, 
+            },
+            {
+                $lookup: {
+                    from: "cities",
+                    localField: "city",
+                    foreignField: "_id",
+                    as: "cityName"
+                }
+            },
+            {
+                $lookup: {
+                    from: "states",
+                    localField: "state",
+                    foreignField: "_id",
+                    as: "stateName"
+                }
+            },
+            {
+                $project: {
+                    followersInfo: 1,
+                    followersCount: { "$size": "$followersInfo" },
+                    gallery: 1,
+                    postInfo: 1,
+                    userId: 1,
+                    userInfo: 1,
+                    countryName: 1,
+                    stateName: 1,
+                    cityName: 1,
+                    experience: 1,
+                    category: 1,
+                    subCategory: 1,
+                    physicalStats: 1,
+                    socialMediaLinks: 1,
+                    skills: 1,
+                    education: 1,
+                    entityForm: 1,
+                    languages: 1,
+                    userName: 1,
+                    _id: 1
+
+                }
+            }
+            ]);
+            return data;
+        } catch (e) {
+            console.log(e);
+            throw new Error(e);
+        }
+    };
+
+    // with post gallery of other user profile info(to check other users profiles)
+    async getUserProfile(profileId) {
+        //console.log(profileId)
+        try {
+            //return await this.db.UserProfiles.find({_id:profileId})
+            //let id = mongoose.Schema.(profileId)
+            const data = await this.db.UserProfiles.aggregate([{ $match: { "_id": mongoose.Types.ObjectId(profileId) } },
+            {
+                $lookup: {
+                    from: "followers",
+                    localField: "userId",
+                    foreignField: "userId",
+                    as: "followersInfo"
+                }
+            },
+            {
+                $lookup: {
+                    from: "userposts",
+                    localField: "userId",
+                    foreignField: "userId",
+                    as: "postInfo"
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "userInfo"
+                }
+            },
+            {
+                $lookup: {
+                    from: "countries",
+                    localField: "country",
+                    foreignField: "_id",
+                    as: "countryName"
+                }
+            },
             {
                 $lookup: {
                     from: "cities",
@@ -210,7 +210,7 @@ class UserProfileService {
                         }
                     }
                 }
-            },            
+            },
             {
                 $project: {
                     followersInfo: 1,
@@ -369,10 +369,10 @@ class UserProfileService {
         return conditon
 
     };
-    async getEntityForm(userId){
+    async getEntityForm(userId) {
         try {
             const entityInfo = await this.db.UserProfiles.findOne(
-                { userId: mongoose.Types.ObjectId(userId) },{entityForm:1}            
+                { userId: mongoose.Types.ObjectId(userId) }, { entityForm: 1 }
             );
 
             return JSON.parse(JSON.stringify(entityInfo));
@@ -426,9 +426,9 @@ class UserProfileService {
                     userId: userId,
                     $or: filters
                 }
-            }else{
+            } else {
                 obj = {
-                    userId: userId                    
+                    userId: userId
                 }
             };
             const reqPosts = await this.db.RequirementPosts.aggregate([{ $match: obj }]);
@@ -444,14 +444,14 @@ class UserProfileService {
             let obj = {};
             if (filters.length > 0) {
                 obj = {
-                    expiredOn : { 
+                    expiredOn: {
                         $gte: new Date()
-                    },                 
+                    },
                     $or: filters
                 }
-            }else{
+            } else {
                 obj = {
-                    expiredOn : { 
+                    expiredOn: {
                         $gte: new Date()
                     }
                 }
@@ -473,98 +473,129 @@ class UserProfileService {
         }
     };
 
-    
-  // saving requirments by users ( to save requirements)
-  async saveRequirementsByUsers(data) {
-    try {
-      const saveInfo = await this.db.SavedRequirements.create(data);
-      return saveInfo;
-    } catch (err) {
-      console.log(err);
-      throw new Error(err);
-    }
-  };
-  // get saved requirements by userid
-  async getSavedRequirementsByUserId(userId) {
-    try {
-      const savedInfo = await this.db.SavedRequirements.aggregate([{ $match: { userId: mongoose.Types.ObjectId(userId) } }, {
-        $lookup: {
-          from: "savedrequirements",
-          localField: "requirementId",
-          foreignField: "_id",
-          as: "requirementsInfo"
-        }
-      },
-      { $unwind: "$requirementsInfo" }
-      ]);
-      return savedInfo;
-    } catch (err) {
-      console.log(err);
-      throw new Error(err);
-    }
-  };
 
-  // applying requirments by users ( to save requirements of applied ingo)
-  async saveApplicationsByUsers(data) {
-    try {
-      const aplliedInfo = await this.db.AppliedRequirements.create(data);
-      return aplliedInfo;
-    } catch (err) {
-      console.log(err);
-      throw new Error(err);
-    }
-  };
-
-  // get applied requirements info by userid
-    async getAppliedRequirementsByUserId(userId) {
+    // saving requirments by users ( to save requirements)
+    async saveRequirementsByUsers(data) {
         try {
-        const appliedInfo = await this.db.AppliedRequirements.aggregate([{ $match: { requirementAplliedUserId: mongoose.Types.ObjectId(userId) } }, {
-            $lookup: {
-            from: "savedrequirements",
-            localField: "requirementId",
-            foreignField: "_id",
-            as: "appliedrequirementsInfo"
-            }
-        },
-        { $unwind: "$appliedrequirementsInfo" },
-
-        ]);
-        return appliedInfo;
-        } catch (err) {
-        console.log(err);
-        throw new Error(err);
-        }
-    };
-    async getUserNameBySearch(name){
-        try {
-            return await this.db.UserProfiles.find({userName:{$regex:name,$options:"$i"}});            
+            const saveInfo = await this.db.SavedRequirements.create(data);
+            return saveInfo;
         } catch (err) {
             console.log(err);
             throw new Error(err);
         }
     };
-    async createInfluencer(data){
+    // get saved requirements by userid
+    async getSavedRequirementsByUserId(userId) {
         try {
-            const data = await this.db.Influencer.create(data); 
+            const savedInfo = await this.db.SavedRequirements.aggregate([{ $match: { userId: mongoose.Types.ObjectId(userId) } }, {
+                $lookup: {
+                    from: "savedrequirements",
+                    localField: "requirementId",
+                    foreignField: "_id",
+                    as: "requirementsInfo"
+                }
+            },
+            { $unwind: "$requirementsInfo" }
+            ]);
+            return savedInfo;
+        } catch (err) {
+            console.log(err);
+            throw new Error(err);
+        }
+    };
+
+    // applying requirments by users ( to save requirements of applied ingo)
+    async saveApplicationsByUsers(data) {
+        try {
+            const aplliedInfo = await this.db.AppliedRequirements.create(data);
+            return aplliedInfo;
+        } catch (err) {
+            console.log(err);
+            throw new Error(err);
+        }
+    };
+
+    // get applied requirements info by userid
+    async getAppliedRequirementsByUserId(userId) {
+        try {
+            const appliedInfo = await this.db.AppliedRequirements.aggregate([{ $match: { requirementAplliedUserId: mongoose.Types.ObjectId(userId) } }, {
+                $lookup: {
+                    from: "savedrequirements",
+                    localField: "requirementId",
+                    foreignField: "_id",
+                    as: "appliedrequirementsInfo"
+                }
+            },
+            { $unwind: "$appliedrequirementsInfo" },
+
+            ]);
+            return appliedInfo;
+        } catch (err) {
+            console.log(err);
+            throw new Error(err);
+        }
+    };
+    async getUserNameBySearch(name) {
+        try {
+            return await this.db.UserProfiles.aggregate([
+                //{ userName: { $regex: name, $options: "$i" } }
+                { $regexMatch: { input: "$userName", regex: name, options: "i" } },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "userInfo"
+                    }
+                }
+            ]);
+        } catch (err) {
+            console.log(err);
+            throw new Error(err);
+        }
+    };
+    async createInfluencer(data) {
+        try {
+            const data = await this.db.Influencer.create(data);
             let obj = {};
             obj["entity_type"] = "Influencer";
             obj["userId"] = data.clientId;
-            obj["entityId"]  = data._id;
-            obj["recieverId"] = data.influencerId;            
-            em.emit(eventNames.GENERATE_NOTIFICATION, obj);           
+            obj["entityId"] = data._id;
+            obj["recieverId"] = data.influencerId;
+            em.emit(eventNames.GENERATE_NOTIFICATION, obj);
         } catch (err) {
             console.log(err);
             throw new Error(err);
         }
     };
-    async getInfluenceRequest(entityId){
+    async getInfluenceRequest(entityId) {
         try {
-            return await this.db.Influencer.findOne({_id:entityId});                        
+            return await this.db.Influencer.findOne({ _id: entityId });
         } catch (err) {
             console.log(err);
             throw new Error(err);
         }
     };
+    // most viewed profiles and count
+    async mostViewdProfiles() {
+        try {
+            const data = await this.db.userprofiles.aggregate([
+                { $unwind: "$watchedUsers" },
+                {
+                    $group: {
+                        _id: { userId: "$userId" }, watchedUsers: { $push: "$watchedUsers" },
+                        viewsCount: { $sum: 1 }
+                    }
+                },
+                { $lookup: { from: "users", localField: "_id.userId", foreignField: "_id", as: "user" } },
+                { $unwind: "$user" },
+                { $sort: { viewsCount: -1 } }
+            ]);
+            return data;
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
 
 };
 

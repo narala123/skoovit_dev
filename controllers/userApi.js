@@ -226,6 +226,21 @@ module.exports = function (express,passport) {
     }
   });
 
+  // most foloowers count
+  api.get('/mostfollowerslist', async (req, res) =>{
+    try {      
+      const data = await userService.mostFollowersList( req.user.userId);
+      if(data) {
+        return res.status(constants.STATUS_200).send({ statusCode: constants.STATUS_200, message: constants.STATUS_MSG_200,data:data, status: constants.STATUS_TRUE });
+      }else{
+        return res.status(constants.STATUS_400).send({ statusCode: constants.STATUS_400, message: constants.STATUS_MSG_400, status: constants.STATUS_FALSE });
+      } 
+    }catch(e) {
+      console.log("error", e)
+      return res.status(constants.STATUS_500).send({ statusCode: constants.STATUS_500, data:e.message, message: constants.STATUS_MSG_500, status: constants.STATUS_FALSE });
+    }
+  });
+
   /*
         To check valid token and user role, works as middleware.
         below of this function all Api's should have token.
